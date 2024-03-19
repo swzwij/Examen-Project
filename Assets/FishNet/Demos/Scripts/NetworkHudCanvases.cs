@@ -60,8 +60,6 @@ namespace FishNet.Example
         [Tooltip("Indicator for client state.")]
         [SerializeField]
         private Image _clientIndicator;
-
-        [SerializeField] private InputField _ipInput;
         #endregion
 
         #region Private.
@@ -226,9 +224,7 @@ namespace FishNet.Example
             if (_clientState != LocalConnectionState.Stopped)
                 _networkManager.ClientManager.StopConnection();
             else
-            {
                 _networkManager.ClientManager.StartConnection();
-            }
 
             DeselectButtons();
         }
