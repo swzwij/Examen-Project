@@ -125,7 +125,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 1474325579737520305}
   _networkObjectCache: {fileID: 1474325579737520305}
-  _speed: 5
+  speed: 5
 --- !u!114 &1474325579737520305
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,7 +158,7 @@ MonoBehaviour:
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 9108699489103310431
+  <AssetPathHash>k__BackingField: 4732234012717596714
 --- !u!54 &2673675629627332716
 Rigidbody:
   m_ObjectHideFlags: 0
