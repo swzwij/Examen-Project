@@ -24,6 +24,9 @@ namespace Examen.Player
                 _myCamera = Camera.main;
         }
 
+        /// <summary>
+        /// Points the pointer at the position based on the input from the "PointerPosition" action.
+        /// </summary>
         public void PointAtPosition()
         {
             Vector2 pointerPosition = InputManager.TryGetAction("PointerPosition").ReadValue<Vector2>();

@@ -17,7 +17,7 @@ namespace Examen.Player
         private InputAction _interactAction;
         private Pointer _pointer;
 
-        public Action OnInteract;
+        public Action OnInteract; // Change to Action<Interactable>?
 
         private void OnEnable() => InputManager.SubscribeToAction("Interact", OnInteractPerformed, out _interactAction);
 
