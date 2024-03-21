@@ -1,33 +1,36 @@
+using Examen_Project.Items;
+using System.Collections.Generic;
 
-namespace Examen_Project.Inventory
+namespace Examen.Inventory
 {
     public static class InventorySystem
     {
-        public static int WoodCount { get; private set; }
-        public static int StoneCount { get; private set; }
+        private static Dictionary<Item, int> _currentItems = new();
 
         /// <summary>
-        /// Add given wood amount to the current wood count.
+        /// Add given item amount to the current item count.
         /// </summary>
-        /// <param name="amountOfWood"> amount of wood you want to add.</param>
-        public static void AddWood(int amountOfWood) => WoodCount += amountOfWood;
+        /// <param name="newItem"> The item you want to add.</param>
+        /// <param name="amountOfItem"> Amount of the certain item you want to add.</param>
+        public static void AddItem(Item newItem ,int amountOfItem)
+        {
+            if (!_currentItems.ContainsKey(newItem))
+                _currentItems.Add(newItem, amountOfItem);
+            else
+                _currentItems[newItem] += amountOfItem;
+        }
 
         /// <summary>
-        /// remove given wood amount to the current wood count.
+        /// Remove given item amount to the current item count.
         /// </summary>
-        /// <param name="amountOfWood"> amount of wood you want to remove.</param>
-        public static void RemoveWood(int amountOfWood) => WoodCount -= amountOfWood;
-
-        /// <summary>
-        /// Add given stone amount to the current stone count.
-        /// </summary>
-        /// <param name="amountOfStone"> amount of stone you want to add.</param>
-        public static void AddStone(int amountOfStone) => StoneCount += amountOfStone;
-
-        /// <summary>
-        /// remove given stone amount to the current stone count.
-        /// </summary>
-        /// <param name="amountOfStone"> amount of stone you want to remove.</param>
-        public static void RemoveStone(int amountOfStone) => StoneCount -= amountOfStone;
+        /// <param name="removeItem"> The item you want to remove.</param>
+        /// <param name="amountOfItem"> Amount of item you want to remove.</param>
+        public static void RemoveItem(Item removeItem, int amountOfItem)
+        {
+            if (!_currentItems.ContainsKey(removeItem))
+                return;
+          
+           _currentItems[removeItem] = _currentItems[removeItem] - amountOfItem < 0 ?  0 : _currentItems[removeItem] - amountOfItem;
+        }
     }
 }
