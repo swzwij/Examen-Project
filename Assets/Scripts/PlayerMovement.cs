@@ -3,32 +3,37 @@ using FishNet.Object;
 
 public class PlayerMovement : NetworkBehaviour
 {
-    [SerializeField] private float _speed = 5.0f;
+    public float speed = 5.0f;
 
     private void Update()
     {
-        if (!IsOwner)
+        if (!base.IsOwner)
             return;
 
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
-        Vector3 movement = new(horizontalInput, 0, verticalInput);
-
-        transform.position += (float)TimeManager.TickDelta * _speed * movement;
-
-        SendMovementToServer(movement);
+        SendInputToServer(horizontalInput, verticalInput);
     }
 
     [ServerRpc]
-    private void SendMovementToServer(Vector3 movement)
+    void SendInputToServer(float horizontalInput, float verticalInput)
     {
-        transform.position += (float)TimeManager.TickDelta * _speed * movement;
-        BroadcastMovement(transform.position); // Broadcast to all clients
+        ProcessInput(horizontalInput, verticalInput);
     }
 
-    [ObserversRpc] // Client version will receive position update
-    private void BroadcastMovement(Vector3 newPosition)
+    [Server]
+    private void ProcessInput(float horizontalInput, float verticalInput)
+    {
+        Vector3 movement = new(horizontalInput, 0, verticalInput); 
+        Vector3 scaledMovement = (float)TimeManager.TickDelta * speed * movement;
+        transform.position += scaledMovement;
+
+        BroadcastPosition(transform.position);
+    }
+
+    [ObserversRpc]
+    void BroadcastPosition(Vector3 newPosition)
     {
         transform.position = newPosition;
     }
