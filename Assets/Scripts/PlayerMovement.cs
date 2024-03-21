@@ -7,7 +7,7 @@ public class PlayerMovement : NetworkBehaviour
 
     private void Update()
     {
-        if (!base.IsOwner)
+        if (!IsOwner) // Check if this client is allowed to move this player
             return;
 
         float horizontalInput = Input.GetAxis("Horizontal");
@@ -16,15 +16,19 @@ public class PlayerMovement : NetworkBehaviour
         SendInputToServer(horizontalInput, verticalInput);
     }
 
-    [ServerRpc]
-    void SendInputToServer(float horizontalInput, float verticalInput)
+    [ServerRpc] // ServerRpc sends data to the server
+    private void SendInputToServer(float horizontalInput, float verticalInput)
     {
+        // Send input to the server to set the position, this makes it so there is server authority which means players cannot set their own position.
+
         ProcessInput(horizontalInput, verticalInput);
     }
 
-    [Server]
+    [Server] // Server methods only get executed on server cleints.
     private void ProcessInput(float horizontalInput, float verticalInput)
     {
+        // Server takes inputs and converts it into a position
+
         Vector3 movement = new(horizontalInput, 0, verticalInput); 
         Vector3 scaledMovement = (float)TimeManager.TickDelta * speed * movement;
         transform.position += scaledMovement;
@@ -32,9 +36,11 @@ public class PlayerMovement : NetworkBehaviour
         BroadcastPosition(transform.position);
     }
 
-    [ObserversRpc]
-    void BroadcastPosition(Vector3 newPosition)
+    [ObserversRpc] // ObserversRpc wil send things to other clients in the server
+    private void BroadcastPosition(Vector3 newPosition)
     {
+        // new position gets broadcasted to all the other players in the server.
+
         transform.position = newPosition;
     }
 }
