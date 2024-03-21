@@ -19,13 +19,19 @@ public class BuildingManager : MonoBehaviour
 
     void Update()
     {
-        // Get the current mouse position in the world space
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        // Ensure the object stays at its original z-position
-        mousePosition.z = transform.position.z;
+        if (!Input.GetMouseButton(0))
+            return;
 
-        // Move the object smoothly towards the mouse position
-        transform.position = Vector3.Lerp(transform.position, mousePosition, followSpeed * Time.deltaTime);
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(ray, out var hit))
+            GetDraggablePiece(hit);
+    }
+    private void GetDraggablePiece(RaycastHit hit)
+    {
+        Vector3 mousePosition = hit.point;
+
+        transform.position = new Vector3(mousePosition.x, 0.01f, mousePosition.z);
     }
 
     private void SetBuilding(GameObject structure)
