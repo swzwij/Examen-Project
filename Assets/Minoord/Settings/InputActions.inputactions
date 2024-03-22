@@ -6,7 +6,7 @@
             "id": "4d345f5c-106a-4065-8244-3892be2c86a2",
             "actions": [
                 {
-                    "name": "Interact",
+                    "name": "Click",
                     "type": "Button",
                     "id": "913a536f-a095-46ee-ae4c-58532f439df3",
                     "expectedControlType": "Button",
@@ -32,7 +32,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Interact",
+                    "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -43,7 +43,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Interact",
+                    "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -54,7 +54,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Interact",
+                    "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

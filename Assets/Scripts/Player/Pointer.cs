@@ -1,20 +1,32 @@
 using System;
 using Minoord.Input;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using FishNet.Object;
 
 namespace Examen.Player
 {
-    public class Pointer : MonoBehaviour
+    public class Pointer : NetworkBehaviour
     {
         [SerializeField] private LayerMask _pointerLayerMask;
         private Camera _myCamera; // Replace with camera manager once this is implemented
         private Vector3 _pointerWorldPosition;
+        private InputAction _clickAction;
 
         public Action<Vector3> OnPointedAtPosition;
 
-        private void OnEnable() => InputManager.TryGetAction("PointerPosition").Enable();
+        private void OnEnable()
+        {
+            InputManager.SubscribeToAction("Click", OnPointPerformed, out _clickAction);
+            InputManager.TryGetAction("PointerPosition").Enable();
+        }
 
-        private void OnDisable() => InputManager.TryGetAction("PointerPosition").Disable();
+        private void OnDisable()
+        {
+            _clickAction.Disable();
+            _clickAction.performed -= OnPointPerformed;
+            InputManager.TryGetAction("PointerPosition").Disable();
+        }
 
         private void Awake()
         {
@@ -37,6 +49,14 @@ namespace Examen.Player
                 _pointerWorldPosition = hit.point;
                 OnPointedAtPosition?.Invoke(_pointerWorldPosition);
             }
+        }
+
+        private void OnPointPerformed(InputAction.CallbackContext context)
+        {
+            if(!IsOwner) 
+                return;
+
+            PointAtPosition();
         }
     }
 }
