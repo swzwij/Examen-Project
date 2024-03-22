@@ -1,5 +1,6 @@
 {
     "name": "Unity.FishNet.Codegen",
+    "rootNamespace": "",
     "references": [
         "FishNet.Runtime",
         "FishNet.Codegen.Cecil",
@@ -10,7 +11,7 @@
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": true,
-    "overrideReferences": true,
+    "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": false,
     "defineConstraints": [],
