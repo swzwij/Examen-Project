@@ -7,5 +7,7 @@ namespace Examen.Items
     public class Item : ScriptableObject
     {
         [SerializeField]  private string _name;
+
+        public string Name => _name;
     }
 }
