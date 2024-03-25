@@ -2,10 +2,10 @@ using UnityEngine;
 
 namespace Examen.Items
 {
-    [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Item", order = 1)]
+    [CreateAssetMenu(fileName = "Item", menuName = "Items/New Item", order = 1)]
     public class Item : ScriptableObject
     {
-        [SerializeField]  private string _name;
+        [SerializeField] private string _name;
 
          public string Name => _name;
     }
