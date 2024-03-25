@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using GameKit.Utilities;
 using UnityEngine;
 
 namespace Examen.Pathfinding.Grid
@@ -19,6 +20,8 @@ namespace Examen.Pathfinding.Grid
         public float nodeDistance = 1f;
         public Node[,] nodes;
         public Cell[,] cells;
+
+        private Vector3 CellSize => new(_cellSize * nodeDistance, _cellSize * nodeDistance, _cellSize * nodeDistance);
 
         private void OnEnable() => CreateGrid();
 
@@ -55,17 +58,25 @@ namespace Examen.Pathfinding.Grid
 
         private void InitializeCells()
         {
+            DestroyCells();
+
             int numCellsX = Mathf.CeilToInt((float)gridSizeX / _cellSize);
             int numCellsY = Mathf.CeilToInt((float)gridSizeY / _cellSize);
 
-            cells = new Cell[numCellsX, numCellsY];
+            var test = new Cell[numCellsX, numCellsY];
 
             for (int x = 0; x < numCellsX; x++)
             {
                 for (int y = 0; y < numCellsY; y++)
                 {
                     Cell newCell = new Cell();
-                    cells[x, y] = newCell;
+                    test[x, y] = newCell;
+
+                    newCell = new GameObject($"Cell {x}-{y}").AddComponent<Cell>();
+                    newCell.gameObject.layer = 2; // Ignore raycast
+                    newCell.transform.SetParent(transform);
+                    newCell.transform.position = GetCellPosition(x, y);
+                    newCell.transform.localScale = CellSize;
 
                     // Determine the nodes that belong to this cell
                     int startX = x * _cellSize;
@@ -83,6 +94,8 @@ namespace Examen.Pathfinding.Grid
                     }
                 }
             }
+
+            cells = test;
         }
 
         private bool IsWalkableArea(Vector3 position, out float elevation)
@@ -176,6 +189,14 @@ namespace Examen.Pathfinding.Grid
         public void ClearGrid()
         {
             nodes = null;
+            DestroyCells();
+        }
+
+        private void DestroyCells()
+        {
+            for (int i = transform.childCount - 1; i >= 0; i--)
+                DestroyImmediate(transform.GetChild(i).gameObject);
+            
             cells = null;
         }
 
@@ -190,6 +211,16 @@ namespace Examen.Pathfinding.Grid
             Node currentNode = nodes[x, y];
 
             return currentNode;
+        }
+
+        private Vector3 GetCellPosition(int xIndex, int yIndex)
+        {
+            // Calculate the bottom left position of the cell
+            Vector3 cellBottomLeft = transform.position + new Vector3(xIndex * CellSize.x, 0, yIndex * CellSize.y);
+
+            // Calculate the center position of the cell
+            Vector3 cellCenter = cellBottomLeft + new Vector3(CellSize.x / 2, 0, CellSize.z / 2);
+            return cellCenter;
         }
 
         private void OnDrawGizmos() // Mark Todo: Clean up this method. Move drawing to owner classes.
@@ -218,35 +249,6 @@ namespace Examen.Pathfinding.Grid
                             continue;
                         
                         Gizmos.DrawLine(node.position, connectedNode.position);
-                    }
-                }
-            }
-
-            // Draw a wire box around each cell
-            if (cells != null)
-            {
-                Gizmos.color = Color.yellow;
-
-                int numCellsX = Mathf.CeilToInt((float)gridSizeX / _cellSize);
-                int numCellsY = Mathf.CeilToInt((float)gridSizeY / _cellSize);
-
-                for (int x = 0; x < numCellsX; x++)
-                {
-                    for (int y = 0; y < numCellsY; y++)
-                    {
-                        float cellWidth = _cellSize * nodeDistance;
-                        float cellHeight = _cellSize * nodeDistance;
-
-                        // Calculate the bottom left position of the cell
-                        Vector3 cellBottomLeft = transform.position + new Vector3(x * cellWidth, 0, y * cellHeight);
-
-                        // Calculate the center position of the cell
-                        Vector3 cellCenter = cellBottomLeft + new Vector3(cellWidth / 2, 0, cellHeight / 2);
-
-                        // Since Gizmos.DrawWireCube expects a center position and size, we provide those
-                        Vector3 cellSizeVec = new Vector3(cellWidth, 0, cellHeight);
-
-                        Gizmos.DrawWireCube(cellCenter, cellSizeVec);
                     }
                 }
             }
