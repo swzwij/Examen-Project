@@ -1,24 +1,11 @@
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace Examen.PlayerDatabase
 {
     public class PlayerDataUpdateRequest : Swzwij.APIManager.APIRequest
     {
-        private readonly Dictionary<string, object> _updates;
+        private readonly PlayerData _playerData;
 
-        public override string URL => "http://localhost/update_player_data.php";
+        public override string URL => $"update_player_data.php?id={_playerData.id}&level={_playerData.level}&exp={_playerData.exp}&buildings={_playerData.buildings}";
 
-        public PlayerDataUpdateRequest(Dictionary<string, object> updates) => _updates = updates;
-
-        public string GetBody()
-        {
-            if (_updates == null)
-            {
-                return null;
-            }
-
-            return JsonUtility.ToJson(_updates);
-        }
+        public PlayerDataUpdateRequest(PlayerData data) => _playerData = data;
     }
 }

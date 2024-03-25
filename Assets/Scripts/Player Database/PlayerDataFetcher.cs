@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using Swzwij.APIManager;
 using System;
 using System.Collections;
@@ -6,28 +7,27 @@ using UnityEngine;
 
 namespace Examen.PlayerDatabase
 {
-    public class PlayerDataFetcher : MonoBehaviour
+    public static class PlayerDataFetcher
     {
-        public Action<PlayerData> OnDataFetched;
-        public Action<string> OnDataUpdated;
+        public static Action<PlayerData> OnDataFetched;
+        public static Action<PlayerData> OnDataUpdated;
 
-        public void Fetch(int id)
+        public static void Fetch(int id)
         {
             PlayerDataFetchRequest request = new(id);
             APIManager.Instance.GetCall<PlayerData>(request, OnDataRecieved, OnRequestError);
         }
 
-        private void OnDataRecieved(PlayerData playerData) => OnDataFetched?.Invoke(playerData);
+        private static void OnDataRecieved(PlayerData playerData) => OnDataFetched?.Invoke(playerData);
 
-        public void UpdatePlayerData(int id, Dictionary<string, object> updates)
+        public static void UpdatePlayerData(PlayerData playerData)
         {
-            PlayerDataUpdateRequest request = new(updates);
-            //APIManager.Instance.PostCall(request, request.GetBody(), OnDataUpdateSuccess, OnRequestError);
+            PlayerDataUpdateRequest request = new(playerData);
+            APIManager.Instance.GetCall<PlayerData>(request, OnDataUpdateSuccess, OnRequestError);
         }
 
-        private void OnDataUpdateSuccess(string responseMessage) => OnDataUpdated?.Invoke(responseMessage);
+        private static void OnDataUpdateSuccess(PlayerData response) => OnDataUpdated?.Invoke(response);
 
-        private void OnRequestError(APIStatus status) => Debug.LogError("Request Error: " + status);
-
+        private static void OnRequestError(APIStatus status) => Debug.LogError("Request Error: " + status);
     }
 }

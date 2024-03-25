@@ -52,6 +52,27 @@ namespace Swzwij.APIManager
         #endregion
 
         /// <summary>
+        /// Indicates whether the application is running in development mode.
+        /// </summary>
+        [Tooltip("Indicates whether the application is running in development mode.")]
+        [SerializeField]
+        private bool _development = false;
+
+        /// <summary>
+        /// The domain name or base URL of the API.
+        /// </summary>
+        [Tooltip("The domain name or base URL of the API.")]
+        [SerializeField]
+        private string _domain;
+
+        /// <summary>
+        /// The domain name or base URL of the API for development purposes.
+        /// </summary>
+        [Tooltip("The domain name or base URL of the API for development purposes.")]
+        [SerializeField]
+        private string _developmentDomain;
+
+        /// <summary>
         /// Sends a GET request to the specified API endpoint.
         /// </summary>
         /// <typeparam name="T">Type of the expected response data.</typeparam>
@@ -59,7 +80,7 @@ namespace Swzwij.APIManager
         /// <param name="onComplete">Callback invoked upon a successful response.</param>
         /// <param name="onFailure">Callback invoked when the request fails or encounters an error.</param>
         public void GetCall<T>(APIRequest request, Action<T> onComplete = null, Action<APIStatus> onFailure = null) =>
-            StartCoroutine(WebRequest(request, onComplete, onFailure));
+            StartCoroutine(GetRequest(request, onComplete, onFailure));
 
         /// <summary>
         /// Coroutine for sending a web request and handling the response.
@@ -68,9 +89,11 @@ namespace Swzwij.APIManager
         /// <param name="request">API request configuration.</param>
         /// <param name="onComplete">Callback invoked upon a successful response.</param>
         /// <param name="onFailure">Callback invoked when the request fails or encounters an error.</param>
-        private IEnumerator WebRequest<T>(APIRequest request, Action<T> onComplete, Action<APIStatus> onFailure)
+        private IEnumerator GetRequest<T>(APIRequest request, Action<T> onComplete, Action<APIStatus> onFailure)
         {
-            UnityWebRequest webRequest = new(request.URL)
+            string url = _development ? $"{_developmentDomain}{request.URL}" : $"{_domain}{request.URL}";
+
+            UnityWebRequest webRequest = new(url)
             {
                 downloadHandler = new DownloadHandlerBuffer()
             };
@@ -111,9 +134,13 @@ namespace Swzwij.APIManager
             string jsonData = JsonUtility.ToJson(data);
             byte[] dataBytes = Encoding.UTF8.GetBytes(jsonData);
 
-            UnityWebRequest webRequest = new(request.URL, "POST");
-            webRequest.uploadHandler = new UploadHandlerRaw(dataBytes);
-            webRequest.downloadHandler = new DownloadHandlerBuffer();
+            string url = _development ? $"{_developmentDomain}{request.URL}" : $"{_domain}{request.URL}";
+
+            UnityWebRequest webRequest = new(url, "POST")
+            {
+                uploadHandler = new UploadHandlerRaw(dataBytes),
+                downloadHandler = new DownloadHandlerBuffer()
+            };
             webRequest.SetRequestHeader("Content-Type", "application/json");
 
             yield return webRequest.SendWebRequest();
