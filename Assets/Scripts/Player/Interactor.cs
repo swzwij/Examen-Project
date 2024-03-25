@@ -8,8 +8,8 @@ namespace Examen.Player
     public class Interactor : NetworkBehaviour
     {
         #region Testing
-        private void Start() => _pointer.OnPointedAtPosition += DebugPointer;
-        private void OnDisable() => _pointer.OnPointedAtPosition -= DebugPointer;
+        //private void Start() => _pointer.OnPointedAtPosition += DebugPointer;
+        //private void OnDisable() => _pointer.OnPointedAtPosition -= DebugPointer;
 
         private void DebugPointer(Vector3 position) 
             => Debug.DrawLine(transform.position, position, Color.red, 1f);

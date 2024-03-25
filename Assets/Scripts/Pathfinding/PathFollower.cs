@@ -1,35 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
 using Examen.Pathfinding.Grid;
+using Examen.Player;
 using UnityEngine;
 
 namespace Examen.Pathfinding
 {
     public class Pathfollower : MonoBehaviour
     {
-        [SerializeField] private Transform testTarget;
         [SerializeField] private float speed = 5f;
         [SerializeField] private Color pathColor = Color.red;
         [SerializeField] private bool canMove;
 
         private Pathfinder _pathfinder;
+        private Pointer _pointer;
         private List<Node> _currentPath = new();
         private int currentPathIndex = 0;
+        private Coroutine _followPathCoroutine;
 
         private void Start()
         {
             _pathfinder = GetComponent<Pathfinder>();
-            StartPath(testTarget);
+            _pointer = GetComponent<Pointer>();
+
+            _pointer.OnPointedAtPosition += StartPath;
         }
 
-        public void StartPath(Transform target)
+        public void StartPath(Vector3 target)
         {
+            if (_followPathCoroutine != null)
+                StopCoroutine(_followPathCoroutine);
+
             Vector3 startPosition = transform.position;
-            _currentPath = _pathfinder.FindPath(startPosition, target.position);
+            _currentPath = _pathfinder.FindPath(startPosition, target);
             currentPathIndex = 0;
 
             if (_currentPath != null && _currentPath.Count > 0)
-                StartCoroutine(FollowPath());
+                _followPathCoroutine = StartCoroutine(FollowPath());
         }
 
         private IEnumerator FollowPath()
