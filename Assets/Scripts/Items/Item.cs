@@ -1,7 +1,11 @@
+using Examen.Inventory;
+using UnityEngine;
+
 namespace Examen.Items
 {
-    public abstract class Item
+    [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Item", order = 1)]
+    public class Item : ScriptableObject
     {
-        public abstract string Name { get;}
+        public string Name;
     }
 }
