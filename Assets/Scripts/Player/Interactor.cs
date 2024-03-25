@@ -28,7 +28,7 @@ namespace Examen.Player
         private void CheckForInteractable(GameObject objectInQuestion)
         {
             if (objectInQuestion.TryGetComponent<Interactable>(out Interactable interactable))
-                OnInteractableFound?.Invoke(interactable);
+                interactable.Interact();//Replace this later with OnInteractableFound?.Invoke(interactable);
         }
     }
 }

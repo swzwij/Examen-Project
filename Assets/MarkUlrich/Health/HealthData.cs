@@ -9,10 +9,10 @@ namespace MarkUlrich.Health
         private float _maxHealth;
         
         public UnityEvent<HealthEvent> onHealthChanged = new UnityEvent<HealthEvent>();
-        [SerializeField] private UnityEvent onHealthAdded = new UnityEvent();
-        [SerializeField] private UnityEvent onDamageTaken = new UnityEvent();
-        [SerializeField] private UnityEvent onDie = new UnityEvent();
-        [SerializeField] private UnityEvent onResurrected = new UnityEvent();
+        public UnityEvent onHealthAdded = new UnityEvent();
+        public UnityEvent onDamageTaken = new UnityEvent();
+        public UnityEvent onDie = new UnityEvent();
+        public UnityEvent onResurrected = new UnityEvent();
 
         public float Health => health;
         public float MaxHealth => _maxHealth;
