@@ -9,6 +9,7 @@ namespace Examen.Pathfinding.Grid
         [SerializeField] private float maxElevationDetection = 30f;
         [SerializeField] private float maxElevationDifference = 0.6f;
         [SerializeField] private float maxConnectionDistance = 1f;
+        [SerializeField] private float _nodeHeightOffset = 0.2f;
         [SerializeField] private LayerMask walkableLayerMask;
         [SerializeField] private LayerMask obstacleLayerMask;
         [SerializeField] private int _cellSize = 10;
@@ -101,7 +102,7 @@ namespace Examen.Pathfinding.Grid
             // Perform the raycast
             if (Physics.Raycast(ray, out hit, maxRaycastDistance, walkableLayerMask))
             {
-                elevation = hit.point.y + 0.2f;
+                elevation = hit.point.y + _nodeHeightOffset;
                 return true; // If walkable terrain is hit
             }
 
@@ -178,7 +179,20 @@ namespace Examen.Pathfinding.Grid
             cells = null;
         }
 
-        private void OnDrawGizmos()
+        public Node GetNodeFromWorldPosition(Vector3 worldPosition)
+        {
+            float percentX = Mathf.Clamp01((worldPosition.x - transform.position.x) / (gridSizeX * nodeDistance));
+            float percentY = Mathf.Clamp01((worldPosition.z - transform.position.z) / (gridSizeY * nodeDistance));
+
+            int x = Mathf.RoundToInt(gridSizeX * percentX);
+            int y = Mathf.RoundToInt(gridSizeY * percentY);
+
+            Node currentNode = nodes[x, y];
+
+            return currentNode;
+        }
+
+        private void OnDrawGizmos() // Mark Todo: Clean up this method. Move drawing to owner classes.
         {
             if (!showGrid)
                 return;
@@ -237,102 +251,5 @@ namespace Examen.Pathfinding.Grid
                 }
             }
         }
-
-        // A* Pathfinding Algorithm
-        public List<Node> FindPath(Vector3 startPos, Vector3 targetPos)
-        {
-            Node startNode = GetNodeFromWorldPosition(startPos);
-            Node targetNode = GetNodeFromWorldPosition(targetPos);
-
-            List<Node> openSet = new List<Node>();
-            HashSet<Node> closedSet = new HashSet<Node>();
-
-            openSet.Add(startNode);
-
-            while (openSet.Count > 0)
-            {
-                Node currentNode = openSet[0];
-                for (int i = 1; i < openSet.Count; i++)
-                {
-                    if (openSet[i].FCost < currentNode.FCost || openSet[i].FCost == currentNode.FCost && openSet[i].hCost < currentNode.hCost)
-                    {
-                        currentNode = openSet[i];
-                    }
-                }
-
-                openSet.Remove(currentNode);
-                closedSet.Add(currentNode);
-
-                if (currentNode == targetNode)
-                {
-                    return RetracePath(startNode, targetNode);
-                }
-
-                foreach (Node neighbor in currentNode.connectedNodes)
-                {
-                    if (!neighbor.isWalkable || closedSet.Contains(neighbor))
-                    {
-                        continue;
-                    }
-
-                    int newMovementCostToNeighbor = currentNode.gCost + CalculateDistance(currentNode, neighbor);
-                    if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
-                    {
-                        neighbor.gCost = newMovementCostToNeighbor;
-                        neighbor.hCost = CalculateDistance(neighbor, targetNode);
-                        neighbor.parent = currentNode;
-
-                        if (!openSet.Contains(neighbor))
-                        {
-                            openSet.Add(neighbor);
-                        }
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        int CalculateDistance(Node a, Node b)
-        {
-            int xDistance = Mathf.Abs(a.gridPosition.x - b.gridPosition.x);
-            int yDistance = Mathf.Abs(a.gridPosition.y - b.gridPosition.y);
-
-            if (xDistance > yDistance)
-            {
-                return 14 * yDistance + 10 * (xDistance - yDistance);
-            }
-
-            return 14 * xDistance + 10 * (yDistance - xDistance);
-        }
-
-        List<Node> RetracePath(Node startNode, Node endNode)
-        {
-            List<Node> path = new List<Node>();
-            Node currentNode = endNode;
-
-            while (currentNode != startNode)
-            {
-                path.Add(currentNode);
-                currentNode = currentNode.parent;
-            }
-            path.Reverse();
-
-            return path;
-        }
-
-        Node GetNodeFromWorldPosition(Vector3 worldPosition)
-        {
-            float percentX = Mathf.Clamp01((worldPosition.x - transform.position.x) / (gridSizeX * nodeDistance));
-            float percentY = Mathf.Clamp01((worldPosition.z - transform.position.z) / (gridSizeY * nodeDistance));
-
-            int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
-            int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
-
-            Node currentNode = nodes[x, y];
-
-            return currentNode;
-        }
     }
-
 }
