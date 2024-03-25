@@ -1,7 +1,6 @@
-using System;
-using UnityEngine;
-
-public class Interactable : MonoBehaviour
+public interface Interactable
 {
-    public Action OnInteract;
+    public abstract void Interact();
+
+    public abstract void PlaySound();
 }
