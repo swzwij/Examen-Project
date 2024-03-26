@@ -1,25 +1,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using GameKit.Utilities;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Examen.Pathfinding.Grid
 {
     public class GridSystem : MonoBehaviour
     {
-        [SerializeField] private float maxElevationDetection = 30f;
+        [SerializeField] private bool showGrid = true;
+        [SerializeField] private float _maxWorldHeight = 30f;
         [SerializeField] private float maxElevationDifference = 0.6f;
         [SerializeField] private float maxConnectionDistance = 1f;
         [SerializeField] private float _nodeHeightOffset = 0.2f;
         [SerializeField] private LayerMask walkableLayerMask;
         [SerializeField] private LayerMask obstacleLayerMask;
+        [SerializeField] private Cell _cellPrefab;
         [SerializeField] private int _cellSize = 10;
-        [SerializeField] private bool showGrid = true;
         [SerializeField] private bool useRefinedConnections = true;
-        public int gridSizeX, gridSizeY;
-        public float nodeDistance = 1f;
-        public Node[,] nodes;
-        public Cell[,] cells;
+        [SerializeField] int gridSizeX, gridSizeY;
+        [SerializeField] private float nodeDistance = 1f;
+        private Node[,] nodes;
+        private Cell[,] cells;
 
         private Vector3 CellSize => new(_cellSize * nodeDistance, _cellSize * nodeDistance, _cellSize * nodeDistance);
 
@@ -63,20 +65,22 @@ namespace Examen.Pathfinding.Grid
             int numCellsX = Mathf.CeilToInt((float)gridSizeX / _cellSize);
             int numCellsY = Mathf.CeilToInt((float)gridSizeY / _cellSize);
 
-            var test = new Cell[numCellsX, numCellsY];
-
+            cells = new Cell[numCellsX, numCellsY];
             for (int x = 0; x < numCellsX; x++)
             {
                 for (int y = 0; y < numCellsY; y++)
                 {
-                    Cell newCell = new Cell();
-                    test[x, y] = newCell;
+                    Cell newCell = Instantiate(_cellPrefab);
+                    cells[x, y] = newCell;
 
-                    newCell = new GameObject($"Cell {x}-{y}").AddComponent<Cell>();
+                    newCell.name = $"Cell {x}-{y}";
                     newCell.gameObject.layer = 2; // Ignore raycast
                     newCell.transform.SetParent(transform);
                     newCell.transform.position = GetCellPosition(x, y);
                     newCell.transform.localScale = CellSize;
+                    newCell.GridSystem = this;
+                    newCell.CellX = x;
+                    newCell.CellY = y;
 
                     // Determine the nodes that belong to this cell
                     int startX = x * _cellSize;
@@ -94,14 +98,12 @@ namespace Examen.Pathfinding.Grid
                     }
                 }
             }
-
-            cells = test;
         }
 
-        private bool IsWalkableArea(Vector3 position, out float elevation)
+        public bool IsWalkableArea(Vector3 position, out float elevation)
         {
             // Create a ray from above the position downward
-            Ray ray = new Ray(position + Vector3.up * maxElevationDetection, Vector3.down);
+            Ray ray = new Ray(position + Vector3.up * _maxWorldHeight, Vector3.down);
             RaycastHit hit;
 
             float maxRaycastDistance = 200f;
@@ -128,9 +130,8 @@ namespace Examen.Pathfinding.Grid
             Cell cell = cells[cellX, cellY];
             foreach (Node node in cell.Nodes)
             {
-                float elevation;
                 Vector3 position = node.position;
-                if (IsWalkableArea(position, out elevation))
+                if (IsWalkableArea(position, out float elevation))
                 {
                     node.isWalkable = true;
                     node.elevation = elevation;
@@ -189,6 +190,7 @@ namespace Examen.Pathfinding.Grid
         public void ClearGrid()
         {
             nodes = null;
+            cells = null;
             DestroyCells();
         }
 
@@ -196,8 +198,6 @@ namespace Examen.Pathfinding.Grid
         {
             for (int i = transform.childCount - 1; i >= 0; i--)
                 DestroyImmediate(transform.GetChild(i).gameObject);
-            
-            cells = null;
         }
 
         public Node GetNodeFromWorldPosition(Vector3 worldPosition)
@@ -230,7 +230,7 @@ namespace Examen.Pathfinding.Grid
 
             // draw a bounding box around the grid based on grid size
             Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(transform.position + new Vector3(gridSizeX * nodeDistance / 2f, 0, gridSizeY * nodeDistance / 2f), new Vector3(gridSizeX * nodeDistance, 0, gridSizeY * nodeDistance));
+            Gizmos.DrawWireCube(transform.position + new Vector3(gridSizeX * nodeDistance / 2f, _maxWorldHeight / 2, gridSizeY * nodeDistance / 2f), new Vector3(gridSizeX * nodeDistance, _maxWorldHeight, gridSizeY * nodeDistance));
 
             if (nodes != null)
             {

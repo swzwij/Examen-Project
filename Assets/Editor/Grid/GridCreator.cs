@@ -16,9 +16,6 @@ namespace Examen.Editors.Grid
             if (GUILayout.Button("Create Grid"))
                 grid.CreateGrid();
 
-            if (GUILayout.Button("Update Cell 1,1"))
-                grid.UpdateCell(1, 1);
-
             if (GUILayout.Button("Clear Grid"))
                 grid.ClearGrid();
         }
