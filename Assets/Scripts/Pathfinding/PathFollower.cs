@@ -7,24 +7,26 @@ using UnityEngine;
 
 namespace Examen.Pathfinding
 {
-    public class Pathfollower : MonoBehaviour
+    [RequireComponent(typeof(Pathfinder))]
+    public class PathFollower : MonoBehaviour
     {
-        [SerializeField] private float speed = 5f;
+        [SerializeField] private float _speed = 5f;
         [SerializeField] private float _obstacleCheckDistance = 1f;
         [SerializeField] private LayerMask _obstaclesLayerMask;
-        [SerializeField] private Color pathColor = Color.red;
+        [SerializeField] private Color _pathColor = Color.red;
 
         private Vector3 _currentTarget;
         private bool _hasFoundBlockage;
         private Pathfinder _pathfinder;
         private Pointer _pointer;
         private List<Node> _currentPath = new();
-        private int currentPathIndex = 0;
+        private int _currentPathIndex = 0;
         private Coroutine _followPathCoroutine;
 
         public bool IsPathBlocked 
             => Physics.Raycast(transform.position, transform.forward, _obstacleCheckDistance, _obstaclesLayerMask);
-        public Action OnPathCompleted;
+
+        public event Action OnPathCompleted;
 
         private void Start()
         {
@@ -52,7 +54,7 @@ namespace Examen.Pathfinding
             Vector3 startPosition = transform.position;
             _currentTarget = target;
             _currentPath = _pathfinder.FindPath(startPosition, target);
-            currentPathIndex = 0;
+            _currentPathIndex = 0;
 
             if (_currentPath != null && _currentPath.Count > 0)
                 _followPathCoroutine = StartCoroutine(FollowPath());
@@ -60,19 +62,19 @@ namespace Examen.Pathfinding
 
         private IEnumerator FollowPath()
         {
-            while (currentPathIndex < _currentPath.Count)
+            while (_currentPathIndex < _currentPath.Count)
             {
-                Vector3 currentWaypoint = _currentPath[currentPathIndex].position;
+                Vector3 currentWaypoint = _currentPath[_currentPathIndex].position;
 
                 while (Vector3.Distance(transform.position, currentWaypoint) > 0.1f)
                 {
-                    transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
+                    transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, _speed * Time.deltaTime);
                     transform.LookAt(currentWaypoint);
                     Debug.DrawRay(transform.position, transform.forward * _obstacleCheckDistance, Color.blue);
                     yield return null;
                 }
 
-                currentPathIndex++;
+                _currentPathIndex++;
                 yield return null;
             }
 
@@ -91,12 +93,10 @@ namespace Examen.Pathfinding
         {
             if (_currentPath != null)
             {
-                Gizmos.color = pathColor;
+                Gizmos.color = _pathColor;
 
-                for (int i = currentPathIndex; i < _currentPath.Count - 1; i++)
-                {
+                for (int i = _currentPathIndex; i < _currentPath.Count - 1; i++)
                     Gizmos.DrawLine(_currentPath[i].position, _currentPath[i + 1].position);
-                }
             }
         }
     }

@@ -8,36 +8,34 @@ namespace Examen.Pathfinding.Grid
 {
     public class GridSystem : MonoBehaviour
     {
-        [SerializeField] private bool showGrid = true;
+        [SerializeField] private bool _showGrid = true;
         [SerializeField] private float _maxWorldHeight = 30f;
-        [SerializeField] private float maxElevationDifference = 0.6f;
-        [SerializeField] private float maxConnectionDistance = 1f;
+        [SerializeField] private float _maxElevationDifference = 0.6f;
+        [SerializeField] private float _maxConnectionDistance = 1f;
         [SerializeField] private float _nodeHeightOffset = 0.2f;
-        [SerializeField] private LayerMask walkableLayerMask;
-        [SerializeField] private LayerMask obstacleLayerMask;
+        [SerializeField] private LayerMask _walkableLayerMask;
+        [SerializeField] private LayerMask _obstacleLayerMask;
         [SerializeField] private Cell _cellPrefab;
         [SerializeField] private int _cellSize = 10;
-        [SerializeField] private bool useRefinedConnections = true;
-        [SerializeField] int gridSizeX, gridSizeY;
-        [SerializeField] private float nodeDistance = 1f;
-        private Node[,] nodes;
-        private Cell[,] cells;
+        [SerializeField] private bool _useRefinedConnections = true;
+        [SerializeField] Vector2Int _gridSize;
+        [SerializeField] private float _nodeDistance = 1f;
+        private Node[,] _nodes;
+        private Cell[,] _cells;
 
-        private Vector3 CellSize => new(_cellSize * nodeDistance, _cellSize * nodeDistance, _cellSize * nodeDistance);
+        private Vector3 CellSize 
+            => new(_cellSize * _nodeDistance, _cellSize * _nodeDistance, _cellSize * _nodeDistance);
 
         private void OnEnable() => CreateGrid();
 
         public void CreateGrid()
         {
-            Vector3 startPosition = transform.position;
-
-            nodes = new Node[gridSizeX, gridSizeY];
-
-            for (int x = 0; x < gridSizeX; x++)
+            _nodes = new Node[_gridSize.x, _gridSize.y];
+            for (int x = 0; x < _gridSize.x; x++)
             {
-                for (int y = 0; y < gridSizeY; y++)
+                for (int y = 0; y < _gridSize.y; y++)
                 {
-                    Vector3 nodePosition = startPosition + new Vector3(x * nodeDistance, 0, y * nodeDistance);
+                    Vector3 nodePosition = transform.position + new Vector3(x * _nodeDistance, 0, y * _nodeDistance);
                     Node newNode = new(nodePosition);
 
                     if (IsWalkableArea(nodePosition, out float elevation))
@@ -45,11 +43,11 @@ namespace Examen.Pathfinding.Grid
                         newNode.elevation = elevation;
                         newNode.position = new Vector3(nodePosition.x, elevation, nodePosition.z);
                         newNode.isWalkable = true;
-                        newNode.maxConnectionDistance = maxConnectionDistance;
-                        newNode.maxElevationDifference = maxElevationDifference;
+                        newNode.maxConnectionDistance = _maxConnectionDistance;
+                        newNode.maxElevationDifference = _maxElevationDifference;
                     }
 
-                    nodes[x, y] = newNode;
+                    _nodes[x, y] = newNode;
                     newNode.gridPosition = new Vector2Int(x, y);
                 }
             }
@@ -62,16 +60,16 @@ namespace Examen.Pathfinding.Grid
         {
             DestroyCells();
 
-            int numCellsX = Mathf.CeilToInt((float)gridSizeX / _cellSize);
-            int numCellsY = Mathf.CeilToInt((float)gridSizeY / _cellSize);
+            int numCellsX = Mathf.CeilToInt(_gridSize.x / _cellSize);
+            int numCellsY = Mathf.CeilToInt(_gridSize.y / _cellSize);
 
-            cells = new Cell[numCellsX, numCellsY];
+            _cells = new Cell[numCellsX, numCellsY];
             for (int x = 0; x < numCellsX; x++)
             {
                 for (int y = 0; y < numCellsY; y++)
                 {
                     Cell newCell = Instantiate(_cellPrefab);
-                    cells[x, y] = newCell;
+                    _cells[x, y] = newCell;
 
                     newCell.name = $"Cell {x}-{y}";
                     newCell.gameObject.layer = 2; // Ignore raycast
@@ -85,14 +83,14 @@ namespace Examen.Pathfinding.Grid
                     // Determine the nodes that belong to this cell
                     int startX = x * _cellSize;
                     int startY = y * _cellSize;
-                    int endX = Mathf.Min(startX + _cellSize, gridSizeX);
-                    int endY = Mathf.Min(startY + _cellSize, gridSizeY);
+                    int endX = Mathf.Min(startX + _cellSize, _gridSize.x);
+                    int endY = Mathf.Min(startY + _cellSize, _gridSize.y);
 
                     for (int nodeX = startX; nodeX < endX; nodeX++)
                     {
                         for (int nodeY = startY; nodeY < endY; nodeY++)
                         {
-                            Node node = nodes[nodeX, nodeY];
+                            Node node = _nodes[nodeX, nodeY];
                             newCell.AddNode(node);
                         }
                     }
@@ -103,19 +101,18 @@ namespace Examen.Pathfinding.Grid
         public bool IsWalkableArea(Vector3 position, out float elevation)
         {
             // Create a ray from above the position downward
-            Ray ray = new Ray(position + Vector3.up * _maxWorldHeight, Vector3.down);
+            Ray ray = new(position + Vector3.up * _maxWorldHeight, Vector3.down);
             RaycastHit hit;
 
             float maxRaycastDistance = 200f;
 
-            if (Physics.Raycast(ray, out hit, maxRaycastDistance, obstacleLayerMask))
+            if (Physics.Raycast(ray, out hit, maxRaycastDistance, _obstacleLayerMask))
             {
                 elevation = 0f;
                 return false; // If an obstacle is hit
             }
 
-            // Perform the raycast
-            if (Physics.Raycast(ray, out hit, maxRaycastDistance, walkableLayerMask))
+            if (Physics.Raycast(ray, out hit, maxRaycastDistance, _walkableLayerMask))
             {
                 elevation = hit.point.y + _nodeHeightOffset;
                 return true; // If walkable terrain is hit
@@ -127,7 +124,7 @@ namespace Examen.Pathfinding.Grid
 
         public void UpdateCell(int cellX, int cellY)
         {
-            Cell cell = cells[cellX, cellY];
+            Cell cell = _cells[cellX, cellY];
             foreach (Node node in cell.Nodes)
             {
                 Vector3 position = node.position;
@@ -136,8 +133,8 @@ namespace Examen.Pathfinding.Grid
                     node.isWalkable = true;
                     node.elevation = elevation;
                     node.position = new Vector3(position.x, elevation, position.z);
-                    node.maxConnectionDistance = maxConnectionDistance;
-                    node.maxElevationDifference = maxElevationDifference;
+                    node.maxConnectionDistance = _maxConnectionDistance;
+                    node.maxElevationDifference = _maxElevationDifference;
                 }
                 else
                 {
@@ -150,29 +147,29 @@ namespace Examen.Pathfinding.Grid
 
         private void ConnectNodes()
         {
-            foreach (int x in Enumerable.Range(0, gridSizeX))
-                foreach (int y in Enumerable.Range(0, gridSizeY))
+            foreach (int x in Enumerable.Range(0, _gridSize.x))
+                foreach (int y in Enumerable.Range(0, _gridSize.y))
                     CheckNodeConnections(x, y);
         }
 
         private void CheckNodeConnections(int x, int y)
         {
-            Node currentNode = nodes[x, y];
+            Node currentNode = _nodes[x, y];
 
             foreach (int i in Enumerable.Range(x - 1, 3))
             {
                 foreach (int j in Enumerable.Range(y - 1, 3))
                 {
-                    if (i == x && j == y || i < 0 || i >= gridSizeX || j < 0 || j >= gridSizeY)
+                    if (i == x && j == y || i < 0 || i >= _gridSize.x || j < 0 || j >= _gridSize.y)
                         continue;
 
-                    Node otherNode = nodes[i, j];
+                    Node otherNode = _nodes[i, j];
 
                     if (otherNode == null)
                         continue;
                     
                     // perform linecast between nodes to check for obstacles
-                    if (useRefinedConnections)
+                    if (_useRefinedConnections)
                     {
                         Vector3 direction = otherNode.position - currentNode.position;
                         float distance = Vector3.Distance(currentNode.position, otherNode.position);
@@ -189,8 +186,8 @@ namespace Examen.Pathfinding.Grid
 
         public void ClearGrid()
         {
-            nodes = null;
-            cells = null;
+            _nodes = null;
+            _cells = null;
             DestroyCells();
         }
 
@@ -202,13 +199,13 @@ namespace Examen.Pathfinding.Grid
 
         public Node GetNodeFromWorldPosition(Vector3 worldPosition)
         {
-            float percentX = Mathf.Clamp01((worldPosition.x - transform.position.x) / (gridSizeX * nodeDistance));
-            float percentY = Mathf.Clamp01((worldPosition.z - transform.position.z) / (gridSizeY * nodeDistance));
+            float percentX = Mathf.Clamp01((worldPosition.x - transform.position.x) / (_gridSize.x * _nodeDistance));
+            float percentY = Mathf.Clamp01((worldPosition.z - transform.position.z) / (_gridSize.y * _nodeDistance));
 
-            int x = Mathf.RoundToInt(gridSizeX * percentX);
-            int y = Mathf.RoundToInt(gridSizeY * percentY);
+            int x = Mathf.RoundToInt(_gridSize.x * percentX);
+            int y = Mathf.RoundToInt(_gridSize.y * percentY);
 
-            Node currentNode = nodes[x, y];
+            Node currentNode = _nodes[x, y];
 
             return currentNode;
         }
@@ -225,16 +222,16 @@ namespace Examen.Pathfinding.Grid
 
         private void OnDrawGizmos() // Mark Todo: Clean up this method. Move drawing to owner classes.
         {
-            if (!showGrid)
+            if (!_showGrid)
                 return;
 
             // draw a bounding box around the grid based on grid size
             Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(transform.position + new Vector3(gridSizeX * nodeDistance / 2f, _maxWorldHeight / 2, gridSizeY * nodeDistance / 2f), new Vector3(gridSizeX * nodeDistance, _maxWorldHeight, gridSizeY * nodeDistance));
+            Gizmos.DrawWireCube(transform.position + new Vector3(_gridSize.x * _nodeDistance / 2f, _maxWorldHeight / 2, _gridSize.y * _nodeDistance / 2f), new Vector3(_gridSize.x * _nodeDistance, _maxWorldHeight, _gridSize.y * _nodeDistance));
 
-            if (nodes != null)
+            if (_nodes != null)
             {
-                foreach (Node node in nodes)
+                foreach (Node node in _nodes)
                 {
                     if (!node.isWalkable)
                         continue;
