@@ -83,9 +83,3 @@ public class PoolSystem : MonoBehaviour
             _objectsQueu.Add(nameTag, new List<GameObject>() { gameObject });
     }
 }
-
-//In inspector set which objects are created by default
-//Spawns in the objects
-//Saves spawned in gameobjects in a list
-// when object despawns it stores it in a list with the rest of object
-// when respawning, it get it from the list. if there aren't any it will create a new 1 
