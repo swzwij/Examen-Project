@@ -1,12 +1,14 @@
 using Examen.Inventory;
 using Examen.Items;
 using MarkUlrich.Health;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(HealthData))]
-public class Tree : MonoBehaviour, Interactable
+public class Stone : MonoBehaviour, Interactable
 {
-    [SerializeField] private Item _woodItem;
+    [SerializeField] private Item _stoneItem;
 
     private HealthData _healthData;
 
@@ -16,12 +18,12 @@ public class Tree : MonoBehaviour, Interactable
         PlayInteractingSound();
         //playanimation
         _healthData.TakeDamage(1);
-        InventorySystem.AddItem(_woodItem, 1);
+        InventorySystem.AddItem(_stoneItem, 1);
     }
 
     public void PlayInteractingSound()
     {
-       
+
     }
 
     private void Start()
@@ -29,5 +31,4 @@ public class Tree : MonoBehaviour, Interactable
         _healthData = GetComponent<HealthData>();
         //_healthData.onDie.AddListener();
     }
-
 }
