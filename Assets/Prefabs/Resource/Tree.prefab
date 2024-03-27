@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 3028185344713196405}
   - component: {fileID: 4341610940115685757}
   - component: {fileID: 3900610256788216518}
-  - component: {fileID: 243937823442390336}
   - component: {fileID: 5299540553567268499}
+  - component: {fileID: 243937823442390336}
   m_Layer: 0
   m_Name: Tree
   m_TagString: Untagged
@@ -109,6 +109,23 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!114 &5299540553567268499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1743377894931261834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efd769099e2bb664e81be915184e3cc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HealthData: {fileID: 0}
+  poolSystem: {fileID: 0}
+  ResourceItem: {fileID: 11400000, guid: 25d262743dcf76145860ce1e70a7afff, type: 2}
+  AmountToGive: 1
+  DeathTime: 5
 --- !u!114 &243937823442390336
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,16 +155,3 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   isDead: 0
---- !u!114 &5299540553567268499
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1743377894931261834}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: efd769099e2bb664e81be915184e3cc3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _woodItem: {fileID: 11400000, guid: 25d262743dcf76145860ce1e70a7afff, type: 2}

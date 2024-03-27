@@ -119,7 +119,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51666943ec35f2748b9ac69331c59334, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stoneItem: {fileID: 11400000, guid: 52d8885bbe883b2428e8e821aaa5c5b7, type: 2}
+  HealthData: {fileID: 0}
+  poolSystem: {fileID: 0}
+  ResourceItem: {fileID: 11400000, guid: 52d8885bbe883b2428e8e821aaa5c5b7, type: 2}
+  AmountToGive: 1
+  DeathTime: 5
 --- !u!114 &5770678232989211857
 MonoBehaviour:
   m_ObjectHideFlags: 0

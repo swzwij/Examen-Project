@@ -123,6 +123,17 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &219728965 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4892930671130575841, guid: fbbeef3e739587a4aa83823b9cb897f3, type: 3}
+  m_PrefabInstance: {fileID: 4535912467171109896}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51666943ec35f2748b9ac69331c59334, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &622242520
 GameObject:
   m_ObjectHideFlags: 0
@@ -468,6 +479,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1567188119}
+  - component: {fileID: 1567188120}
   m_Layer: 0
   m_Name: ResourceSpawner
   m_TagString: Untagged
@@ -490,6 +502,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1567188120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1567188118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cce386683eb3fe489b1038826cf9ade, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnAreas:
+  - Area: {fileID: 0}
+    AmountOfResourcesInTheArea: 0
+    spawnableResources:
+    - resource: {fileID: 2042642490}
+      spawnChance: 0
+    - resource: {fileID: 219728965}
+      spawnChance: 0
 --- !u!1 &1765930648
 GameObject:
   m_ObjectHideFlags: 0
@@ -665,6 +697,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2042642490 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5299540553567268499, guid: 282b5a44bdc83904d8b83030786e3e6b, type: 3}
+  m_PrefabInstance: {fileID: 8163540744061289665}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efd769099e2bb664e81be915184e3cc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4535912467171109896
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -786,8 +829,8 @@ SceneRoots:
   - {fileID: 1071418400}
   - {fileID: 622242522}
   - {fileID: 1352936048}
-  - {fileID: 8163540744061289665}
   - {fileID: 1765930655}
+  - {fileID: 8163540744061289665}
   - {fileID: 4535912467171109896}
   - {fileID: 885285919}
   - {fileID: 1567188119}

@@ -1,13 +1,12 @@
+using MarkUlrich.Utils;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PoolSystem : MonoBehaviour
+public class PoolSystem : SingletonInstance<PoolSystem>
 {
     private Dictionary<string, List<GameObject>> _objectsQueu = new();
     private Dictionary<string, List<GameObject>> _objectsActive = new();
-
-    private void Start() => DontDestroyOnLoad(gameObject);
 
     public void AddActiveObjects(string nameTag, List<GameObject> gameObjects)
     {
