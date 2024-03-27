@@ -1,4 +1,3 @@
-using FishNet.Managing.Scened;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +13,7 @@ public class ResourceSpawner : MonoBehaviour
             SpawnAreas area = spawnAreas[i];
             float spawnPercentage = 100;
             float currentSpawnAmount = area.AmountOfResourcesInTheArea;
-            Dictionary<Resource,float> spawnTypes = new();
+            Dictionary<GameObject,float> spawnTypes = new();
 
             for (int j = 0; j < area.spawnableResources.Count; j++)
             {
@@ -33,7 +32,7 @@ public class ResourceSpawner : MonoBehaviour
                     percentage = spawnPercentage;
                 }
 
-                float amountOfrescoures = MathF.Abs(area.AmountOfResourcesInTheArea / 100 * percentage);
+                float amountOfrescoures = MathF.Abs((float)area.AmountOfResourcesInTheArea / 100 * percentage);
 
                 if (currentSpawnAmount - amountOfrescoures < 0)
                     amountOfrescoures = currentSpawnAmount;
@@ -56,7 +55,7 @@ public class ResourceSpawner : MonoBehaviour
     [Serializable]
     private struct ResourceInfo
     {
-        public Resource resource;
+        public GameObject resource;
         [Range(0, 100)] public float spawnChance;
     }
 }
