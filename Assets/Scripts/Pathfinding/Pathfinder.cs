@@ -6,6 +6,9 @@ namespace Examen.Pathfinding
 {
     public class Pathfinder : MonoBehaviour
     {
+        [SerializeField] private int _diagonalCost = 14;
+        [SerializeField] private int _straightCost = 10;
+
         private GridSystem gridSystem; // Mark Todo: Parent grid. Divide grid system into grid and grid system later and then replace this with grid.
 
         private void OnEnable() => gridSystem = FindObjectOfType<GridSystem>(); 
@@ -54,9 +57,7 @@ namespace Examen.Pathfinding
                         neighbor.parent = currentNode;
 
                         if (!openSet.Contains(neighbor))
-                        {
                             openSet.Add(neighbor);
-                        }
                     }
                 }
             }
@@ -71,10 +72,10 @@ namespace Examen.Pathfinding
 
             if (xDistance > yDistance)
             {
-                return 14 * yDistance + 10 * (xDistance - yDistance);
+                return _diagonalCost * yDistance + _straightCost * (xDistance - yDistance);
             }
 
-            return 14 * xDistance + 10 * (yDistance - xDistance);
+            return _diagonalCost * xDistance + _straightCost * (yDistance - xDistance);
         }
 
         private List<Node> RetracePath(Node startNode, Node endNode)

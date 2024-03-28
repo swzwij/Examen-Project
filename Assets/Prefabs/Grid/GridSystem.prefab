@@ -44,20 +44,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49966f502814c704ebbedcef60efa90b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showGrid: 0
+  _showGrid: 1
   _maxWorldHeight: 30
-  maxElevationDifference: 1.5
-  maxConnectionDistance: 3
-  _nodeHeightOffset: 0.2
-  walkableLayerMask:
+  _maxElevationDifference: 1.4
+  _maxConnectionDistance: 3
+  _nodeHeightOffset: 0.3
+  _walkableLayerMask:
     serializedVersion: 2
     m_Bits: 1
-  obstacleLayerMask:
+  _obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 64
   _cellPrefab: {fileID: 6240166786542947317, guid: 16fc201a78392d74bb4502a776621619, type: 3}
   _cellSize: 8
-  useRefinedConnections: 0
-  gridSizeX: 30
-  gridSizeY: 64
-  nodeDistance: 2
+  _useRefinedConnections: 0
+  _gridSize: {x: 30, y: 64}
+  _nodeDistance: 2
+  _maxNodeConnections: 3

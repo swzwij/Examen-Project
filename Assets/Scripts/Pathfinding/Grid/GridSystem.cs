@@ -20,6 +20,7 @@ namespace Examen.Pathfinding.Grid
         [SerializeField] private bool _useRefinedConnections = true;
         [SerializeField] Vector2Int _gridSize;
         [SerializeField] private float _nodeDistance = 1f;
+        [SerializeField] private int _maxNodeConnections = 3;
         private Node[,] _nodes;
         private Cell[,] _cells;
 
@@ -156,9 +157,9 @@ namespace Examen.Pathfinding.Grid
         {
             Node currentNode = _nodes[x, y];
 
-            foreach (int i in Enumerable.Range(x - 1, 3))
+            foreach (int i in Enumerable.Range(x - 1, _maxNodeConnections))
             {
-                foreach (int j in Enumerable.Range(y - 1, 3))
+                foreach (int j in Enumerable.Range(y - 1, _maxNodeConnections))
                 {
                     if (i == x && j == y || i < 0 || i >= _gridSize.x || j < 0 || j >= _gridSize.y)
                         continue;
