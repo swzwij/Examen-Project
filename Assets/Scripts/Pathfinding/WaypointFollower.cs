@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class WaypointFollower : PathFollower
 {
-    private Transform _waypointsParent;
     [SerializeField] private List<Transform> _waypoints = new();
     private int _currentWaypointIndex = 0;
+    private Transform _waypointsParent;
 
     protected override void Start()
     {
         base.Start();
+        p_isDetermined = true;
 
         _waypointsParent = new GameObject().transform;
         _waypointsParent.name = $"{gameObject.name} - Waypoints";
