@@ -124,12 +124,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 226658194d0dd59449bc76e1fe9faf79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 15
-  _obstacleCheckDistance: 1
-  _obstaclesLayerMask:
+  p_speed: 5
+  p_obstacleCheckDistance: 1
+  p_obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 64
-  pathColor: {r: 1, g: 0, b: 0, a: 1}
+  p_pathColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &4964243218378621144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,6 +142,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9a604492ad089246baeec7d19bd4c84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _diagonalCost: 14
+  _straightCost: 10
 --- !u!114 &431041323644128263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193,7 +195,7 @@ MonoBehaviour:
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 993922286
   <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 7807759643866311769
+  <AssetPathHash>k__BackingField: 3077078254872095947
 --- !u!114 &7692977816705919355
 MonoBehaviour:
   m_ObjectHideFlags: 0

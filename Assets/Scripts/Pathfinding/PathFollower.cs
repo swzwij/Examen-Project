@@ -10,93 +10,96 @@ namespace Examen.Pathfinding
     [RequireComponent(typeof(Pathfinder))]
     public class PathFollower : MonoBehaviour
     {
-        [SerializeField] private float _speed = 5f;
-        [SerializeField] private float _obstacleCheckDistance = 1f;
-        [SerializeField] private LayerMask _obstaclesLayerMask;
-        [SerializeField] private Color _pathColor = Color.red;
+        [SerializeField] protected float p_speed = 5f;
+        [SerializeField] protected float p_obstacleCheckDistance = 1f;
+        [SerializeField] protected LayerMask p_obstaclesLayerMask;
+        [SerializeField] protected Color p_pathColor = Color.red;
 
-        private Vector3 _currentTarget;
-        private bool _hasFoundBlockage;
-        private Pathfinder _pathfinder;
-        private Pointer _pointer;
-        private List<Node> _currentPath = new();
-        private int _currentPathIndex = 0;
-        private Coroutine _followPathCoroutine;
+        protected Vector3 p_currentTarget;
+        protected bool p_hasFoundBlockage;
+        protected Pathfinder p_pathfinder;
+        protected Pointer p_pointer;
+        protected List<Node> p_currentPath = new();
+        protected int p_currentPathIndex = 0;
+        protected Coroutine p_followPathCoroutine;
 
         public bool IsPathBlocked 
-            => Physics.Raycast(transform.position, transform.forward, _obstacleCheckDistance, _obstaclesLayerMask);
+            => Physics.Raycast(transform.position, transform.forward, p_obstacleCheckDistance, p_obstaclesLayerMask);
 
         public event Action OnPathCompleted;
 
-        private void Start()
+        protected virtual void Start()
         {
-            _pathfinder = GetComponent<Pathfinder>();
-            _pointer = GetComponent<Pointer>();
+            p_pathfinder = GetComponent<Pathfinder>();
 
-            _pointer.OnPointedAtPosition += StartPath;
+            if (TryGetComponent(out p_pointer))
+                p_pointer.OnPointedAtPosition += StartPath;
+            
             OnPathCompleted += ResetBlockage;
         }
 
-        private void Update()
+        protected virtual void Update()
         {
-            if (IsPathBlocked && !_hasFoundBlockage)
+            if (IsPathBlocked && !p_hasFoundBlockage)
             {
-                _hasFoundBlockage = true;
-                StartPath(_currentTarget);
+                p_hasFoundBlockage = true;
+                StartPath(p_currentTarget);
             }
         }
 
         public void StartPath(Vector3 target)
         {
-            if (_followPathCoroutine != null)
-                StopCoroutine(_followPathCoroutine);
+            if (p_followPathCoroutine != null)
+                StopCoroutine(p_followPathCoroutine);
 
             Vector3 startPosition = transform.position;
-            _currentTarget = target;
-            _currentPath = _pathfinder.FindPath(startPosition, target);
-            _currentPathIndex = 0;
+            p_currentTarget = target;
+            p_currentPath = p_pathfinder.FindPath(startPosition, target);
+            p_currentPathIndex = 0;
 
-            if (_currentPath != null && _currentPath.Count > 0)
-                _followPathCoroutine = StartCoroutine(FollowPath());
+            if (p_currentPath != null && p_currentPath.Count > 0)
+                p_followPathCoroutine = StartCoroutine(FollowPath());
         }
 
-        private IEnumerator FollowPath()
+        protected IEnumerator FollowPath()
         {
-            while (_currentPathIndex < _currentPath.Count)
+            while (p_currentPathIndex < p_currentPath.Count)
             {
-                Vector3 currentWaypoint = _currentPath[_currentPathIndex].position;
+                Vector3 currentWaypoint = p_currentPath[p_currentPathIndex].position;
 
                 while (Vector3.Distance(transform.position, currentWaypoint) > 0.1f)
                 {
-                    transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, _speed * Time.deltaTime);
+                    transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, p_speed * Time.deltaTime);
                     transform.LookAt(currentWaypoint);
-                    Debug.DrawRay(transform.position, transform.forward * _obstacleCheckDistance, Color.blue);
+                    Debug.DrawRay(transform.position, transform.forward * p_obstacleCheckDistance, Color.blue);
                     yield return null;
                 }
 
-                _currentPathIndex++;
+                p_currentPathIndex++;
                 yield return null;
             }
 
             OnPathCompleted?.Invoke();
         }
 
-        private void ResetBlockage() => _hasFoundBlockage = false;
+        protected void ResetBlockage() => p_hasFoundBlockage = false;
 
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
-            _pointer.OnPointedAtPosition -= StartPath;
+            if (p_pointer != null)
+                p_pointer.OnPointedAtPosition -= StartPath;
+            
             OnPathCompleted -= ResetBlockage;
         }
 
-        private void OnDrawGizmos()
+        protected void OnDrawGizmos()
         {
-            if (_currentPath != null)
+            if (p_currentPath != null)
             {
-                Gizmos.color = _pathColor;
+                Gizmos.color = p_pathColor;
 
-                for (int i = _currentPathIndex; i < _currentPath.Count - 1; i++)
-                    Gizmos.DrawLine(_currentPath[i].position, _currentPath[i + 1].position);
+                for (int i = p_currentPathIndex; i < p_currentPath.Count - 1; i++)
+                    Gizmos.DrawLine(p_currentPath[i].position, p_currentPath[i + 1].position);
             }
         }
     }
