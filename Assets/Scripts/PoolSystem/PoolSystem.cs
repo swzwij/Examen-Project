@@ -1,5 +1,8 @@
 using MarkUlrich.Utils;
+using System.Collections;
+using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,12 +13,12 @@ namespace Examen.Poolsystem
         private Dictionary<string, List<GameObject>> _objectsQueu = new();
         private Dictionary<string, List<GameObject>> _objectsActive = new();
 
-        public void AddActiveObjects(string nameTag, List<GameObject> gameObjects)
+        public void AddActiveObject(string nameTag, GameObject gameObject)
         {
             if (_objectsActive.ContainsKey(nameTag))
-                _objectsActive[nameTag].AddRange(gameObjects);
+                _objectsActive[nameTag].Add(gameObject);
             else
-                _objectsActive.Add(nameTag, gameObjects);
+                _objectsActive.Add(nameTag, new List<GameObject>() { gameObject });
         }
 
         public void SpawnObject(string nameTag, GameObject spawnPrefab, Transform parentTransform = null) => SpawnObject(nameTag, parentTransform, spawnPrefab);
@@ -25,12 +28,13 @@ namespace Examen.Poolsystem
             if (_objectsQueu.ContainsKey(nameTag) && _objectsQueu[nameTag].Count > 0)
             {
                 List<GameObject> objects = _objectsQueu[nameTag];
+                int objectCount = objects.Count - 1;
 
-                MoveObjectToActiveScene(objects[objects.Count], parentTransform);
-                AddActiveObject(nameTag, objects[objects.Count]);
+                MoveObjectToActiveScene(objects[objectCount], parentTransform);
+                AddActiveObject(nameTag, objects[objectCount]);
 
-                objects[objects.Count].SetActive(true);
-                objects.RemoveAt(objects.Count);
+                objects[objectCount].SetActive(true);
+                objects.RemoveAt(objectCount);
                 return;
             }
 
@@ -41,21 +45,30 @@ namespace Examen.Poolsystem
             AddActiveObject(nameTag, newGameObject);
         }
 
-        public void DespawnObject(string nameTag)
+        public void DespawnObject(string nameTag, GameObject despawnObject)
         {
-            if (_objectsActive.ContainsKey(nameTag) && _objectsActive[nameTag].Count > 0)
+            if (_objectsActive.ContainsKey(nameTag) && _objectsActive[nameTag].Contains(despawnObject))
             {
                 List<GameObject> objects = _objectsActive[nameTag];
 
-                MoveObjectToDontDestroyOnLoadScene(objects[objects.Count]);
-                AddQueuObject(nameTag, objects[objects.Count]);
+                MoveObjectToDontDestroyOnLoadScene(despawnObject);
+                AddQueuObject(nameTag, despawnObject);
 
-                objects[objects.Count].SetActive(false);
-                objects.RemoveAt(objects.Count);
+                despawnObject.SetActive(false);
+                objects.Remove(despawnObject);
                 return;
             }
 
-            Debug.LogError("Can't find object you want to despawn");
+            Debug.LogError($"Can't find object {nameTag} to despawn");
+        }
+
+        public void StartDeathTimer(int amountOfTimer, string resourceName, Transform previousParentTransform) => StartCoroutine(DeathTimer(amountOfTimer, resourceName,previousParentTransform));
+
+        private IEnumerator DeathTimer(int amountOfTimer, string resourceName, Transform previousParentTransform)
+        {
+            yield return new WaitForSeconds(amountOfTimer);
+
+            SpawnObject(resourceName, previousParentTransform);
         }
 
         private void MoveObjectToActiveScene(GameObject movingObject, Transform parentTransform)
@@ -67,14 +80,6 @@ namespace Examen.Poolsystem
         }
 
         private void MoveObjectToDontDestroyOnLoadScene(GameObject movingObject) => movingObject.transform.parent = transform;
-
-        private void AddActiveObject(string nameTag, GameObject gameObject)
-        {
-            if (_objectsActive.ContainsKey(nameTag))
-                _objectsActive[nameTag].Add(gameObject);
-            else
-                _objectsActive.Add(nameTag, new List<GameObject>() { gameObject });
-        }
 
         private void AddQueuObject(string nameTag, GameObject gameObject)
         {

@@ -1,3 +1,4 @@
+using Examen.Interactables.Resource;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,13 +16,12 @@ namespace Examen.Spawning.ResourceSpawning
                 SpawnAreas area = spawnAreas[i];
                 float spawnPercentage = 100;
                 float currentSpawnAmount = area.AmountOfResourcesInTheArea;
-                Dictionary<GameObject, float> spawnTypes = new();
 
                 for (int j = 0; j < area.spawnableResources.Count; j++)
                 {
                     if (spawnPercentage <= 0 || currentSpawnAmount <= 0)
                     {
-                        Debug.LogError($"Can't spawn {area.spawnableResources[j].resource.name}, because you can't spawn more then 100% Resources");
+                        Debug.LogError($"Can't spawn {area.spawnableResources[j].SpawnResource.name}, because you can't spawn more then 100% Resources");
                         break;
                     }
 
@@ -29,7 +29,7 @@ namespace Examen.Spawning.ResourceSpawning
 
                     if (spawnPercentage - percentage < 0)
                     {
-                        Debug.LogWarning($"Percentage of {area.spawnableResources[j].resource.name} was to high so we rounded it down to {spawnPercentage}");
+                        Debug.LogWarning($"Percentage of {area.spawnableResources[j].SpawnResource.name} was to high so we rounded it down to {spawnPercentage}");
                         percentage = spawnPercentage;
                         spawnPercentage = 0;
                     }
@@ -47,11 +47,21 @@ namespace Examen.Spawning.ResourceSpawning
                     else
                         currentSpawnAmount = newSpawnAmount;
 
-                    spawnTypes.Add(area.spawnableResources[j].resource, amountOfrescoures);
+                    SpawnResources(area ,area.spawnableResources[j].SpawnResource, amountOfrescoures);
                 }
-
-                area.Area.SpawnResources(spawnTypes);
             }
+        }
+
+        private void SpawnResources(SpawnAreas spawnArea, GameObject gameObject, float amount)
+        {
+            List<GameObject> spawnedGameobjects = new();
+
+            for (int i = 0; i < amount; i++)
+            {
+                spawnedGameobjects.Add(Instantiate(gameObject, spawnArea.Area.transform));
+            }
+
+            spawnArea.Area.SpawnedResources = spawnedGameobjects;
         }
 
         [Serializable]
@@ -59,15 +69,14 @@ namespace Examen.Spawning.ResourceSpawning
         {
             public SpawnArea Area;
             public int AmountOfResourcesInTheArea;
-            public List<ResourceInfo> spawnableResources;
+            public List<ResourceSpawnInfo> spawnableResources;
         }
 
         [Serializable]
-        private struct ResourceInfo
+        private struct ResourceSpawnInfo
         {
-            public GameObject resource;
+            public GameObject SpawnResource;
             [Range(0, 100)] public float spawnChance;
         }
-
     }
 }

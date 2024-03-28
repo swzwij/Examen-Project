@@ -1,6 +1,5 @@
 using Examen.Items;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Examen.Inventory
 {
@@ -19,7 +18,6 @@ namespace Examen.Inventory
                 _currentItems.Add(newItem, amountOfItem);
             else
                 _currentItems[newItem] += amountOfItem;
-
         }
 
         /// <summary>

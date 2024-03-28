@@ -19,7 +19,6 @@ namespace Examen.Interactables.Resource
         public int DeathTime;
 
         public const int DamageAmount = 1;
-        public Action OnRespawn;
 
         public virtual void Interact()
         {
@@ -44,16 +43,8 @@ namespace Examen.Interactables.Resource
 
         public virtual void StartDeathTimer()
         {
-            poolSystem.DespawnObject(ResourceItem.Name);
-            StartCoroutine(DeathTimer());
-        }
-
-        private IEnumerator DeathTimer()
-        {
-            yield return new WaitForSeconds(DeathTime);
-
-            poolSystem.SpawnObject(ResourceItem.Name);
-            OnRespawn?.Invoke();
+            poolSystem.StartDeathTimer(DeathTime, ResourceItem.Name, transform.parent);
+            poolSystem.DespawnObject(ResourceItem.Name, gameObject);
         }
     }
 }
