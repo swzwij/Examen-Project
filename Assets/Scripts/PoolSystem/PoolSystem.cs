@@ -3,82 +3,85 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PoolSystem : SingletonInstance<PoolSystem>
+namespace Examen.Poolsystem
 {
-    private Dictionary<string, List<GameObject>> _objectsQueu = new();
-    private Dictionary<string, List<GameObject>> _objectsActive = new();
-
-    public void AddActiveObjects(string nameTag, List<GameObject> gameObjects)
+    public class PoolSystem : SingletonInstance<PoolSystem>
     {
-        if (_objectsActive.ContainsKey(nameTag))
-            _objectsActive[nameTag].AddRange(gameObjects);
-        else
-            _objectsActive.Add(nameTag, gameObjects);
-    }
+        private Dictionary<string, List<GameObject>> _objectsQueu = new();
+        private Dictionary<string, List<GameObject>> _objectsActive = new();
 
-    public void SpawnObject(string nameTag, GameObject spawnPrefab, Transform parentTransform = null) => SpawnObject(nameTag, parentTransform, spawnPrefab);
-
-    public void SpawnObject(string nameTag, Transform parentTransform = null, GameObject spawnPrefab = null)
-    {
-        if(_objectsQueu.ContainsKey(nameTag) && _objectsQueu[nameTag].Count > 0)
+        public void AddActiveObjects(string nameTag, List<GameObject> gameObjects)
         {
-            List<GameObject> objects = _objectsQueu[nameTag];
-
-            MoveObjectToActiveScene(objects[objects.Count], parentTransform);
-            AddActiveObject(nameTag, objects[objects.Count]);
-
-            objects[objects.Count].SetActive(true);
-            objects.RemoveAt(objects.Count);
-            return;
+            if (_objectsActive.ContainsKey(nameTag))
+                _objectsActive[nameTag].AddRange(gameObjects);
+            else
+                _objectsActive.Add(nameTag, gameObjects);
         }
 
-        if (spawnPrefab == null) return;
-        
-        GameObject newGameObject = Instantiate(spawnPrefab);
-        MoveObjectToActiveScene(newGameObject, parentTransform);
-        AddActiveObject(nameTag, newGameObject);
-    }
+        public void SpawnObject(string nameTag, GameObject spawnPrefab, Transform parentTransform = null) => SpawnObject(nameTag, parentTransform, spawnPrefab);
 
-    public void DespawnObject(string nameTag)
-    {
-        if (_objectsActive.ContainsKey(nameTag) && _objectsActive[nameTag].Count > 0)
+        public void SpawnObject(string nameTag, Transform parentTransform = null, GameObject spawnPrefab = null)
         {
-            List<GameObject> objects = _objectsActive[nameTag];
+            if (_objectsQueu.ContainsKey(nameTag) && _objectsQueu[nameTag].Count > 0)
+            {
+                List<GameObject> objects = _objectsQueu[nameTag];
 
-            MoveObjectToDontDestroyOnLoadScene(objects[objects.Count]);
-            AddQueuObject(nameTag, objects[objects.Count]);
+                MoveObjectToActiveScene(objects[objects.Count], parentTransform);
+                AddActiveObject(nameTag, objects[objects.Count]);
 
-            objects[objects.Count].SetActive(false);
-            objects.RemoveAt(objects.Count);
-            return;
+                objects[objects.Count].SetActive(true);
+                objects.RemoveAt(objects.Count);
+                return;
+            }
+
+            if (spawnPrefab == null) return;
+
+            GameObject newGameObject = Instantiate(spawnPrefab);
+            MoveObjectToActiveScene(newGameObject, parentTransform);
+            AddActiveObject(nameTag, newGameObject);
         }
 
-        Debug.LogError("Can't find object you want to despawn");
-    }
+        public void DespawnObject(string nameTag)
+        {
+            if (_objectsActive.ContainsKey(nameTag) && _objectsActive[nameTag].Count > 0)
+            {
+                List<GameObject> objects = _objectsActive[nameTag];
 
-    private void MoveObjectToActiveScene(GameObject movingObject,Transform parentTransform)
-    {
-        if (parentTransform == null)
-            SceneManager.MoveGameObjectToScene(movingObject, SceneManager.GetActiveScene());
-        else
-            movingObject.transform.parent = parentTransform;
-    }
+                MoveObjectToDontDestroyOnLoadScene(objects[objects.Count]);
+                AddQueuObject(nameTag, objects[objects.Count]);
 
-    private void MoveObjectToDontDestroyOnLoadScene(GameObject movingObject) => movingObject.transform.parent = transform;
+                objects[objects.Count].SetActive(false);
+                objects.RemoveAt(objects.Count);
+                return;
+            }
 
-    private void AddActiveObject(string nameTag, GameObject gameObject)
-    {
-        if (_objectsActive.ContainsKey(nameTag))
-            _objectsActive[nameTag].Add(gameObject);
-        else
-            _objectsActive.Add(nameTag,new List<GameObject>() { gameObject });
-    }
+            Debug.LogError("Can't find object you want to despawn");
+        }
 
-    private void AddQueuObject(string nameTag, GameObject gameObject)
-    {
-        if (_objectsQueu.ContainsKey(nameTag))
-            _objectsQueu[nameTag].Add(gameObject);
-        else
-            _objectsQueu.Add(nameTag, new List<GameObject>() { gameObject });
+        private void MoveObjectToActiveScene(GameObject movingObject, Transform parentTransform)
+        {
+            if (parentTransform == null)
+                SceneManager.MoveGameObjectToScene(movingObject, SceneManager.GetActiveScene());
+            else
+                movingObject.transform.parent = parentTransform;
+        }
+
+        private void MoveObjectToDontDestroyOnLoadScene(GameObject movingObject) => movingObject.transform.parent = transform;
+
+        private void AddActiveObject(string nameTag, GameObject gameObject)
+        {
+            if (_objectsActive.ContainsKey(nameTag))
+                _objectsActive[nameTag].Add(gameObject);
+            else
+                _objectsActive.Add(nameTag, new List<GameObject>() { gameObject });
+        }
+
+        private void AddQueuObject(string nameTag, GameObject gameObject)
+        {
+            if (_objectsQueu.ContainsKey(nameTag))
+                _objectsQueu[nameTag].Add(gameObject);
+            else
+                _objectsQueu.Add(nameTag, new List<GameObject>() { gameObject });
+        }
     }
 }

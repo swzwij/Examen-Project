@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1397762634095335817}
   - component: {fileID: 9178003254615693376}
   - component: {fileID: 552402148503755518}
-  - component: {fileID: 4892930671130575841}
+  - component: {fileID: 2589754670566915848}
   - component: {fileID: 5770678232989211857}
   m_Layer: 0
   m_Name: Stone
@@ -107,7 +107,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4892930671130575841
+--- !u!114 &2589754670566915848
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -116,7 +116,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6801524543545634848}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51666943ec35f2748b9ac69331c59334, type: 3}
+  m_Script: {fileID: 11500000, guid: e2c1fb24612314d408978a9a58b65ad7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   HealthData: {fileID: 0}

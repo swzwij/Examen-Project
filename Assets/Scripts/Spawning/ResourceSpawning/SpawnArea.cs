@@ -1,17 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpawnArea : MonoBehaviour
+namespace Examen.Spawning.ResourceSpawning
 {
-    public void SpawnResources(Dictionary<GameObject, float> resourcesToSpawn)
+    public class SpawnArea : MonoBehaviour
     {
-        foreach (var resource in resourcesToSpawn)
+        public void SpawnResources(Dictionary<GameObject, float> resourcesToSpawn)
         {
-            Debug.Log($"Spawn {resource.Value} {resource.Key.name}");
-
-            for (int i = 0; i < resource.Value; i++)
+            foreach (var resource in resourcesToSpawn)
             {
-                Instantiate(resource.Key); 
+                Debug.Log($"Spawn {resource.Value} {resource.Key.name}");
+
+                for (int i = 0; i < resource.Value; i++)
+                {
+                    Instantiate(resource.Key);
+                }
             }
         }
     }
