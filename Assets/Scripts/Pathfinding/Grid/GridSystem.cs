@@ -1,7 +1,4 @@
-using System.Collections.Generic;
 using System.Linq;
-using GameKit.Utilities;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Examen.Pathfinding.Grid
@@ -32,29 +29,43 @@ namespace Examen.Pathfinding.Grid
         public void CreateGrid()
         {
             _nodes = new Node[_gridSize.x, _gridSize.y];
-            for (int x = 0; x < _gridSize.x; x++)
-            {
-                for (int y = 0; y < _gridSize.y; y++)
-                {
-                    Vector3 nodePosition = transform.position + new Vector3(x * _nodeDistance, 0, y * _nodeDistance);
-                    Node newNode = new(nodePosition);
-
-                    if (IsWalkableArea(nodePosition, out float elevation))
-                    {
-                        newNode.elevation = elevation;
-                        newNode.position = new Vector3(nodePosition.x, elevation, nodePosition.z);
-                        newNode.isWalkable = true;
-                        newNode.maxConnectionDistance = _maxConnectionDistance;
-                        newNode.maxElevationDifference = _maxElevationDifference;
-                    }
-
-                    _nodes[x, y] = newNode;
-                    newNode.gridPosition = new Vector2Int(x, y);
-                }
-            }
-
+            InitializeGrid(_gridSize, InitializeNode);
             ConnectNodes();
             InitializeCells();
+        }
+
+        private void InitializeGrid(Vector2Int gridSize, System.Action<int, int> initializeElement)
+        {
+            for (int x = 0; x < gridSize.x; x++)
+                for (int y = 0; y < gridSize.y; y++)
+                    initializeElement(x, y);
+        }
+
+        private void InitializeNode(int x, int y)
+        {
+            Vector3 nodePosition = CalculateNodePosition(x, y);
+            Node newNode = new(nodePosition);
+
+            newNode = ConfigureNode(newNode, nodePosition);
+            _nodes[x, y] = newNode;
+            newNode.gridPosition = new Vector2Int(x, y);
+        }
+
+        private Vector3 CalculateNodePosition(int x, int y) 
+            => transform.position + new Vector3(x * _nodeDistance, 0, y * _nodeDistance);
+
+        private Node ConfigureNode(Node node, Vector3 nodePosition)
+        {
+            if (IsWalkableArea(nodePosition, out float elevation))
+            {
+                node.elevation = elevation;
+                node.position = new Vector3(nodePosition.x, elevation, nodePosition.z);
+                node.isWalkable = true;
+                node.maxConnectionDistance = _maxConnectionDistance;
+                node.maxElevationDifference = _maxElevationDifference;
+            }
+
+            return node;
         }
 
         private void InitializeCells()
@@ -65,62 +76,60 @@ namespace Examen.Pathfinding.Grid
             int numCellsY = Mathf.CeilToInt(_gridSize.y / _cellSize);
 
             _cells = new Cell[numCellsX, numCellsY];
-            for (int x = 0; x < numCellsX; x++)
-            {
-                for (int y = 0; y < numCellsY; y++)
-                {
-                    Cell newCell = Instantiate(_cellPrefab);
-                    _cells[x, y] = newCell;
+            InitializeGrid(new Vector2Int(numCellsX, numCellsY), InitializeCell);
+        }
 
-                    newCell.name = $"Cell {x}-{y}";
-                    newCell.gameObject.layer = 2; // Ignore raycast
-                    newCell.transform.SetParent(transform);
-                    newCell.transform.position = GetCellPosition(x, y);
-                    newCell.transform.localScale = CellSize;
-                    newCell.GridSystem = this;
-                    newCell.CellX = x;
-                    newCell.CellY = y;
+        private void InitializeCell(int x, int y)
+        {
+            Cell newCell = Instantiate(_cellPrefab);
+            _cells[x, y] = newCell;
 
-                    // Determine the nodes that belong to this cell
-                    int startX = x * _cellSize;
-                    int startY = y * _cellSize;
-                    int endX = Mathf.Min(startX + _cellSize, _gridSize.x);
-                    int endY = Mathf.Min(startY + _cellSize, _gridSize.y);
+            ConfigureCell(newCell, x, y);
+            PopulateCellWithNodes(newCell, x, y);
+        }
 
-                    for (int nodeX = startX; nodeX < endX; nodeX++)
-                    {
-                        for (int nodeY = startY; nodeY < endY; nodeY++)
-                        {
-                            Node node = _nodes[nodeX, nodeY];
-                            newCell.AddNode(node);
-                        }
-                    }
-                }
-            }
+        private void ConfigureCell(Cell cell, int x, int y)
+        {
+            cell.name = $"Cell {x}-{y}";
+            cell.gameObject.layer = 2; // Ignore raycast
+            cell.transform.SetParent(transform);
+            cell.transform.position = GetCellPosition(x, y);
+            cell.transform.localScale = CellSize;
+            cell.GridSystem = this;
+            cell.CellX = x;
+            cell.CellY = y;
+        }
+
+        private void PopulateCellWithNodes(Cell cell, int x, int y)
+        {
+            int startX = x * _cellSize;
+            int startY = y * _cellSize;
+            int endX = Mathf.Min(startX + _cellSize, _gridSize.x);
+            int endY = Mathf.Min(startY + _cellSize, _gridSize.y);
+
+            for (int nodeX = startX; nodeX < endX; nodeX++)
+                for (int nodeY = startY; nodeY < endY; nodeY++)
+                    cell.AddNode(_nodes[nodeX, nodeY]);
         }
 
         public bool IsWalkableArea(Vector3 position, out float elevation)
         {
-            // Create a ray from above the position downward
             Ray ray = new(position + Vector3.up * _maxWorldHeight, Vector3.down);
-            RaycastHit hit;
 
-            float maxRaycastDistance = 200f;
-
-            if (Physics.Raycast(ray, out hit, maxRaycastDistance, _obstacleLayerMask))
+            if (Physics.Raycast(ray, out RaycastHit hit, 200f, _obstacleLayerMask))
             {
                 elevation = 0f;
-                return false; // If an obstacle is hit
+                return false;
             }
 
-            if (Physics.Raycast(ray, out hit, maxRaycastDistance, _walkableLayerMask))
+            if (Physics.Raycast(ray, out hit, 200f, _walkableLayerMask))
             {
                 elevation = hit.point.y + _nodeHeightOffset;
-                return true; // If walkable terrain is hit
+                return true;
             }
 
             elevation = 0f;
-            return false; // If no walkable terrain is found
+            return false;
         }
 
         public void UpdateCell(int cellX, int cellY)

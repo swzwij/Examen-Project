@@ -9,17 +9,17 @@ namespace Examen.Pathfinding
         [SerializeField] private int _diagonalCost = 14;
         [SerializeField] private int _straightCost = 10;
 
-        private GridSystem gridSystem; // Mark Todo: Parent grid. Divide grid system into grid and grid system later and then replace this with grid.
+        private GridSystem _gridSystem;
 
-        private void OnEnable() => gridSystem = FindObjectOfType<GridSystem>(); 
+        private void OnEnable() => _gridSystem = FindObjectOfType<GridSystem>();
 
         public List<Node> FindPath(Vector3 startPos, Vector3 targetPos)
         {
-            Node startNode = gridSystem.GetNodeFromWorldPosition(startPos);
-            Node targetNode = gridSystem.GetNodeFromWorldPosition(targetPos);
+            Node startNode = _gridSystem.GetNodeFromWorldPosition(startPos);
+            Node targetNode = _gridSystem.GetNodeFromWorldPosition(targetPos);
 
-            List<Node> openSet = new List<Node>();
-            HashSet<Node> closedSet = new HashSet<Node>();
+            List<Node> openSet = new();
+            HashSet<Node> closedSet = new();
 
             openSet.Add(startNode);
 
@@ -28,26 +28,24 @@ namespace Examen.Pathfinding
                 Node currentNode = openSet[0];
                 for (int i = 1; i < openSet.Count; i++)
                 {
-                    if (openSet[i].FCost < currentNode.FCost || openSet[i].FCost == currentNode.FCost && openSet[i].hCost < currentNode.hCost)
-                    {
+                    bool isLowerFCost = openSet[i].FCost < currentNode.FCost;
+                    bool isSameFCost = openSet[i].FCost == currentNode.FCost;
+                    bool isLowerHCost = openSet[i].hCost < currentNode.hCost;
+
+                    if (isLowerFCost || (isSameFCost && isLowerHCost))
                         currentNode = openSet[i];
-                    }
                 }
 
                 openSet.Remove(currentNode);
                 closedSet.Add(currentNode);
 
                 if (currentNode == targetNode)
-                {
                     return RetracePath(startNode, targetNode);
-                }
 
                 foreach (Node neighbor in currentNode.connectedNodes)
                 {
                     if (!neighbor.isWalkable || closedSet.Contains(neighbor))
-                    {
                         continue;
-                    }
 
                     int newMovementCostToNeighbor = currentNode.gCost + CalculateDistance(currentNode, neighbor);
                     if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
@@ -72,10 +70,12 @@ namespace Examen.Pathfinding
 
             if (xDistance > yDistance)
             {
-                return _diagonalCost * yDistance + _straightCost * (xDistance - yDistance);
+                int diagonalDistance = _diagonalCost * yDistance + _straightCost * (xDistance - yDistance);
+                return diagonalDistance;
             }
 
-            return _diagonalCost * xDistance + _straightCost * (yDistance - xDistance);
+            int straightDistance = _diagonalCost * xDistance + _straightCost * (yDistance - xDistance);
+            return straightDistance;
         }
 
         private List<Node> RetracePath(Node startNode, Node endNode)
