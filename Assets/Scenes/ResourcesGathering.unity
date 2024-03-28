@@ -505,12 +505,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnAreas:
   - Area: {fileID: 1934703882}
-    AmountOfResourcesInTheArea: 2
+    AmountOfResourcesInTheArea: 4
     spawnableResources:
     - resource: {fileID: 1743377894931261834, guid: 282b5a44bdc83904d8b83030786e3e6b, type: 3}
-      spawnChance: 75
+      spawnChance: 25
     - resource: {fileID: 6801524543545634848, guid: fbbeef3e739587a4aa83823b9cb897f3, type: 3}
-      spawnChance: 50
+      spawnChance: 75
 --- !u!1 &1765930648
 GameObject:
   m_ObjectHideFlags: 0
