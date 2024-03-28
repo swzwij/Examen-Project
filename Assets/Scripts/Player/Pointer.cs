@@ -55,8 +55,8 @@ namespace Examen.Player
 
         private void OnPointPerformed(InputAction.CallbackContext context)
         {
-            if(!IsOwner) 
-                return;
+            /*if(!IsOwner) 
+                return;*/
 
             PointAtPosition();
         }
