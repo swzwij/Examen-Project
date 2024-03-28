@@ -13,6 +13,11 @@ namespace Examen.Poolsystem
         private Dictionary<string, List<GameObject>> _objectsQueu = new();
         private Dictionary<string, List<GameObject>> _objectsActive = new();
 
+        /// <summary>
+        /// Puts the given gameobject in the active objects dictonary under the given tag.
+        /// </summary>
+        /// <param name="nameTag">The name of the catergory, you want the gameobject to be in</param>
+        /// <param name="gameObject">The object you want to add to the active objects dictionary</param>
         public void AddActiveObject(string nameTag, GameObject gameObject)
         {
             if (_objectsActive.ContainsKey(nameTag))
