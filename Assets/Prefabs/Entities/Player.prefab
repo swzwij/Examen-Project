@@ -128,8 +128,8 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
-  p_speed: 5
-  p_obstacleCheckDistance: 1
+  p_speed: 15
+  p_obstacleCheckDistance: 0.5
   p_obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4fb04e21e4138743869dbe8ddedff0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 3
+  _componentIndexCache: 2
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
 --- !u!114 &431041323644128263
@@ -179,6 +179,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72487ff4dc28fb8418848132a371b17e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 3
+  _addedNetworkObject: {fileID: 3679868855582776512}
+  _networkObjectCache: {fileID: 3679868855582776512}
   _pointerLayerMask:
     serializedVersion: 2
     m_Bits: 119
@@ -200,8 +203,9 @@ MonoBehaviour:
   _networkBehaviours:
   - {fileID: 5755628630257008346}
   - {fileID: 4964243218378621144}
-  - {fileID: 7692977816705919355}
   - {fileID: 1851998169087112436}
+  - {fileID: 431041323644128263}
+  - {fileID: 7692977816705919355}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
@@ -230,6 +234,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f1d30f6ad20a7a4daec169bfb05daaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 2
+  _componentIndexCache: 4
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}

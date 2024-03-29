@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using FishNet.Object;
 using UnityEngine;
 
 namespace Examen.Pathfinding.Grid
 {
     [RequireComponent(typeof(BoxCollider))]
-    public class Cell : NetworkBehaviour
+    public class Cell : MonoBehaviour
     {
         [SerializeField] private LayerMask _updateCellMask;
 

@@ -26,7 +26,6 @@ namespace Examen.Pathfinding.Grid
 
         private void OnEnable() => CreateGrid();
 
-        //[Server]
         public void CreateGrid()
         {
             _nodes = new Node[_gridSize.x, _gridSize.y];

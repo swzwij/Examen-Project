@@ -6,7 +6,7 @@ using FishNet.Object;
 
 namespace Examen.Player
 {
-    public class Pointer : MonoBehaviour
+    public class Pointer : NetworkBehaviour
     {
         [SerializeField] private LayerMask _pointerLayerMask;
         private Camera _myCamera; // Replace with camera manager once this is implemented
@@ -30,21 +30,21 @@ namespace Examen.Player
                 _myCamera = Camera.main;
         }
 
-        //[ServerRpc]
+        [ServerRpc]
         /// <summary>
         /// Points the pointer at the position based on the input from the "PointerPosition" action.
         /// </summary>
         public void PointAtPosition()
         {
-            // if (!IsOwner)
-            //     return;
+            if (!IsOwner)
+                return;
 
             Vector2 pointerPosition = _inputManager.TryGetAction("PointerPosition").ReadValue<Vector2>();
             
             ProcessPointerPosition(pointerPosition);
         }
 
-        //[Server]
+        [Server]
         private void ProcessPointerPosition(Vector2 pointerPosition)
         {
             Ray pointerRay = _myCamera.ScreenPointToRay(pointerPosition);
@@ -52,13 +52,14 @@ namespace Examen.Player
             {
                 _pointerWorldPosition = hit.point;
                 OnPointedAtPosition?.Invoke(_pointerWorldPosition);
+                Debug.Log($"Pointer pointed at position: {_pointerWorldPosition}");
             }
         }
 
         private void OnPointPerformed(InputAction.CallbackContext context)
         {
-            // if(!IsOwner) 
-            //     return;
+            if(!IsOwner) 
+                return;
 
             PointAtPosition();
         }

@@ -58,7 +58,7 @@ namespace Examen.Pathfinding
         {
             if (Vector3.Distance(transform.position, _waypoints[_currentWaypointIndex].position) < 5f 
             && _currentWaypointIndex < _waypoints.Count-1)
-                GetNextWaypoint();
+                _currentWaypointIndex++;
 
             if (IsPathBlocked && !p_hasFoundBlockage)
             {
@@ -83,9 +83,7 @@ namespace Examen.Pathfinding
             yield return new WaitUntil(() => !IsPathBlocked);
 
             yield return new WaitForSeconds(p_waitTime);
-            //GenerateCompletePath();
             ContinuePath();
-            //StartPath(p_currentTarget);
         }
 
         public void ContinuePath()
@@ -98,16 +96,6 @@ namespace Examen.Pathfinding
 
             if (p_currentPath != null && p_currentPath.Count > 0)
                 p_followPathCoroutine = StartCoroutine(FollowPath());
-        }
-
-        protected void GetNextWaypoint()
-        {
-            //_waypoints.RemoveAt(_currentWaypointIndex);
-            _currentWaypointIndex++;
-            //p_currentTarget = _waypoints[_currentWaypointIndex].position;
-            print($"Waypoint {_currentWaypointIndex} reached, {_waypoints.Count - _currentWaypointIndex} waypoints left.");
-            if (_currentWaypointIndex >= _waypoints.Count)
-                OnPathCompleted -= GetNextWaypoint;
         }
     }
 }

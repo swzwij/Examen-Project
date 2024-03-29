@@ -48,11 +48,12 @@ namespace Examen.Pathfinding
             }
         }
 
+        //[ServerRpc]
         public void StartPath(Vector3 target)
         {
             // if (!IsOwner)
             //     return;
-
+            
             p_currentPath.Clear();
 
             if (p_followPathCoroutine != null)
@@ -77,6 +78,8 @@ namespace Examen.Pathfinding
                 {
                     transform.position = Vector3.MoveTowards(transform.position, currentNode, p_speed * Time.deltaTime);
                     transform.LookAt(currentNode);
+
+                    BroadcastPosition(transform.position);
                     Debug.DrawRay(transform.position, transform.forward * p_obstacleCheckDistance, Color.blue);
                     yield return null;
                 }
@@ -87,6 +90,12 @@ namespace Examen.Pathfinding
             
             p_hasFoundBlockage = false;
             OnPathCompleted?.Invoke();
+        }
+
+        [ObserversRpc]
+        protected void BroadcastPosition(Vector3 position)
+        {
+            transform.position = position;
         }
 
         protected void ResetBlockage() => p_hasFoundBlockage = false;
