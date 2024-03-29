@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using Examen.Pathfinding.Grid;
+using FishNet.Object;
 using UnityEngine;
 
 namespace Examen.Pathfinding
 {
-    public class Pathfinder : MonoBehaviour
+    public class Pathfinder : NetworkBehaviour
     {
         [SerializeField] private int _diagonalCost = 14;
         [SerializeField] private int _straightCost = 10;
@@ -15,6 +16,9 @@ namespace Examen.Pathfinding
 
         public List<Node> FindPath(Vector3 startPos, Vector3 targetPos)
         {
+            // if (!IsOwner)
+            //     return null;
+
             Node startNode = _gridSystem.GetNodeFromWorldPosition(startPos);
             Node targetNode = _gridSystem.GetNodeFromWorldPosition(targetPos);
 
@@ -30,7 +34,7 @@ namespace Examen.Pathfinding
                 {
                     bool isLowerFCost = openSet[i].FCost < currentNode.FCost;
                     bool isSameFCost = openSet[i].FCost == currentNode.FCost;
-                    bool isLowerHCost = openSet[i].hCost < currentNode.hCost;
+                    bool isLowerHCost = openSet[i].HCost < currentNode.HCost;
 
                     if (isLowerFCost || (isSameFCost && isLowerHCost))
                         currentNode = openSet[i];
@@ -42,17 +46,17 @@ namespace Examen.Pathfinding
                 if (currentNode == targetNode)
                     return RetracePath(startNode, targetNode);
 
-                foreach (Node neighbor in currentNode.connectedNodes)
+                foreach (Node neighbor in currentNode.ConnectedNodes)
                 {
-                    if (!neighbor.isWalkable || closedSet.Contains(neighbor))
+                    if (!neighbor.IsWalkable || closedSet.Contains(neighbor))
                         continue;
 
-                    int newMovementCostToNeighbor = currentNode.gCost + CalculateDistance(currentNode, neighbor);
-                    if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
+                    int newMovementCostToNeighbor = currentNode.GCost + CalculateDistance(currentNode, neighbor);
+                    if (newMovementCostToNeighbor < neighbor.GCost || !openSet.Contains(neighbor))
                     {
-                        neighbor.gCost = newMovementCostToNeighbor;
-                        neighbor.hCost = CalculateDistance(neighbor, targetNode);
-                        neighbor.parent = currentNode;
+                        neighbor.GCost = newMovementCostToNeighbor;
+                        neighbor.HCost = CalculateDistance(neighbor, targetNode);
+                        neighbor.Parent = currentNode;
 
                         if (!openSet.Contains(neighbor))
                             openSet.Add(neighbor);
@@ -60,13 +64,13 @@ namespace Examen.Pathfinding
                 }
             }
 
-            return null;
+            return new();
         }
 
         private int CalculateDistance(Node a, Node b)
         {
-            int xDistance = Mathf.Abs(a.gridPosition.x - b.gridPosition.x);
-            int yDistance = Mathf.Abs(a.gridPosition.y - b.gridPosition.y);
+            int xDistance = Mathf.Abs(a.GridPosition.x - b.GridPosition.x);
+            int yDistance = Mathf.Abs(a.GridPosition.y - b.GridPosition.y);
 
             if (xDistance > yDistance)
             {
@@ -86,7 +90,7 @@ namespace Examen.Pathfinding
             while (currentNode != startNode)
             {
                 path.Add(currentNode);
-                currentNode = currentNode.parent;
+                currentNode = currentNode.Parent;
             }
             path.Reverse();
 

@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using FishNet.Object;
 using UnityEngine;
 
 namespace Examen.Pathfinding.Grid
 {
     [RequireComponent(typeof(BoxCollider))]
-    public class Cell : MonoBehaviour
+    public class Cell : NetworkBehaviour
     {
         [SerializeField] private LayerMask _updateCellMask;
 
@@ -18,9 +19,6 @@ namespace Examen.Pathfinding.Grid
 
         public HashSet<Node> Nodes => _nodes;
 
-        public void AddNode(Node node) => _nodes.Add(node);
-        public void AddConnectedCell(Cell cell) => _connectedCells.Add(cell);
-
         private void OnEnable()
         {
             _collider = GetComponent<BoxCollider>();
@@ -28,9 +26,15 @@ namespace Examen.Pathfinding.Grid
             _collider.includeLayers = _updateCellMask;
             _collider.excludeLayers = ~_updateCellMask;
         }
-
+        
         private void OnTriggerEnter(Collider other) => GridSystem.UpdateCell(CellX, CellY);
 
         private void OnTriggerExit(Collider other) => GridSystem.UpdateCell(CellX, CellY);
+
+        //[Server]
+        public void AddNode(Node node) => _nodes.Add(node);
+
+        //[Server]
+        public void AddConnectedCell(Cell cell) => _connectedCells.Add(cell);
     }
 }

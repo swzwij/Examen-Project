@@ -1,44 +1,113 @@
+using System.Collections;
 using System.Collections.Generic;
 using Examen.Pathfinding;
+using Examen.Pathfinding.Grid;
 using UnityEngine;
 
-public class WaypointFollower : PathFollower
+namespace Examen.Pathfinding
 {
-    [SerializeField] private List<Transform> _waypoints = new();
-    private int _currentWaypointIndex = 0;
-    private Transform _waypointsParent;
-
-    protected override void Start()
+    public class WaypointFollower : PathFollower
     {
-        base.Start();
-        p_isDetermined = true;
+        [SerializeField] private List<Transform> _waypoints = new();
+        private List<Node> _completePath = new();
+        private int _currentWaypointIndex = 0;
+        private Transform _waypointsParent;
 
-        _waypointsParent = new GameObject().transform;
-        _waypointsParent.name = $"{gameObject.name} - Waypoints";
-        
-        _waypoints.Clear();
-
-        for (int i = transform.childCount - 1; i >= 0; i--)
+        protected override void Start()
         {
-            _waypoints.Add(transform.GetChild(i));
-            transform.GetChild(i).SetParent(_waypointsParent);
+            base.Start();
+            _waypointsParent = new GameObject().transform;
+            _waypointsParent.name = $"{gameObject.name} - Waypoints";
+
+            _waypoints.Clear();
+
+            for (int i = transform.childCount - 1; i >= 0; i--)
+            {
+                _waypoints.Add(transform.GetChild(i));
+                transform.GetChild(i).SetParent(_waypointsParent);
+            }
+
+            _waypoints.Reverse();
+
+            if (_waypoints.Count == 0)
+                return;
+
+            GenerateCompletePath();
         }
 
-        _waypoints.Reverse();
+        private void GenerateCompletePath()
+        {
+            for (int i = _currentWaypointIndex; i < _waypoints.Count; i++)
+            {
+                if (i == _currentWaypointIndex)
+                {
+                    StartPath(_waypoints[i].position);
+                    _completePath.AddRange(p_currentPath);
+                }
+                else
+                {
+                    _completePath.AddRange(p_pathfinder.FindPath(_waypoints[i - 1].position, _waypoints[i].position));
+                }
+            }
 
-        if (_waypoints.Count == 0)
-            return;
-        
-        StartPath(_waypoints[_currentWaypointIndex].position);
-        OnPathCompleted += GetNextWaypoint;
-    }
+            p_currentPath = _completePath;
+            p_currentTarget = p_currentPath[^1].Position;
+        }
 
-    protected void GetNextWaypoint()
-    {
-        _currentWaypointIndex++;
-        if (_currentWaypointIndex >= _waypoints.Count)
-            return;
-        
-        StartPath(_waypoints[_currentWaypointIndex].position);
+        protected override void FixedUpdate() 
+        {
+            if (Vector3.Distance(transform.position, _waypoints[_currentWaypointIndex].position) < 5f 
+            && _currentWaypointIndex < _waypoints.Count-1)
+                GetNextWaypoint();
+
+            if (IsPathBlocked && !p_hasFoundBlockage)
+            {
+                p_hasFoundBlockage = true;
+                List<Node> newPath = p_pathfinder.FindPath(transform.position, p_currentTarget);
+
+                if (newPath.Count == 0)
+                {
+                    p_waitForClearance = StartCoroutine(WaitForPathClearance());
+                    return;
+                }
+                
+                GenerateCompletePath();
+            }
+        }
+
+        protected IEnumerator WaitForPathClearance()
+        {
+            if (p_followPathCoroutine != null)
+                StopCoroutine(p_followPathCoroutine);
+
+            yield return new WaitUntil(() => !IsPathBlocked);
+
+            yield return new WaitForSeconds(p_waitTime);
+            //GenerateCompletePath();
+            ContinuePath();
+            //StartPath(p_currentTarget);
+        }
+
+        public void ContinuePath()
+        {
+            // if (!IsOwner)
+            //     return;
+
+            if (p_followPathCoroutine != null)
+                StopCoroutine(p_followPathCoroutine);
+
+            if (p_currentPath != null && p_currentPath.Count > 0)
+                p_followPathCoroutine = StartCoroutine(FollowPath());
+        }
+
+        protected void GetNextWaypoint()
+        {
+            //_waypoints.RemoveAt(_currentWaypointIndex);
+            _currentWaypointIndex++;
+            //p_currentTarget = _waypoints[_currentWaypointIndex].position;
+            print($"Waypoint {_currentWaypointIndex} reached, {_waypoints.Count - _currentWaypointIndex} waypoints left.");
+            if (_currentWaypointIndex >= _waypoints.Count)
+                OnPathCompleted -= GetNextWaypoint;
+        }
     }
 }

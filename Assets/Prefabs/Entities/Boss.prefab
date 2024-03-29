@@ -122,6 +122,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9a604492ad089246baeec7d19bd4c84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   _diagonalCost: 14
   _straightCost: 10
 --- !u!114 &6810126444432453413
@@ -136,12 +139,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b4fe012d37c3e04d9400d754a4fba34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 1
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   p_speed: 5
-  p_obstacleCheckDistance: 1
+  p_obstacleCheckDistance: 0.25
   p_obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 64
   p_pathColor: {r: 1, g: 0, b: 0, a: 1}
+  p_waitTime: 1
   _waypoints: []
 --- !u!1 &9005010927722937738
 GameObject:

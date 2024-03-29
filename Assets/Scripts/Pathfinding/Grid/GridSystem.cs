@@ -1,9 +1,10 @@
 using System.Linq;
+using FishNet.Object;
 using UnityEngine;
 
 namespace Examen.Pathfinding.Grid
 {
-    public class GridSystem : MonoBehaviour
+    public class GridSystem : NetworkBehaviour
     {
         [SerializeField] private bool _showGrid = true;
         [SerializeField] private float _maxWorldHeight = 30f;
@@ -14,7 +15,6 @@ namespace Examen.Pathfinding.Grid
         [SerializeField] private LayerMask _obstacleLayerMask;
         [SerializeField] private Cell _cellPrefab;
         [SerializeField] private int _cellSize = 10;
-        [SerializeField] private bool _useRefinedConnections = true;
         [SerializeField] Vector2Int _gridSize;
         [SerializeField] private float _nodeDistance = 1f;
         [SerializeField] private int _maxNodeConnections = 3;
@@ -26,6 +26,7 @@ namespace Examen.Pathfinding.Grid
 
         private void OnEnable() => CreateGrid();
 
+        //[Server]
         public void CreateGrid()
         {
             _nodes = new Node[_gridSize.x, _gridSize.y];
@@ -48,7 +49,7 @@ namespace Examen.Pathfinding.Grid
 
             newNode = ConfigureNode(newNode, nodePosition);
             _nodes[x, y] = newNode;
-            newNode.gridPosition = new Vector2Int(x, y);
+            newNode.GridPosition = new Vector2Int(x, y);
         }
 
         private Vector3 CalculateNodePosition(int x, int y) 
@@ -58,11 +59,11 @@ namespace Examen.Pathfinding.Grid
         {
             if (IsWalkableArea(nodePosition, out float elevation))
             {
-                node.elevation = elevation;
-                node.position = new Vector3(nodePosition.x, elevation, nodePosition.z);
-                node.isWalkable = true;
-                node.maxConnectionDistance = _maxConnectionDistance;
-                node.maxElevationDifference = _maxElevationDifference;
+                node.Elevation = elevation;
+                node.Position = new Vector3(nodePosition.x, elevation, nodePosition.z);
+                node.IsWalkable = true;
+                node.MaxConnectionDistance = _maxConnectionDistance;
+                node.MaxElevationDifference = _maxElevationDifference;
             }
 
             return node;
@@ -137,18 +138,18 @@ namespace Examen.Pathfinding.Grid
             Cell cell = _cells[cellX, cellY];
             foreach (Node node in cell.Nodes)
             {
-                Vector3 position = node.position;
+                Vector3 position = node.Position;
                 if (IsWalkableArea(position, out float elevation))
                 {
-                    node.isWalkable = true;
-                    node.elevation = elevation;
-                    node.position = new Vector3(position.x, elevation, position.z);
-                    node.maxConnectionDistance = _maxConnectionDistance;
-                    node.maxElevationDifference = _maxElevationDifference;
+                    node.IsWalkable = true;
+                    node.Elevation = elevation;
+                    node.Position = new Vector3(position.x, elevation, position.z);
+                    node.MaxConnectionDistance = _maxConnectionDistance;
+                    node.MaxElevationDifference = _maxElevationDifference;
                 }
                 else
                 {
-                    node.isWalkable = false;
+                    node.IsWalkable = false;
                 }
             }
 
@@ -177,17 +178,6 @@ namespace Examen.Pathfinding.Grid
 
                     if (otherNode == null)
                         continue;
-                    
-                    // perform linecast between nodes to check for obstacles
-                    if (_useRefinedConnections)
-                    {
-                        Vector3 direction = otherNode.position - currentNode.position;
-                        float distance = Vector3.Distance(currentNode.position, otherNode.position);
-                        Ray ray = new Ray(currentNode.position, direction);
-
-                        if (Physics.Linecast(ray.origin, ray.origin + ray.direction * distance))
-                            continue;
-                    }
 
                     currentNode.AddConnectedNode(otherNode);
                 }
@@ -243,19 +233,19 @@ namespace Examen.Pathfinding.Grid
             {
                 foreach (Node node in _nodes)
                 {
-                    if (!node.isWalkable)
+                    if (!node.IsWalkable)
                         continue;
                     
                     Gizmos.color = Color.blue;
-                    Gizmos.DrawSphere(node.position, 0.1f);
+                    Gizmos.DrawSphere(node.Position, 0.1f);
                 
                     Gizmos.color = Color.cyan;
-                    foreach (Node connectedNode in node.connectedNodes)
+                    foreach (Node connectedNode in node.ConnectedNodes)
                     {
-                        if (!connectedNode.isWalkable)
+                        if (!connectedNode.IsWalkable)
                             continue;
                         
-                        Gizmos.DrawLine(node.position, connectedNode.position);
+                        Gizmos.DrawLine(node.Position, connectedNode.Position);
                     }
                 }
             }
