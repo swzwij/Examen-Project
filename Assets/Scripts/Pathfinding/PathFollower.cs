@@ -31,12 +31,12 @@ namespace Examen.Pathfinding
 
         public event Action OnPathCompleted;
 
-        protected virtual void Start()
+        protected virtual void Start() 
         {
             p_pathfinder = GetComponent<Pathfinder>();
 
             if (TryGetComponent(out p_pointer))
-                p_pointer.OnPointedAtPosition += StartPath;
+                p_pointer.OnPointedAtPosition += ProcessPointerPosition;
         }
 
         protected virtual void FixedUpdate()
@@ -48,7 +48,25 @@ namespace Examen.Pathfinding
             }
         }
 
-        //[ServerRpc]
+
+        
+        protected void ProcessPointerPosition(Vector3 position)
+        {
+            if (!IsOwner)
+                return;
+            PreProcessPointerPosition(position);
+        }
+
+        [ServerRpc]
+        private void PreProcessPointerPosition(Vector3 position)
+        {
+            if (p_waitForClearance != null)
+                StopCoroutine(p_waitForClearance);
+
+            StartPath(position);
+        }
+
+        [Server]
         public void StartPath(Vector3 target)
         {
             // if (!IsOwner)
@@ -67,6 +85,7 @@ namespace Examen.Pathfinding
                 p_followPathCoroutine = StartCoroutine(FollowPath());
         }
 
+        [Server]
         protected IEnumerator FollowPath()
         {
             ResetBlockage();
@@ -98,14 +117,13 @@ namespace Examen.Pathfinding
             transform.position = position;
         }
 
+        [Server]
         protected void ResetBlockage() => p_hasFoundBlockage = false;
 
         protected virtual void OnDisable()
         {
             if (p_pointer != null)
                 p_pointer.OnPointedAtPosition -= StartPath;
-            
-            OnPathCompleted -= ResetBlockage;
         }
 
         protected void OnDrawGizmos()

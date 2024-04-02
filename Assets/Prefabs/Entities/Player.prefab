@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 2953861478302212928}
   - component: {fileID: 5755628630257008346}
   - component: {fileID: 4964243218378621144}
-  - component: {fileID: 1851998169087112436}
   - component: {fileID: 431041323644128263}
   - component: {fileID: 3679868855582776512}
   - component: {fileID: 7692977816705919355}
@@ -152,21 +151,6 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 3679868855582776512}
   _diagonalCost: 14
   _straightCost: 10
---- !u!114 &1851998169087112436
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6297853107807436002}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4fb04e21e4138743869dbe8ddedff0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 2
-  _addedNetworkObject: {fileID: 3679868855582776512}
-  _networkObjectCache: {fileID: 3679868855582776512}
 --- !u!114 &431041323644128263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,7 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72487ff4dc28fb8418848132a371b17e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 3
+  _componentIndexCache: 2
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
   _pointerLayerMask:
@@ -203,7 +187,6 @@ MonoBehaviour:
   _networkBehaviours:
   - {fileID: 5755628630257008346}
   - {fileID: 4964243218378621144}
-  - {fileID: 1851998169087112436}
   - {fileID: 431041323644128263}
   - {fileID: 7692977816705919355}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
@@ -234,6 +217,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f1d30f6ad20a7a4daec169bfb05daaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 4
+  _componentIndexCache: 3
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}

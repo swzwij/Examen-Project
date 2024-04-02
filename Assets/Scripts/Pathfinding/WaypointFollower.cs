@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Examen.Pathfinding;
 using Examen.Pathfinding.Grid;
+using FishNet.Object;
 using UnityEngine;
 
 namespace Examen.Pathfinding
@@ -41,7 +41,7 @@ namespace Examen.Pathfinding
             {
                 if (i == _currentWaypointIndex)
                 {
-                    StartPath(_waypoints[i].position);
+                    ProcessPointerPosition(_waypoints[i].position);
                     _completePath.AddRange(p_currentPath);
                 }
                 else
@@ -86,6 +86,7 @@ namespace Examen.Pathfinding
             ContinuePath();
         }
 
+        [ServerRpc]
         public void ContinuePath()
         {
             // if (!IsOwner)

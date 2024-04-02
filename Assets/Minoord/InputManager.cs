@@ -2,22 +2,18 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.InputSystem;
 using System;
-using FishNet.Object;
-using UnityEngine;
 
 namespace Minoord.Input 
 {
-    public class InputManager : NetworkBehaviour
+    public static class InputManager
     {
-        private InputActions _inputAction;
-        private readonly Dictionary<Action<InputAction.CallbackContext>, InputAction> _subscribedInputs = new();
-
-        private void Awake() => _inputAction = new InputActions();
+        private readonly static InputActions _inputAction = new();
+        private readonly static Dictionary<Action<InputAction.CallbackContext>, InputAction> _subscribedInputs = new();
 
         /// <summary>
         /// Enables or Disables Input based on isActive
         /// </summary>
-        public void ToggleAllInputs(bool isActive) 
+        public static void ToggleAllInputs(bool isActive) 
         {
             List<InputAction> actions = _subscribedInputs.Values.ToList();
 
@@ -35,14 +31,14 @@ namespace Minoord.Input
         /// </summary>
         /// <param name="actionName"> The name of the action you want </param>
         /// <returns>Returns the input action you are looking for if it exists </returns>
-        public InputAction TryGetAction(string actionName) => _inputAction.FindAction(actionName);
+        public static InputAction TryGetAction(string actionName) => _inputAction.FindAction(actionName);
 
         /// <summary>
         /// Enables the given action and add the function to the preformed
         /// </summary>
         /// <param name="inputAction"> The action you want to subscribe to</param>
         /// <param name="function"> The function you want to have subscribed</param>
-        public void SubscribeToAction(InputAction inputAction, Action<InputAction.CallbackContext> function)
+        public static void SubscribeToAction(InputAction inputAction, Action<InputAction.CallbackContext> function)
         {
             inputAction.Enable();
             inputAction.performed += function;
@@ -56,7 +52,7 @@ namespace Minoord.Input
         /// <param name="inputName">The name of the action you want</param>
         /// <param name="function"> The function you want to have subscribed</param>
         /// <param name="inputAction"> Gives back the action it subsribed to</param>
-        public void SubscribeToAction(string inputName, Action<InputAction.CallbackContext> function, out InputAction inputAction)
+        public static void SubscribeToAction(string inputName, Action<InputAction.CallbackContext> function, out InputAction inputAction)
         {
             inputAction = TryGetAction(inputName);
             inputAction.Enable();
@@ -71,7 +67,7 @@ namespace Minoord.Input
         /// </summary>
         /// <param name="inputAction"> The action you want to unsubscribe to</param>
         /// <param name="function"> The function you want to have unsubscribed</param>
-        public void UnsubscribeToAction(InputAction inputAction, Action<InputAction.CallbackContext> function)
+        public static void UnsubscribeToAction(InputAction inputAction, Action<InputAction.CallbackContext> function)
         {
             inputAction.performed -= function;
 
@@ -83,7 +79,7 @@ namespace Minoord.Input
         /// </summary>
         /// <param name="inputName">The name of the action you want</param>
         /// <param name="function"> The function you want to have unsubscribed</param>
-        public void UnsubscribeToAction(string inputName, Action<InputAction.CallbackContext> function)
+        public static void UnsubscribeToAction(string inputName, Action<InputAction.CallbackContext> function)
         {
             InputAction inputAction = TryGetAction(inputName);
             inputAction.performed -= function;
@@ -94,7 +90,7 @@ namespace Minoord.Input
         /// <summary>
         /// Unsubscribes each subscribed function from their actions
         /// </summary>
-        public void UnsubscribeToAllActions()
+        public static void UnsubscribeToAllActions()
         {
             foreach (KeyValuePair<Action<InputAction.CallbackContext>, InputAction> input in _subscribedInputs)
                 input.Value.performed -= input.Key;
