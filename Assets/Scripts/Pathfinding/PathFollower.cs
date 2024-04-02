@@ -47,18 +47,11 @@ namespace Examen.Pathfinding
                 StartPath(p_currentTarget);
             }
         }
-
-
         
         protected void ProcessPointerPosition(Vector3 position)
         {
             if (!IsOwner)
                 return;
-            PreProcessPointerPosition(position);
-        }
-
-        protected void PreProcessPointerPositionByPass(Vector3 position)
-        {
             PreProcessPointerPosition(position);
         }
 
