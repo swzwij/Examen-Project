@@ -13,7 +13,7 @@ namespace Examen.Pathfinding
         private int _currentWaypointIndex = 0;
         private Transform _waypointsParent;
 
-        protected override void Start()
+        private void Start() 
         {
             base.Start();
             _waypointsParent = new GameObject().transform;
@@ -41,7 +41,7 @@ namespace Examen.Pathfinding
             {
                 if (i == _currentWaypointIndex)
                 {
-                    ProcessPointerPosition(_waypoints[i].position);
+                    StartPath(_waypoints[i].position);
                     _completePath.AddRange(p_currentPath);
                 }
                 else
@@ -86,12 +86,8 @@ namespace Examen.Pathfinding
             ContinuePath();
         }
 
-        [ServerRpc]
         public void ContinuePath()
         {
-            // if (!IsOwner)
-            //     return;
-
             if (p_followPathCoroutine != null)
                 StopCoroutine(p_followPathCoroutine);
 

@@ -57,8 +57,13 @@ namespace Examen.Pathfinding
             PreProcessPointerPosition(position);
         }
 
+        protected void PreProcessPointerPositionByPass(Vector3 position)
+        {
+            PreProcessPointerPosition(position);
+        }
+
         [ServerRpc]
-        private void PreProcessPointerPosition(Vector3 position)
+        protected void PreProcessPointerPosition(Vector3 position)
         {
             if (p_waitForClearance != null)
                 StopCoroutine(p_waitForClearance);
