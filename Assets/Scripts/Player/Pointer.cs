@@ -16,21 +16,11 @@ namespace Examen.Player
         public Action<Vector3> OnPointedAtPosition;
         public Action<GameObject> OnPointedGameobject;
 
-        private void OnEnable()
+        private void Start()
         {
             InputManager.SubscribeToAction("Click", OnPointPerformed, out _clickAction);
             InputManager.TryGetAction("PointerPosition").Enable();
-        }
 
-        private void OnDisable()
-        {
-            _clickAction.Disable();
-            _clickAction.performed -= OnPointPerformed;
-            InputManager.TryGetAction("PointerPosition").Disable();
-        }
-
-        private void Awake()
-        {
             if (TryGetComponent(out Camera camera))
                 _myCamera = camera;
             else
@@ -42,9 +32,17 @@ namespace Examen.Player
         /// </summary>
         public void PointAtPosition()
         {
+            if (!IsOwner)
+                return;
+
             Vector2 pointerPosition = InputManager.TryGetAction("PointerPosition").ReadValue<Vector2>();
-            
             Ray pointerRay = _myCamera.ScreenPointToRay(pointerPosition);
+
+            ProcessPointerPosition(pointerPosition, pointerRay);
+        }
+
+        private void ProcessPointerPosition(Vector2 pointerPosition, Ray pointerRay)
+        {
             if (Physics.Raycast(pointerRay, out RaycastHit hit, _pointerLayerMask))
             {
                 _pointerWorldPosition = hit.point;
@@ -55,10 +53,17 @@ namespace Examen.Player
 
         private void OnPointPerformed(InputAction.CallbackContext context)
         {
-            /*if(!IsOwner) 
-                return;*/
+            if (!IsOwner)
+                return;
 
             PointAtPosition();
+        }
+
+        private void OnDestroy()
+        {
+            _clickAction.Disable();
+            _clickAction.performed -= OnPointPerformed;
+            InputManager.TryGetAction("PointerPosition").Disable();
         }
     }
 }
