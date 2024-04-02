@@ -12,13 +12,16 @@ namespace Examen.Pathfinding
         private List<Node> _completePath = new();
         private int _currentWaypointIndex = 0;
         private Transform _waypointsParent;
+        private bool _hasInitialised;
 
         protected override void Start() 
         {
-            if (!IsServer)
-                return;
-
             base.Start();
+        }
+
+        private void InitBoss()
+        {
+            Debug.LogError("Init boss");
             _waypointsParent = new GameObject().transform;
             _waypointsParent.name = $"{gameObject.name} - Waypoints";
 
@@ -32,6 +35,7 @@ namespace Examen.Pathfinding
 
             _waypoints.Reverse();
 
+            Debug.LogError(_waypoints.Count);
             if (_waypoints.Count == 0)
                 return;
 
@@ -56,6 +60,7 @@ namespace Examen.Pathfinding
 
             p_currentPath = _completePath;
             p_currentTarget = p_currentPath[^1].Position;
+            Debug.LogError(_waypoints.Count);
         }
 
         protected override void FixedUpdate() 
@@ -63,8 +68,20 @@ namespace Examen.Pathfinding
             if (!IsServer)
                 return;
 
-            if (Vector3.Distance(transform.position, _waypoints[_currentWaypointIndex].position) < 5f 
-            && _currentWaypointIndex < _waypoints.Count-1)
+            if (!_hasInitialised)
+            {
+                _hasInitialised = true;
+                InitBoss();
+            }
+
+            UpdateBoss(_waypoints);
+        }
+
+        [Server]
+        private void UpdateBoss(List<Transform> waypoints)
+        {
+            if (Vector3.Distance(transform.position, waypoints[_currentWaypointIndex].position) < 5f 
+            && _currentWaypointIndex < waypoints.Count-1)
                 _currentWaypointIndex++;
 
             if (IsPathBlocked && !p_hasFoundBlockage)
