@@ -1,4 +1,3 @@
-using Examen.Interactables.Resource;
 using System;
 using System.Collections.Generic;
 using UnityEngine;

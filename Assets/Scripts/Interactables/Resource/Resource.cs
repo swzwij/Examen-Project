@@ -1,13 +1,14 @@
 using Examen.Inventory;
 using Examen.Items;
 using Examen.Poolsystem;
+using FishNet.Object;
 using MarkUlrich.Health;
 using UnityEngine;
 
 namespace Examen.Interactables.Resource
 {
     [RequireComponent(typeof(HealthData))]
-    public class Resource : MonoBehaviour, Interactable
+    public class Resource : NetworkBehaviour, Interactable
     {
         [HideInInspector] public HealthData HealthData;
         [HideInInspector] public PoolSystem poolSystem;
@@ -21,6 +22,7 @@ namespace Examen.Interactables.Resource
         /// <summary>
         /// Sets PoolSystem and HealthData Variables and add StartDeathTimer to the onDie Event.
         /// </summary>
+        [Server]
         public virtual void Start()
         {
             poolSystem = PoolSystem.Instance;
@@ -32,6 +34,7 @@ namespace Examen.Interactables.Resource
         /// <summary>
         /// Resurrect the player if it has healthData.
         /// </summary>
+        [Server]
         public virtual void OnEnable()
         {
             if(HasHealthData)
@@ -41,12 +44,29 @@ namespace Examen.Interactables.Resource
         /// <summary>
         /// Calls on every functionality, that needs to happen when interacting with the resources. 
         /// </summary>
+        [ServerRpc]
         public virtual void Interact()
         {
+            if (!IsOwner)
+                return;
+
             PlayInteractingSound();
-            //playanimation
-            HealthData.TakeDamage(DamageAmount);
             InventorySystem.AddItem(ResourceItem, AmountToGive);
+
+            ServerInteract();
+        }
+
+        [Server]
+        public void ServerInteract()
+        {
+            HealthData.TakeDamage(DamageAmount);
+            ReceiveInteract();
+        }
+
+        [ObserversRpc]
+        public void ReceiveInteract()
+        {
+            //playanimation
         }
 
         /// <summary>

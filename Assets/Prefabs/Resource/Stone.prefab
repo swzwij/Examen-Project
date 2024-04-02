@@ -119,8 +119,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2c1fb24612314d408978a9a58b65ad7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   HealthData: {fileID: 0}
   poolSystem: {fileID: 0}
+  HasHealthData: 0
   ResourceItem: {fileID: 11400000, guid: 52d8885bbe883b2428e8e821aaa5c5b7, type: 2}
   AmountToGive: 1
   DeathTime: 5

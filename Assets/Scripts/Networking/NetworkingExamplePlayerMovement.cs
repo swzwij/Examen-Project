@@ -12,10 +12,10 @@ namespace Examen.Networking
             if (!IsOwner) // Check if this client is allowed to move this player
                 return;
 
-            float horizontalInput = Input.GetAxis("Horizontal");
-            float verticalInput = Input.GetAxis("Vertical");
+            //float horizontalInput = Input.GetAxis("Horizontal");
+            //float verticalInput = Input.GetAxis("Vertical");
 
-            SendInputToServer(horizontalInput, verticalInput);
+            //SendInputToServer(horizontalInput, verticalInput);
         }
 
         [ServerRpc] // ServerRpc sends data to the server
