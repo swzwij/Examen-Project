@@ -22,9 +22,11 @@ namespace Examen.Pathfinding
         protected Pathfinder p_pathfinder;
         protected Pointer p_pointer;
         protected List<Node> p_currentPath = new();
+        protected List<Vector3> P_CurrentPathPositions => p_currentPath.ConvertAll(node => node.Position);
         protected int p_currentNodeIndex = 0;
         protected Coroutine p_followPathCoroutine;
         protected Coroutine p_waitForClearance;
+        protected LineRenderer p_pathRenderer;
 
         public bool IsPathBlocked 
             => Physics.Raycast(transform.position, transform.forward, p_obstacleCheckDistance, p_obstaclesLayerMask);
@@ -34,6 +36,7 @@ namespace Examen.Pathfinding
         protected virtual void Start() 
         {
             p_pathfinder = GetComponent<Pathfinder>();
+            p_pathRenderer = GetComponent<LineRenderer>();
 
             if (TryGetComponent(out p_pointer))
                 p_pointer.OnPointedAtPosition += ProcessPointerPosition;
@@ -41,6 +44,9 @@ namespace Examen.Pathfinding
 
         protected virtual void FixedUpdate()
         {
+            if (!IsOwner)
+                return;
+
             if (IsPathBlocked && !p_hasFoundBlockage)
             {
                 p_hasFoundBlockage = true;
@@ -52,6 +58,7 @@ namespace Examen.Pathfinding
         {
             if (!IsOwner)
                 return;
+
             PreProcessPointerPosition(position);
         }
 
@@ -66,10 +73,7 @@ namespace Examen.Pathfinding
 
         [Server]
         public void StartPath(Vector3 target)
-        {
-            // if (!IsOwner)
-            //     return;
-            
+        {   
             p_currentPath.Clear();
 
             if (p_followPathCoroutine != null)
@@ -97,11 +101,12 @@ namespace Examen.Pathfinding
                     transform.LookAt(currentNode);
 
                     BroadcastPosition(transform.position);
+                    BroadcastPath(P_CurrentPathPositions);
                     Debug.DrawRay(transform.position, transform.forward * p_obstacleCheckDistance, Color.blue);
                     yield return null;
                 }
 
-                p_currentNodeIndex++;
+                p_currentPath.RemoveAt(p_currentNodeIndex);
                 yield return null;
             }
             
@@ -115,27 +120,28 @@ namespace Examen.Pathfinding
             transform.position = position;
         }
 
+        [ObserversRpc]
+        protected void BroadcastPath(List<Vector3> path)
+        {
+            if (!IsOwner)
+                return;
+
+            DrawPath(path);
+        }
+
         [Server]
         protected void ResetBlockage() => p_hasFoundBlockage = false;
+        
+        protected void DrawPath(List<Vector3> path)
+        {
+            p_pathRenderer.positionCount = path.Count;
+            p_pathRenderer.SetPositions(path.ToArray());
+        }
 
         protected virtual void OnDisable()
         {
             if (p_pointer != null)
                 p_pointer.OnPointedAtPosition -= StartPath;
-        }
-
-        protected void OnDrawGizmos()
-        {
-            // if (!IsOwner)
-            //     return;
-
-            if (p_currentPath != null)
-            {
-                Gizmos.color = p_pathColor;
-
-                for (int i = p_currentNodeIndex; i < p_currentPath.Count - 1; i++)
-                    Gizmos.DrawLine(p_currentPath[i].Position, p_currentPath[i + 1].Position);
-            }
         }
     }
 }

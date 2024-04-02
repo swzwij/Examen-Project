@@ -21,7 +21,6 @@ namespace Examen.Pathfinding
 
         private void InitBoss()
         {
-            Debug.LogError("Init boss");
             _waypointsParent = new GameObject().transform;
             _waypointsParent.name = $"{gameObject.name} - Waypoints";
 
@@ -35,7 +34,6 @@ namespace Examen.Pathfinding
 
             _waypoints.Reverse();
 
-            Debug.LogError(_waypoints.Count);
             if (_waypoints.Count == 0)
                 return;
 
@@ -60,7 +58,6 @@ namespace Examen.Pathfinding
 
             p_currentPath = _completePath;
             p_currentTarget = p_currentPath[^1].Position;
-            Debug.LogError(_waypoints.Count);
         }
 
         protected override void FixedUpdate() 
