@@ -15,6 +15,9 @@ namespace Examen.Pathfinding
 
         protected override void Start() 
         {
+            if (!IsServer)
+                return;
+
             base.Start();
             _waypointsParent = new GameObject().transform;
             _waypointsParent.name = $"{gameObject.name} - Waypoints";
@@ -35,6 +38,7 @@ namespace Examen.Pathfinding
             GenerateCompletePath();
         }
 
+        [Server]
         private void GenerateCompletePath()
         {
             for (int i = _currentWaypointIndex; i < _waypoints.Count; i++)
@@ -56,6 +60,9 @@ namespace Examen.Pathfinding
 
         protected override void FixedUpdate() 
         {
+            if (!IsServer)
+                return;
+
             if (Vector3.Distance(transform.position, _waypoints[_currentWaypointIndex].position) < 5f 
             && _currentWaypointIndex < _waypoints.Count-1)
                 _currentWaypointIndex++;
@@ -75,6 +82,7 @@ namespace Examen.Pathfinding
             }
         }
 
+        [Server]
         protected IEnumerator WaitForPathClearance()
         {
             if (p_followPathCoroutine != null)
@@ -86,6 +94,7 @@ namespace Examen.Pathfinding
             ContinuePath();
         }
 
+        [Server]
         public void ContinuePath()
         {
             if (p_followPathCoroutine != null)
