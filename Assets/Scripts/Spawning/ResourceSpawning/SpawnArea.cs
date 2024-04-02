@@ -12,9 +12,11 @@ namespace Examen.Spawning.ResourceSpawning
 
         public List<GameObject> SpawnedResources { set => _spawnedResources.AddRange(value); }
 
-        [Server]
         private void Start()
         {
+            if (!IsServer)
+                return;
+
             for (int i = 0; i < _spawnedResources.Count; i++)
             {
                string resourceName = _spawnedResources[i].GetComponent<Resource>().ResourceItem.Name;

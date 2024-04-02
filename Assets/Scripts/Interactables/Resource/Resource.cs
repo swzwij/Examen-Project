@@ -19,10 +19,10 @@ namespace Examen.Interactables.Resource
         public int DeathTime;
 
         public const int DamageAmount = 1;
+
         /// <summary>
         /// Sets PoolSystem and HealthData Variables and add StartDeathTimer to the onDie Event.
         /// </summary>
-        [Server]
         public virtual void Start()
         {
             poolSystem = PoolSystem.Instance;
@@ -34,7 +34,6 @@ namespace Examen.Interactables.Resource
         /// <summary>
         /// Resurrect the player if it has healthData.
         /// </summary>
-        [Server]
         public virtual void OnEnable()
         {
             if(HasHealthData)
@@ -47,9 +46,6 @@ namespace Examen.Interactables.Resource
         [ServerRpc]
         public virtual void Interact()
         {
-            if (!IsOwner)
-                return;
-
             PlayInteractingSound();
             InventorySystem.AddItem(ResourceItem, AmountToGive);
 
