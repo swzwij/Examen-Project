@@ -1,7 +1,8 @@
+using Examen.Player.PlayerDatabase.Reponses;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Examen.PlayerDatabase
+namespace Examen.Player.PlayerDatabase
 {
     public class PlayerDataFetchterDebug : MonoBehaviour
     {
@@ -9,13 +10,11 @@ namespace Examen.PlayerDatabase
         [SerializeField] private bool _post = false;
 
         [Header("Get Variables")]
-        [SerializeField] private int _getId;
+        [SerializeField] private string _getId;
 
         [Header("Post Variables")]
-        [SerializeField] private int _postId;
-        [SerializeField] private int _level;
+        [SerializeField] private string _postId;
         [SerializeField] private int _exp;
-        [SerializeField] private int _buildings;
 
         private void OnEnable()
         {
@@ -51,19 +50,17 @@ namespace Examen.PlayerDatabase
 
         private void Post()
         {
-            PlayerData playerData = new(_postId, _level, _exp, _buildings);
+            PlayerData playerData = new(_postId, _exp);
             PlayerDataFetcher.UpdatePlayerData(playerData);
         }
 
         private void OnGot(PlayerData data)
         {
             Debug.Log($"Got from player id : {data.id}");
-            Debug.Log($"level : {data.level}");
             Debug.Log($"exp : {data.exp}");
-            Debug.Log($"builds : {data.buildings}");
         }
 
-        private void OnPosted(PlayerData callback)
+        private void OnPosted(PlayerDataUpdateResponse callback)
         {
             Debug.Log("Posted");
             Debug.Log(callback);
