@@ -14,11 +14,9 @@ namespace Examen.Pathfinding
 
         private void OnEnable() => _gridSystem = FindObjectOfType<GridSystem>();
 
+        [Server]
         public List<Node> FindPath(Vector3 startPos, Vector3 targetPos)
         {
-            // if (!IsOwner)
-            //     return null;
-
             Node startNode = _gridSystem.GetNodeFromWorldPosition(startPos);
             Node targetNode = _gridSystem.GetNodeFromWorldPosition(targetPos);
 
@@ -67,6 +65,7 @@ namespace Examen.Pathfinding
             return new();
         }
 
+        [Server]
         private int CalculateDistance(Node a, Node b)
         {
             int xDistance = Mathf.Abs(a.GridPosition.x - b.GridPosition.x);
@@ -82,6 +81,7 @@ namespace Examen.Pathfinding
             return straightDistance;
         }
 
+        [Server]
         private List<Node> RetracePath(Node startNode, Node endNode)
         {
             List<Node> path = new List<Node>();
