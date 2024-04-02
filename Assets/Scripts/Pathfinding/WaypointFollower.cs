@@ -13,7 +13,7 @@ namespace Examen.Pathfinding
         private int _currentWaypointIndex = 0;
         private Transform _waypointsParent;
 
-        private void Start() 
+        protected override void Start() 
         {
             base.Start();
             _waypointsParent = new GameObject().transform;
