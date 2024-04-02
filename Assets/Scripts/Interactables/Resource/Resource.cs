@@ -26,9 +26,6 @@ namespace Examen.Interactables.Resource
         public virtual void Start()
         {
             poolSystem = PoolSystem.Instance;
-            HealthData = GetComponent<HealthData>();
-            HealthData.onDie.AddListener(StartDeathTimer);
-            HasHealthData = true;
         }
 
         /// <summary>
@@ -36,14 +33,27 @@ namespace Examen.Interactables.Resource
         /// </summary>
         public virtual void OnEnable()
         {
-            if(HasHealthData)
-                HealthData.Resurrect(HealthData.MaxHealth);
+            if (!IsServer)
+                return;
+
+            if (!HasHealthData)
+            {
+                HealthData = GetComponent<HealthData>();
+                HasHealthData = true;
+
+                HealthData.onDie.AddListener(StartDeathTimer);
+                HealthData.onDie.AddListener(ToggleGameobject);
+                HealthData.onResurrected.AddListener(ToggleGameobject);
+            }
+
+            HealthData.Resurrect(HealthData.MaxHealth);
+
+            SetNewPostion(transform.position);
         }
 
         /// <summary>
         /// Calls on every functionality, that needs to happen when interacting with the resources. 
         /// </summary>
-        [ServerRpc]
         public virtual void Interact()
         {
             PlayInteractingSound();
@@ -53,17 +63,24 @@ namespace Examen.Interactables.Resource
         }
 
         [Server]
-        public void ServerInteract()
+        public virtual void ServerInteract()
         {
             HealthData.TakeDamage(DamageAmount);
             ReceiveInteract();
         }
 
         [ObserversRpc]
-        public void ReceiveInteract()
+        public virtual void ReceiveInteract()
         {
             //playanimation
         }
+
+        [ObserversRpc]
+        public virtual void SetNewPostion(Vector3 newPosition)
+        {
+            transform.position = newPosition;
+        }
+
 
         /// <summary>
         /// Plays interacting sound.
@@ -81,5 +98,9 @@ namespace Examen.Interactables.Resource
             poolSystem.StartDeathTimer(DeathTime, ResourceItem.Name, transform.parent);
             poolSystem.DespawnObject(ResourceItem.Name, gameObject);
         }
+
+        [ObserversRpc]
+        public void ToggleGameobject() => gameObject.SetActive(gameObject.activeSelf);
+
     }
 }

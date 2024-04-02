@@ -12,7 +12,7 @@ namespace Examen.Spawning.ResourceSpawning
 
         public List<GameObject> SpawnedResources { set => _spawnedResources.AddRange(value); }
 
-        private void Start()
+        private void OnEnable()
         {
             if (!IsServer)
                 return;

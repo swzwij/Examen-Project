@@ -11,7 +11,7 @@ namespace Examen.Player
         private void Start() => _pointer.OnPointedAtPosition += DebugPointer;
         private void OnDisable() => _pointer.OnPointedAtPosition -= DebugPointer;
 
-        private void DebugPointer(Vector3 position) 
+        private void DebugPointer(Vector3 position)
             => Debug.DrawLine(transform.position, position, Color.red, 1f);
         #endregion
 
@@ -22,9 +22,23 @@ namespace Examen.Player
         private void OnEnable()
         {
             _pointer = GetComponent<Pointer>();
-            _pointer.OnPointedGameobject += CheckForInteractable;
+            _pointer.OnPointedGameobject += ProcessPointerGameObject;
         }
 
+        private void ProcessPointerGameObject(GameObject objectInQuestion)
+        {
+            if (!IsOwner)
+                return;
+            PreProcessPointerObject(objectInQuestion);
+        }
+
+        [ServerRpc]
+        private void PreProcessPointerObject(GameObject objectInQuestion)
+        {
+            CheckForInteractable(objectInQuestion);
+        }
+
+        [Server]
         private void CheckForInteractable(GameObject objectInQuestion)
         {
             if (objectInQuestion.TryGetComponent<Interactable>(out Interactable interactable))
