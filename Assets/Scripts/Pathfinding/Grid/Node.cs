@@ -13,6 +13,7 @@ namespace Examen.Pathfinding.Grid
         private float maxConnectionDistance;
         private bool isWalkable;
         private Vector2Int gridPosition;
+        private float _nodeHeightOffset = 0.3f;
         private Node parent;
 
         // Cost variables for A* algorithm
@@ -31,7 +32,12 @@ namespace Examen.Pathfinding.Grid
         public float MaxElevationDifference { get => maxElevationDifference; set => maxElevationDifference = value; }
         public float MaxConnectionDistance { get => maxConnectionDistance; set => maxConnectionDistance = value; }
         public Vector2Int GridPosition { get => gridPosition; set => gridPosition = value; }
+        public float NodeHeightOffset { get => _nodeHeightOffset; set => _nodeHeightOffset = value; }
 
+        /// <summary>
+        /// Represents a node in a grid-based pathfinding system.
+        /// </summary>
+        /// <param name="pos">The position of the node in 3D space.</param>
         public Node(Vector3 pos)
         {
             position = pos;
@@ -42,6 +48,10 @@ namespace Examen.Pathfinding.Grid
             isWalkable = false;
         }
 
+        /// <summary>
+        /// Adds a connected node to the current node if it meets the criteria for elevation difference and connection distance.
+        /// </summary>
+        /// <param name="node">The node to add as a connected node.</param>
         public void AddConnectedNode(Node node)
         {
             if (CalculateElevation(node) <= maxElevationDifference && CalculateDistance(node) <= maxConnectionDistance)
@@ -56,8 +66,6 @@ namespace Examen.Pathfinding.Grid
                 connectedNodes.Add(node);
             }
         }
-
-        public void RemoveConnectedNode(Node node) => connectedNodes.Remove(node);
 
         private float CalculateElevation(Node otherNode) => Mathf.Abs(elevation - otherNode.elevation);
         private float CalculateDistance(Node otherNode) => Vector3.Distance(position, otherNode.position);

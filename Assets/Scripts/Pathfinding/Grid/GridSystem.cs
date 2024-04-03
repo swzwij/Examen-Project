@@ -37,6 +37,9 @@ namespace Examen.Pathfinding.Grid
             }
         }
 
+        /// <summary>
+        /// Creates the grid by initializing nodes, connecting them, and initializing cells.
+        /// </summary>
         [Server]
         public void CreateGrid()
         {
@@ -79,6 +82,7 @@ namespace Examen.Pathfinding.Grid
                 node.IsWalkable = true;
                 node.MaxConnectionDistance = _maxConnectionDistance;
                 node.MaxElevationDifference = _maxElevationDifference;
+                node.NodeHeightOffset = _nodeHeightOffset;
             }
 
             return node;
@@ -132,6 +136,12 @@ namespace Examen.Pathfinding.Grid
                     cell.AddNode(_nodes[nodeX, nodeY]);
         }
 
+        /// <summary>
+        /// Checks if an area is walkable at the given position and returns the elevation of the area.
+        /// </summary>
+        /// <param name="position">The position to check.</param>
+        /// <param name="elevation">The elevation of the walkable area.</param>
+        /// <returns>True if the area is walkable, false otherwise.</returns>
         [Server]
         public bool IsWalkableArea(Vector3 position, out float elevation)
         {
@@ -154,6 +164,11 @@ namespace Examen.Pathfinding.Grid
         }
 
 
+        /// <summary>
+        /// Updates the specified cell in the grid system.
+        /// </summary>
+        /// <param name="cellX">The x-coordinate of the cell.</param>
+        /// <param name="cellY">The y-coordinate of the cell.</param>
         [Server]
         public void UpdateCell(int cellX, int cellY)
         {
@@ -208,6 +223,9 @@ namespace Examen.Pathfinding.Grid
             }
         }
 
+        /// <summary>
+        /// Clears the grid by resetting the nodes and cells, and destroying any existing cells.
+        /// </summary>
         [Server]
         public void ClearGrid()
         {
@@ -223,6 +241,9 @@ namespace Examen.Pathfinding.Grid
                 DestroyImmediate(transform.GetChild(i).gameObject);
         }
 
+        /// <summary>
+        /// Represents a node in the grid system.
+        /// </summary>
         [Server]
         public Node GetNodeFromWorldPosition(Vector3 worldPosition)
         {

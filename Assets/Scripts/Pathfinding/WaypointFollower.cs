@@ -14,10 +14,7 @@ namespace Examen.Pathfinding
         private Transform _waypointsParent;
         private bool _hasInitialised;
 
-        protected override void Start() 
-        {
-            base.Start();
-        }
+        protected override void Start() => base.Start();
 
         private void InitBoss()
         {
@@ -108,6 +105,9 @@ namespace Examen.Pathfinding
             ContinuePath();
         }
 
+        /// <summary>
+        /// Continues following the current path.
+        /// </summary>
         [Server]
         public void ContinuePath()
         {

@@ -10,7 +10,6 @@ namespace Examen.Pathfinding.Grid
 
         private BoxCollider _collider;
 
-        private HashSet<Cell> _connectedCells = new();
         private HashSet<Node> _nodes = new();
         public GridSystem GridSystem { private get; set; }
         public int CellX { private get; set; }
@@ -27,13 +26,12 @@ namespace Examen.Pathfinding.Grid
         }
         
         private void OnTriggerEnter(Collider other) => GridSystem.UpdateCell(CellX, CellY);
-
         private void OnTriggerExit(Collider other) => GridSystem.UpdateCell(CellX, CellY);
 
-        //[Server]
+        /// <summary>
+        /// Adds a node to the cell.
+        /// </summary>
+        /// <param name="node">The node to add.</param>
         public void AddNode(Node node) => _nodes.Add(node);
-
-        //[Server]
-        public void AddConnectedCell(Cell cell) => _connectedCells.Add(cell);
     }
 }

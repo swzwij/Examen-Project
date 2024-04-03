@@ -264,11 +264,11 @@ PrefabInstance:
     - target: {fileID: 4374533680099441062, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: _addedNetworkObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2080137326}
     - target: {fileID: 4374533680099441062, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: _networkObjectCache
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2080137326}
     - target: {fileID: 5760878545938402771, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: m_Name
       value: Boss (2)
@@ -280,10 +280,18 @@ PrefabInstance:
     - target: {fileID: 6810126444432453413, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: _addedNetworkObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2080137326}
     - target: {fileID: 6810126444432453413, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: _networkObjectCache
       value: 
+      objectReference: {fileID: 2080137326}
+    - target: {fileID: 9181585673909579258, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
+      propertyPath: _scenePathHash
+      value: 993922286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9181585673909579258, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
+      propertyPath: <SceneId>k__BackingField
+      value: 4268863714639941810
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -474,11 +482,11 @@ PrefabInstance:
     - target: {fileID: 4374533680099441062, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: _addedNetworkObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1149311782}
     - target: {fileID: 4374533680099441062, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: _networkObjectCache
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1149311782}
     - target: {fileID: 5760878545938402771, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: m_Name
       value: Boss (1)
@@ -490,10 +498,18 @@ PrefabInstance:
     - target: {fileID: 6810126444432453413, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: _addedNetworkObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1149311782}
     - target: {fileID: 6810126444432453413, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: _networkObjectCache
       value: 
+      objectReference: {fileID: 1149311782}
+    - target: {fileID: 9181585673909579258, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
+      propertyPath: _scenePathHash
+      value: 993922286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9181585673909579258, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
+      propertyPath: <SceneId>k__BackingField
+      value: 4268863714102196558
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1891,6 +1907,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1642464949}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1149311782 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9181585673909579258, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
+  m_PrefabInstance: {fileID: 278400877}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1168206142
 GameObject:
   m_ObjectHideFlags: 0
@@ -2914,6 +2941,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 923449931}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2080137326 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9181585673909579258, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
+  m_PrefabInstance: {fileID: 155608918}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2085682137
 GameObject:
   m_ObjectHideFlags: 0
@@ -3217,6 +3255,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1834133555745107547, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
   m_PrefabInstance: {fileID: 8338074527931837784}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1823634975853929828 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9181585673909579258, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
+  m_PrefabInstance: {fileID: 8338074527931837784}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &8338074527931837784
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3284,11 +3333,11 @@ PrefabInstance:
     - target: {fileID: 4374533680099441062, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: _addedNetworkObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1823634975853929828}
     - target: {fileID: 4374533680099441062, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: _networkObjectCache
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1823634975853929828}
     - target: {fileID: 5760878545938402771, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: m_Name
       value: Boss
@@ -3300,10 +3349,18 @@ PrefabInstance:
     - target: {fileID: 6810126444432453413, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: _addedNetworkObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1823634975853929828}
     - target: {fileID: 6810126444432453413, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: _networkObjectCache
       value: 
+      objectReference: {fileID: 1823634975853929828}
+    - target: {fileID: 9181585673909579258, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
+      propertyPath: _scenePathHash
+      value: 993922286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9181585673909579258, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
+      propertyPath: <SceneId>k__BackingField
+      value: 4268863714129062481
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

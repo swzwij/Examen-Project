@@ -14,7 +14,6 @@ namespace Examen.Pathfinding
         [SerializeField] protected float p_speed = 5f;
         [SerializeField] protected float p_obstacleCheckDistance = 1f;
         [SerializeField] protected LayerMask p_obstaclesLayerMask;
-        [SerializeField] protected Color p_pathColor = Color.red;
         [SerializeField] protected float p_waitTime = 1f;
 
         protected Vector3 p_currentTarget;
@@ -30,7 +29,6 @@ namespace Examen.Pathfinding
 
         public bool IsPathBlocked 
             => Physics.Raycast(transform.position, transform.forward, p_obstacleCheckDistance, p_obstaclesLayerMask);
-
         public event Action OnPathCompleted;
 
         protected virtual void Start() 
@@ -71,6 +69,10 @@ namespace Examen.Pathfinding
             StartPath(position);
         }
 
+        /// <summary>
+        /// Starts the pathfinding process to the specified target.
+        /// </summary>
+        /// <param name="target">The target position to pathfind to.</param>
         [Server]
         public void StartPath(Vector3 target)
         {   
@@ -94,11 +96,16 @@ namespace Examen.Pathfinding
             while (p_currentNodeIndex < p_currentPath.Count)
             {
                 Vector3 currentNode = p_currentPath[p_currentNodeIndex].Position;
+                Vector3 adjustedNode = currentNode;
+                adjustedNode.y = transform.localScale.y/2 + 
+                p_currentPath[p_currentNodeIndex].NodeHeightOffset + 
+                p_currentPath[p_currentNodeIndex].Position.y;
 
-                while (Vector3.Distance(transform.position, currentNode) > 0.1f)
+                while (Vector3.Distance(transform.position, adjustedNode) > 0.1f)
                 {
-                    transform.position = Vector3.MoveTowards(transform.position, currentNode, p_speed * Time.deltaTime);
-                    transform.LookAt(currentNode);
+                    transform.position = 
+                        Vector3.MoveTowards(transform.position, adjustedNode, p_speed * Time.deltaTime);
+                    transform.LookAt(adjustedNode);
 
                     BroadcastPosition(transform.position);
                     BroadcastPath(P_CurrentPathPositions);
@@ -115,10 +122,7 @@ namespace Examen.Pathfinding
         }
 
         [ObserversRpc]
-        protected void BroadcastPosition(Vector3 position)
-        {
-            transform.position = position;
-        }
+        protected void BroadcastPosition(Vector3 position) => transform.position = position;
 
         [ObserversRpc]
         protected void BroadcastPath(List<Vector3> path)

@@ -14,6 +14,12 @@ namespace Examen.Pathfinding
 
         private void OnEnable() => _gridSystem = FindObjectOfType<GridSystem>();
 
+        /// <summary>
+        /// Finds a path from the specified start position to the target position using the A* pathfinding algorithm.
+        /// </summary>
+        /// <param name="startPos">The starting position.</param>
+        /// <param name="targetPos">The target position.</param>
+        /// <returns>A list of nodes representing the path from the start position to the target position.</returns>
         [Server]
         public List<Node> FindPath(Vector3 startPos, Vector3 targetPos)
         {
