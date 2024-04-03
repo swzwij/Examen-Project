@@ -1,67 +1,53 @@
 using Examen.Player.PlayerDatabase.Reponses;
-using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace Examen.Player.PlayerDatabase
 {
     public class PlayerDataFetchterDebug : MonoBehaviour
     {
-        [SerializeField] private bool _get = false;
-        [SerializeField] private bool _post = false;
+        [Header("Fetch")]
+        [SerializeField] private bool _sendFetchRequest = false;
 
-        [Header("Get Variables")]
-        [SerializeField] private string _getId;
-
-        [Header("Post Variables")]
+        [Header("Update")]
+        [SerializeField] private bool _sendUpdateRequest = false;
         [SerializeField] private int _exp;
-
-        private void OnEnable()
-        {
-            PlayerDataFetcher.OnDataFetched += OnGot;
-            PlayerDataFetcher.OnDataUpdated += OnPosted;
-        }
-
-        private void OnDisable()
-        {
-            PlayerDataFetcher.OnDataFetched -= OnGot;
-            PlayerDataFetcher.OnDataUpdated -= OnPosted;
-        }
 
         private void Update()
         {
-            if(_get)
+            if (_sendFetchRequest)
             {
-                _get = false;
+                _sendFetchRequest = false;
                 Get();
             }
 
-            if(_post)
+            if (_sendUpdateRequest)
             {
-                _post = false;
+                _sendUpdateRequest = false;
                 Post();
             }
         }
 
         private void Get()
         {
-            PlayerDataFetcher.Fetch();
+            Action<PlayerData> OnFetched = (data) =>
+            {
+                Debug.Log($"Got from player id : {data.id}");
+                Debug.Log($"exp : {data.exp}");
+            };
+
+            PlayerDataFetcher.Fetch(OnFetched);
         }
 
         private void Post()
         {
-            PlayerDataFetcher.UpdatePlayerExp(_exp);
-        }
+            Action<PlayerDataUpdateResponse> OnUpdated = (callback) =>
+            {
+                Debug.Log("Posted");
+                Debug.Log(callback);
+            };
 
-        private void OnGot(PlayerData data)
-        {
-            Debug.Log($"Got from player id : {data.id}");
-            Debug.Log($"exp : {data.exp}");
-        }
-
-        private void OnPosted(PlayerDataUpdateResponse callback)
-        {
-            Debug.Log("Posted");
-            Debug.Log(callback);
+            PlayerDataFetcher.UpdatePlayerExp(_exp, OnUpdated);
         }
     }
 }

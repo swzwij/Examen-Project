@@ -11,19 +11,9 @@ namespace Examen.Player.PlayerDatabase
     public static class PlayerDataFetcher
     {
         /// <summary>
-        /// Callback invoked when player data is successfully fetched from the database.
-        /// </summary>
-        public static Action<PlayerData> OnDataFetched;
-
-        /// <summary>
-        /// Callback invoked when an update to the player's data is successful.
-        /// </summary>
-        public static Action<PlayerDataUpdateResponse> OnDataUpdated;
-
-        /// <summary>
         /// Initiates the process of fetching player data from the database.
         /// </summary>
-        public static void Fetch()
+        public static void Fetch(Action<PlayerData> OnDataRecieved)
         {
             PlayerDataFetchRequest request = new(GetLocalIPv4());
             APIManager.Instance.GetCall<PlayerData>(request, OnDataRecieved, OnRequestError);
@@ -33,16 +23,12 @@ namespace Examen.Player.PlayerDatabase
         /// Initiates an update to the player's experience (exp) on the database.
         /// </summary>
         /// <param name="exp">The new experience value for the player.</param>
-        public static void UpdatePlayerExp(int exp)
+        public static void UpdatePlayerExp(int exp, Action<PlayerDataUpdateResponse> OnDataUpdateSuccess = null)
         {
             PlayerData playerData = new(GetLocalIPv4(), exp);
             PlayerDataUpdateRequest request = new(playerData);
             APIManager.Instance.GetCall<PlayerDataUpdateResponse>(request, OnDataUpdateSuccess, OnRequestError);
         }
-
-        private static void OnDataRecieved(PlayerData playerData) => OnDataFetched?.Invoke(playerData);
-
-        private static void OnDataUpdateSuccess(PlayerDataUpdateResponse response) => OnDataUpdated?.Invoke(response);
 
         private static void OnRequestError(APIStatus status) => Debug.LogError("Request Error: " + status);
 
