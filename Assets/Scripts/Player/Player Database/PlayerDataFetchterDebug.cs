@@ -13,7 +13,6 @@ namespace Examen.Player.PlayerDatabase
         [SerializeField] private string _getId;
 
         [Header("Post Variables")]
-        [SerializeField] private string _postId;
         [SerializeField] private int _exp;
 
         private void OnEnable()
@@ -45,13 +44,12 @@ namespace Examen.Player.PlayerDatabase
 
         private void Get()
         {
-            PlayerDataFetcher.Fetch(_getId);
+            PlayerDataFetcher.Fetch();
         }
 
         private void Post()
         {
-            PlayerData playerData = new(_postId, _exp);
-            PlayerDataFetcher.UpdatePlayerData(playerData);
+            PlayerDataFetcher.UpdatePlayerExp(_exp);
         }
 
         private void OnGot(PlayerData data)
