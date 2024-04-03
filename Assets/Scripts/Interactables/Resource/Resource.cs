@@ -33,23 +33,32 @@ namespace Examen.Interactables.Resource
         /// </summary>
         public virtual void OnEnable()
         {
-            if (!IsServer)
-                return;
-
             if (!HasHealthData)
             {
                 HealthData = GetComponent<HealthData>();
                 HasHealthData = true;
 
                 HealthData.onDie.AddListener(StartDeathTimer);
-                HealthData.onDie.AddListener(ToggleGameobject);
-                HealthData.onResurrected.AddListener(ToggleGameobject);
             }
+
+
+            if (!IsServer)
+                return;
+            else
+                SetNewPostion(transform.position);
+
+            HealthData.onDie.AddListener(ToggleGameobject);
+            HealthData.onResurrected.AddListener(ToggleGameobject);
 
             HealthData.Resurrect(HealthData.MaxHealth);
 
-            SetNewPostion(transform.position);
+            HealthData.onResurrected.RemoveListener(ToggleGameobject);
         }
+
+        public virtual void OnDisable()
+        {
+            HealthData.onDie.RemoveListener(ToggleGameobject);
+        } 
 
         /// <summary>
         /// Calls on every functionality, that needs to happen when interacting with the resources. 
@@ -67,6 +76,7 @@ namespace Examen.Interactables.Resource
         {
             HealthData.TakeDamage(DamageAmount);
             ReceiveInteract();
+
         }
 
         [ObserversRpc]
@@ -100,7 +110,7 @@ namespace Examen.Interactables.Resource
         }
 
         [ObserversRpc]
-        public void ToggleGameobject() => gameObject.SetActive(gameObject.activeSelf);
+        public void ToggleGameobject() => gameObject.SetActive(!gameObject.activeSelf);
 
     }
 }
