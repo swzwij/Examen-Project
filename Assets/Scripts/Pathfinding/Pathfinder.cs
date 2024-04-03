@@ -37,43 +37,60 @@ namespace Examen.Pathfinding
 
             while (_openSet.Count > 0)
             {
-                Node currentNode = null;
-                foreach (var node in _openSet)
-                {
-                    if (currentNode == null || node.FinalCost < currentNode.FinalCost || (node.FinalCost == currentNode.FinalCost && node.HeuristicCost < currentNode.HeuristicCost))
-                    {
-                        currentNode = node;
-                    }
-                }
+                GetNodeWithLowestCost(out Node currentNode);
 
                 if (currentNode == null)
                     break;
-
-                _openSet.Remove(currentNode);
-                _closedSet.Add(currentNode);
+                
+                MoveToClosedSet(currentNode);
 
                 if (currentNode == targetNode)
                     return RetracePath(startNode, targetNode);
 
-                foreach (Node neighbor in currentNode.ConnectedNodes)
-                {
-                    if (!neighbor.IsWalkable || _closedSet.TryGetValue(neighbor, out _))
-                        continue;
-
-                    int newMovementCostToNeighbor = currentNode.GoalCost + CalculateDistance(currentNode, neighbor);
-                    if (newMovementCostToNeighbor < neighbor.GoalCost || !_openSet.TryGetValue(neighbor, out _))
-                    {
-                        neighbor.GoalCost = newMovementCostToNeighbor;
-                        neighbor.HeuristicCost = CalculateDistance(neighbor, targetNode);
-                        neighbor.Parent = currentNode;
-
-                        if (!_openSet.TryGetValue(neighbor, out _))
-                            _openSet.Add(neighbor);
-                    }
-                }
+                ProcessNeighbours(targetNode, currentNode);
             }
 
             return _path;
+        }
+
+        private Node GetNodeWithLowestCost(out Node currentNode)
+        {
+            currentNode = null;
+            foreach (Node node in _openSet)
+            {
+                if (currentNode == null || node.FinalCost < currentNode.FinalCost || (node.FinalCost == currentNode.FinalCost && node.HeuristicCost < currentNode.HeuristicCost))
+                {
+                    currentNode = node;
+                }
+            }
+
+            return currentNode;
+        }
+
+        private void MoveToClosedSet(Node currentNode)
+        {
+            _openSet.Remove(currentNode);
+            _closedSet.Add(currentNode);
+        }
+
+        private void ProcessNeighbours(Node targetNode, Node currentNode)
+        {
+            foreach (Node neighbour in currentNode.ConnectedNodes)
+            {
+                if (!neighbour.IsWalkable || _closedSet.TryGetValue(neighbour, out _))
+                    continue;
+
+                int newMovementCostToNeighbor = currentNode.GoalCost + CalculateDistance(currentNode, neighbour);
+                if (newMovementCostToNeighbor < neighbour.GoalCost || !_openSet.TryGetValue(neighbour, out _))
+                {
+                    neighbour.GoalCost = newMovementCostToNeighbor;
+                    neighbour.HeuristicCost = CalculateDistance(neighbour, targetNode);
+                    neighbour.Parent = currentNode;
+
+                    if (!_openSet.TryGetValue(neighbour, out _))
+                        _openSet.Add(neighbour);
+                }
+            }
         }
 
         [Server]

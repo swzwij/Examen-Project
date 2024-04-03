@@ -133,7 +133,6 @@ MonoBehaviour:
   p_obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 64
-  p_pathColor: {r: 1, g: 0, b: 0, a: 1}
   p_waitTime: 1
 --- !u!114 &4964243218378621144
 MonoBehaviour:
@@ -170,6 +169,7 @@ MonoBehaviour:
   _pointerLayerMask:
     serializedVersion: 2
     m_Bits: 119
+  _pointerDistance: 10000
 --- !u!114 &3679868855582776512
 MonoBehaviour:
   m_ObjectHideFlags: 0

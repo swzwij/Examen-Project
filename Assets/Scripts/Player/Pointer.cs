@@ -9,6 +9,7 @@ namespace Examen.Player
     public class Pointer : NetworkBehaviour
     {
         [SerializeField] private LayerMask _pointerLayerMask;
+        [SerializeField] private float _pointerDistance = 100f;
         private Camera _myCamera; // Replace with camera manager once this is implemented
         private Vector3 _pointerWorldPosition;
         private InputAction _clickAction;
@@ -43,7 +44,7 @@ namespace Examen.Player
 
         private void ProcessPointerPosition(Vector2 pointerPosition, Ray pointerRay)
         {
-            if (Physics.Raycast(pointerRay, out RaycastHit hit, _pointerLayerMask))
+            if (Physics.Raycast(pointerRay, out RaycastHit hit, _pointerDistance, _pointerLayerMask))
             {
                 _pointerWorldPosition = hit.point;
                 OnPointedAtPosition?.Invoke(_pointerWorldPosition);

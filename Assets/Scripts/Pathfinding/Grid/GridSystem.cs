@@ -286,7 +286,7 @@ namespace Examen.Pathfinding.Grid
                 new Vector3(_gridSize.x * _nodeDistance / 2f, _maxWorldHeight / 2, _gridSize.y * _nodeDistance / 2f), new Vector3(_gridSize.x * _nodeDistance, _maxWorldHeight, _gridSize.y * _nodeDistance)
             );
 
-            if (_nodes != null)
+            if (_nodes == null || _nodes.Length == 0)
                 return;
             
             foreach (Node node in _nodes)

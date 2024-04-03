@@ -43,7 +43,10 @@ namespace Examen.Pathfinding
 
         protected virtual void FixedUpdate()
         {
-            if (!IsOwner || !IsPathBlocked || p_hasFoundBlockage)
+            if (!IsOwner)
+                return;
+
+            if (!IsPathBlocked || p_hasFoundBlockage)
                 return;
 
             p_hasFoundBlockage = true;

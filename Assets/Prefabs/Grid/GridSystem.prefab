@@ -47,7 +47,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 0}
   _networkObjectCache: {fileID: 0}
-  _showGrid: 1
+  _showGrid: 0
   _maxWorldHeight: 30
   _maxElevationDifference: 1.4
   _maxConnectionDistance: 3
@@ -60,6 +60,6 @@ MonoBehaviour:
     m_Bits: 64
   _cellPrefab: {fileID: 6240166786542947317, guid: 16fc201a78392d74bb4502a776621619, type: 3}
   _cellSize: 8
-  _gridSize: {x: 32, y: 64}
+  _gridSize: {x: 54, y: 126}
   _nodeDistance: 2
   _maxNodeConnections: 3
