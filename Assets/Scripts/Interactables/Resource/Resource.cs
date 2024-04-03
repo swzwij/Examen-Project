@@ -10,46 +10,44 @@ namespace Examen.Interactables.Resource
     [RequireComponent(typeof(HealthData))]
     public class Resource : NetworkBehaviour, Interactable
     {
-        [HideInInspector] public HealthData HealthData;
-        [HideInInspector] public PoolSystem poolSystem;
-        [HideInInspector] public bool HasHealthData;
-
         public Item ResourceItem;
-        public int AmountToGive = 1;
-        public int DeathTime;
 
-        public const int DamageAmount = 1;
+        [SerializeField] protected int p_amountToGive = 1;
+        [SerializeField] protected int p_damageAmount = 1;
+        [SerializeField] protected int p_deathTime;
+
+        protected HealthData p_healthData;
+        protected PoolSystem p_poolSystem;
+        protected bool p_hasHealthData;
 
         /// <summary>
         /// Sets PoolSystem instance.
         /// </summary>
-        public virtual void Start()
-        {
-            poolSystem = PoolSystem.Instance;
-        }
+        public virtual void Start() => p_poolSystem = PoolSystem.Instance;
+
 
         /// <summary>
-        /// If object isServer, it resurrects this gameobject and calls for the clients to mimic its position and active state
+        /// If object isServer, it resurrects this gameobject and calls for the clients to mimic its position and active state.
         /// </summary>
         public virtual void OnEnable()
         {
             if (!IsServer)
                 return;
 
-            if (!HasHealthData)
+            if (!p_hasHealthData)
             {
-                HealthData = GetComponent<HealthData>();
-                HasHealthData = true;
+                p_healthData = GetComponent<HealthData>();
+                p_hasHealthData = true;
 
-                HealthData.onDie.AddListener(StartDeathTimer);
-                HealthData.onDie.AddListener(ToggleGameobject);
+                p_healthData.onDie.AddListener(StartDeathTimer);
+                p_healthData.onDie.AddListener(ToggleGameobject);
 
-                HealthData.onResurrected.AddListener(ToggleGameobject);
+                p_healthData.onResurrected.AddListener(ToggleGameobject);
             }
 
             SetNewPostion(transform.position);
 
-            HealthData.Resurrect(HealthData.MaxHealth);
+            p_healthData.Resurrect(p_healthData.MaxHealth);
         }
 
         /// <summary>
@@ -57,8 +55,8 @@ namespace Examen.Interactables.Resource
         /// </summary>
         public virtual void StartDeathTimer()
         {
-            poolSystem.StartDeathTimer(DeathTime, ResourceItem.Name, transform.parent);
-            poolSystem.DespawnObject(ResourceItem.Name, gameObject);
+            p_poolSystem.StartDeathTimer(p_deathTime, ResourceItem.Name, transform.parent);
+            p_poolSystem.DespawnObject(ResourceItem.Name, gameObject);
         }
 
         /// <summary>
@@ -81,7 +79,7 @@ namespace Examen.Interactables.Resource
         public virtual void Interact()
         {
             PlayInteractingSound();
-            InventorySystem.AddItem(ResourceItem, AmountToGive);
+            InventorySystem.AddItem(ResourceItem, p_amountToGive);
 
             ServerInteract();
         }
@@ -91,7 +89,7 @@ namespace Examen.Interactables.Resource
         /// </summary>
         public virtual void PlayInteractingSound()
         {
-
+            // Todo: Play interacting sound
         }
 
         /// <summary>
@@ -100,9 +98,8 @@ namespace Examen.Interactables.Resource
         [Server]
         public virtual void ServerInteract()
         {
-            HealthData.TakeDamage(DamageAmount);
+            p_healthData.TakeDamage(p_damageAmount);
             ReceiveInteract();
-
         }
 
         /// <summary>
@@ -111,7 +108,7 @@ namespace Examen.Interactables.Resource
         [ObserversRpc]
         public virtual void ReceiveInteract()
         {
-            //playanimation
+            // Todo: Play given animation
         }
     }
 }

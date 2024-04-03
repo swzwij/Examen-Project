@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 552402148503755518}
   - component: {fileID: 2589754670566915848}
   - component: {fileID: 5770678232989211857}
+  - component: {fileID: 7647144858044333622}
   m_Layer: 0
   m_Name: Stone
   m_TagString: Untagged
@@ -120,14 +121,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _componentIndexCache: 0
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
-  HealthData: {fileID: 0}
-  poolSystem: {fileID: 0}
-  HasHealthData: 0
+  _addedNetworkObject: {fileID: 7647144858044333622}
+  _networkObjectCache: {fileID: 7647144858044333622}
   ResourceItem: {fileID: 11400000, guid: 52d8885bbe883b2428e8e821aaa5c5b7, type: 2}
-  AmountToGive: 1
-  DeathTime: 5
+  p_amountToGive: 1
+  p_damageAmount: 1
+  p_deathTime: 5
 --- !u!114 &5770678232989211857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,3 +156,36 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   isDead: 0
+--- !u!114 &7647144858044333622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6801524543545634848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <IsNested>k__BackingField: 0
+  <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
+  _networkBehaviours:
+  - {fileID: 2589754670566915848}
+  <ParentNetworkObject>k__BackingField: {fileID: 0}
+  <ChildNetworkObjects>k__BackingField: []
+  SerializedTransformProperties:
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    LocalScale: {x: 1, y: 1, z: 1}
+  _isNetworked: 1
+  _isGlobal: 0
+  _initializeOrder: 0
+  _defaultDespawnType: 0
+  NetworkObserver: {fileID: 0}
+  <PrefabId>k__BackingField: 3
+  <SpawnableCollectionId>k__BackingField: 0
+  _scenePathHash: 0
+  <SceneId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 17080091064108601600
