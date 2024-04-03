@@ -32,7 +32,7 @@ namespace Examen.Spawning.ResourceSpawning
                         break;
                     }
 
-                    float amountOfResources = CalculateAmountofResources(area.spawnableResources[j],)
+                    float amountOfResources = CalculateAmountofResources(area, area.spawnableResources[j]);
 
                     SpawnResources(area ,area.spawnableResources[j].SpawnResource, amountOfResources);
                 }
