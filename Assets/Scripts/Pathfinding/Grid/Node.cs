@@ -6,32 +6,32 @@ namespace Examen.Pathfinding.Grid
     [System.Serializable]
     public class Node
     {
-        private Vector3 position;
-        private List<Node> connectedNodes;
-        private float elevation;
-        private float maxElevationDifference;
-        private float maxConnectionDistance;
-        private bool isWalkable;
-        private Vector2Int gridPosition;
+        private Vector3 _position;
+        private List<Node> _connectedNodes;
+        private float _elevation;
+        private float _maxElevationDifference;
+        private float _maxConnectionDistance;
+        private bool _isWalkable;
+        private Vector2Int _gridPosition;
         private float _nodeHeightOffset = 0.3f;
-        private Node parent;
+        private Node _parent;
 
         // Cost variables for A* algorithm
-        private int gCost; // Movement cost
-        private int hCost; // Heuristic cost
+        private int _goalCost;
+        private int _heuristicCost;
 
-        public int GCost { get => gCost; set => gCost = value; }
-        public int HCost { get => hCost; set => hCost = value; }
-        public int FCost { get { return gCost + hCost; } } // Total cost 
+        public int GoalCost { get => _goalCost; set => _goalCost = value; }
+        public int HeuristicCost { get => _heuristicCost; set => _heuristicCost = value; }
+        public int FinalCost { get { return _goalCost + _heuristicCost; } }
 
-        public List<Node> ConnectedNodes => connectedNodes;
-        public Node Parent { get => parent; set => parent = value; }
-        public Vector3 Position { get => position; set => position = value; }
-        public float Elevation { get => elevation; set => elevation = value; }
-        public bool IsWalkable { get => isWalkable; set => isWalkable = value; }
-        public float MaxElevationDifference { get => maxElevationDifference; set => maxElevationDifference = value; }
-        public float MaxConnectionDistance { get => maxConnectionDistance; set => maxConnectionDistance = value; }
-        public Vector2Int GridPosition { get => gridPosition; set => gridPosition = value; }
+        public List<Node> ConnectedNodes => _connectedNodes;
+        public Node Parent { get => _parent; set => _parent = value; }
+        public Vector3 Position { get => _position; set => _position = value; }
+        public float Elevation { get => _elevation; set => _elevation = value; }
+        public bool IsWalkable { get => _isWalkable; set => _isWalkable = value; }
+        public float MaxElevationDifference { get => _maxElevationDifference; set => _maxElevationDifference = value; }
+        public float MaxConnectionDistance { get => _maxConnectionDistance; set => _maxConnectionDistance = value; }
+        public Vector2Int GridPosition { get => _gridPosition; set => _gridPosition = value; }
         public float NodeHeightOffset { get => _nodeHeightOffset; set => _nodeHeightOffset = value; }
 
         /// <summary>
@@ -40,12 +40,12 @@ namespace Examen.Pathfinding.Grid
         /// <param name="pos">The position of the node in 3D space.</param>
         public Node(Vector3 pos)
         {
-            position = pos;
-            connectedNodes = new List<Node>();
-            elevation = pos.y;
-            maxElevationDifference = 0.6f;
-            maxConnectionDistance = 1.5f;
-            isWalkable = false;
+            _position = pos;
+            _connectedNodes = new List<Node>();
+            _elevation = pos.y;
+            _maxElevationDifference = 0.6f;
+            _maxConnectionDistance = 1.5f;
+            _isWalkable = false;
         }
 
         /// <summary>
@@ -54,21 +54,21 @@ namespace Examen.Pathfinding.Grid
         /// <param name="node">The node to add as a connected node.</param>
         public void AddConnectedNode(Node node)
         {
-            if (CalculateElevation(node) <= maxElevationDifference && CalculateDistance(node) <= maxConnectionDistance)
-            {
-                Vector3 direction = node.Position - Position;
-                float distance = Vector3.Distance(Position, node.Position);
-                Ray ray = new(Position, direction);
+            if (CalculateElevation(node) > _maxElevationDifference || CalculateDistance(node) > _maxConnectionDistance)
+                return;
+            
+            Vector3 direction = node.Position - Position;
+            float distance = Vector3.Distance(Position, node.Position);
+            Ray ray = new(Position, direction);
 
-                if (Physics.Linecast(ray.origin, ray.origin + ray.direction * distance))
-                    return;
-                
-                connectedNodes.Add(node);
-            }
+            if (Physics.Linecast(ray.origin, ray.origin + ray.direction * distance))
+                return;
+
+            _connectedNodes.Add(node);
         }
 
-        private float CalculateElevation(Node otherNode) => Mathf.Abs(elevation - otherNode.elevation);
-        private float CalculateDistance(Node otherNode) => Vector3.Distance(position, otherNode.position);
+        private float CalculateElevation(Node otherNode) => Mathf.Abs(_elevation - otherNode._elevation);
+        private float CalculateDistance(Node otherNode) => Vector3.Distance(_position, otherNode._position);
     }
 }
 

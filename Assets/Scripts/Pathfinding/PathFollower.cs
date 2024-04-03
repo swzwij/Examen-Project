@@ -29,6 +29,7 @@ namespace Examen.Pathfinding
 
         public bool IsPathBlocked 
             => Physics.Raycast(transform.position, transform.forward, p_obstacleCheckDistance, p_obstaclesLayerMask);
+        
         public event Action OnPathCompleted;
 
         protected virtual void Start() 
@@ -42,16 +43,13 @@ namespace Examen.Pathfinding
 
         protected virtual void FixedUpdate()
         {
-            if (!IsOwner)
+            if (!IsOwner || !IsPathBlocked || p_hasFoundBlockage)
                 return;
 
-            if (IsPathBlocked && !p_hasFoundBlockage)
-            {
-                p_hasFoundBlockage = true;
-                StartPath(p_currentTarget);
-            }
+            p_hasFoundBlockage = true;
+            StartPath(p_currentTarget);
         }
-        
+
         protected void ProcessPointerPosition(Vector3 position)
         {
             if (!IsOwner)
@@ -144,8 +142,10 @@ namespace Examen.Pathfinding
 
         protected virtual void OnDisable()
         {
-            if (p_pointer != null)
-                p_pointer.OnPointedAtPosition -= StartPath;
+            if (p_pointer == null)
+                return;
+            
+            p_pointer.OnPointedAtPosition -= StartPath;
         }
     }
 }

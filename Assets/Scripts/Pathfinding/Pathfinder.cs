@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Examen.Pathfinding.Grid;
 using FishNet.Object;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace Examen.Pathfinding
 {
@@ -14,20 +13,22 @@ namespace Examen.Pathfinding
         private GridSystem _gridSystem;
         private HashSet<Node> _openSet = new();
         private HashSet<Node> _closedSet = new();
+        private List<Node> _path = new();
+        private List<Node> _retracedPath = new();
 
         private void OnEnable() => _gridSystem = FindObjectOfType<GridSystem>();
 
         /// <summary>
         /// Finds a path from the specified start position to the target position using the A* pathfinding algorithm.
         /// </summary>
-        /// <param name="startPos">The starting position.</param>
-        /// <param name="targetPos">The target position.</param>
+        /// <param name="startPosition">The starting position.</param>
+        /// <param name="targetPosition">The target position.</param>
         /// <returns>A list of nodes representing the path from the start position to the target position.</returns>
         [Server]
-        public List<Node> FindPath(Vector3 startPos, Vector3 targetPos)
+        public List<Node> FindPath(Vector3 startPosition, Vector3 targetPosition)
         {
-            Node startNode = _gridSystem.GetNodeFromWorldPosition(startPos);
-            Node targetNode = _gridSystem.GetNodeFromWorldPosition(targetPos);
+            Node startNode = _gridSystem.GetNodeFromWorldPosition(startPosition);
+            Node targetNode = _gridSystem.GetNodeFromWorldPosition(targetPosition);
 
             _openSet.Clear();
             _closedSet.Clear();
@@ -39,7 +40,7 @@ namespace Examen.Pathfinding
                 Node currentNode = null;
                 foreach (var node in _openSet)
                 {
-                    if (currentNode == null || node.FCost < currentNode.FCost || (node.FCost == currentNode.FCost && node.HCost < currentNode.HCost))
+                    if (currentNode == null || node.FinalCost < currentNode.FinalCost || (node.FinalCost == currentNode.FinalCost && node.HeuristicCost < currentNode.HeuristicCost))
                     {
                         currentNode = node;
                     }
@@ -59,11 +60,11 @@ namespace Examen.Pathfinding
                     if (!neighbor.IsWalkable || _closedSet.TryGetValue(neighbor, out _))
                         continue;
 
-                    int newMovementCostToNeighbor = currentNode.GCost + CalculateDistance(currentNode, neighbor);
-                    if (newMovementCostToNeighbor < neighbor.GCost || !_openSet.TryGetValue(neighbor, out _))
+                    int newMovementCostToNeighbor = currentNode.GoalCost + CalculateDistance(currentNode, neighbor);
+                    if (newMovementCostToNeighbor < neighbor.GoalCost || !_openSet.TryGetValue(neighbor, out _))
                     {
-                        neighbor.GCost = newMovementCostToNeighbor;
-                        neighbor.HCost = CalculateDistance(neighbor, targetNode);
+                        neighbor.GoalCost = newMovementCostToNeighbor;
+                        neighbor.HeuristicCost = CalculateDistance(neighbor, targetNode);
                         neighbor.Parent = currentNode;
 
                         if (!_openSet.TryGetValue(neighbor, out _))
@@ -72,14 +73,14 @@ namespace Examen.Pathfinding
                 }
             }
 
-            return new List<Node>();
+            return _path;
         }
 
         [Server]
-        private int CalculateDistance(Node a, Node b)
+        private int CalculateDistance(Node nodeA, Node nodeB)
         {
-            int xDistance = Mathf.Abs(a.GridPosition.x - b.GridPosition.x);
-            int yDistance = Mathf.Abs(a.GridPosition.y - b.GridPosition.y);
+            int xDistance = Mathf.Abs(nodeA.GridPosition.x - nodeB.GridPosition.x);
+            int yDistance = Mathf.Abs(nodeA.GridPosition.y - nodeB.GridPosition.y);
 
             if (xDistance > yDistance)
             {
@@ -94,17 +95,17 @@ namespace Examen.Pathfinding
         [Server]
         private List<Node> RetracePath(Node startNode, Node endNode)
         {
-            List<Node> path = new List<Node>();
-            Node currentNode = endNode;
+            _retracedPath.Clear();
 
+            Node currentNode = endNode;
             while (currentNode != startNode)
             {
-                path.Add(currentNode);
+                _retracedPath.Add(currentNode);
                 currentNode = currentNode.Parent;
             }
-            path.Reverse();
+            _retracedPath.Reverse();
 
-            return path;
+            return _retracedPath;
         }
     }
 }

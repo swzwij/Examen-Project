@@ -15,9 +15,10 @@ namespace Examen.Pathfinding.Grid
         [SerializeField] private LayerMask _obstacleLayerMask;
         [SerializeField] private Cell _cellPrefab;
         [SerializeField] private int _cellSize = 10;
-        [SerializeField] Vector2Int _gridSize;
+        [SerializeField] private Vector2Int _gridSize;
         [SerializeField] private float _nodeDistance = 1f;
         [SerializeField] private int _maxNodeConnections = 3;
+        
         private Node[,] _nodes;
         private Cell[,] _cells;
         private bool _isInitialized;
@@ -27,14 +28,11 @@ namespace Examen.Pathfinding.Grid
 
         private void FixedUpdate()
         {
-            if (!IsServer)
+            if (!IsServer || _isInitialized)
                 return;
-
-            if (!_isInitialized)
-            {
-                _isInitialized = true;
-                CreateGrid();
-            }
+            
+            _isInitialized = true;
+            CreateGrid();
         }
 
         /// <summary>
@@ -53,8 +51,10 @@ namespace Examen.Pathfinding.Grid
         private void InitializeGrid(Vector2Int gridSize, System.Action<int, int> initializeElement)
         {
             for (int x = 0; x < gridSize.x; x++)
+            {
                 for (int y = 0; y < gridSize.y; y++)
                     initializeElement(x, y);
+            }
         }
 
         [Server]
@@ -75,15 +75,15 @@ namespace Examen.Pathfinding.Grid
         [Server]
         private Node ConfigureNode(Node node, Vector3 nodePosition)
         {
-            if (IsWalkableArea(nodePosition, out float elevation))
-            {
-                node.Elevation = elevation;
-                node.Position = new Vector3(nodePosition.x, elevation, nodePosition.z);
-                node.IsWalkable = true;
-                node.MaxConnectionDistance = _maxConnectionDistance;
-                node.MaxElevationDifference = _maxElevationDifference;
-                node.NodeHeightOffset = _nodeHeightOffset;
-            }
+            if (!IsWalkableArea(nodePosition, out float elevation))
+                return node;
+            
+            node.Elevation = elevation;
+            node.Position = new Vector3(nodePosition.x, elevation, nodePosition.z);
+            node.IsWalkable = true;
+            node.MaxConnectionDistance = _maxConnectionDistance;
+            node.MaxElevationDifference = _maxElevationDifference;
+            node.NodeHeightOffset = _nodeHeightOffset;
 
             return node;
         }
@@ -132,8 +132,10 @@ namespace Examen.Pathfinding.Grid
             int endY = Mathf.Min(startY + _cellSize, _gridSize.y);
 
             for (int nodeX = startX; nodeX < endX; nodeX++)
+            {
                 for (int nodeY = startY; nodeY < endY; nodeY++)
                     cell.AddNode(_nodes[nodeX, nodeY]);
+            }
         }
 
         /// <summary>
@@ -197,8 +199,10 @@ namespace Examen.Pathfinding.Grid
         private void ConnectNodes()
         {
             foreach (int x in Enumerable.Range(0, _gridSize.x))
+            {
                 foreach (int y in Enumerable.Range(0, _gridSize.y))
                     CheckNodeConnections(x, y);
+            }
         }
 
         [Server]
@@ -276,26 +280,30 @@ namespace Examen.Pathfinding.Grid
 
             // draw a bounding box around the grid based on grid size
             Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(transform.position + new Vector3(_gridSize.x * _nodeDistance / 2f, _maxWorldHeight / 2, _gridSize.y * _nodeDistance / 2f), new Vector3(_gridSize.x * _nodeDistance, _maxWorldHeight, _gridSize.y * _nodeDistance));
+            Gizmos.DrawWireCube
+            (
+                transform.position + 
+                new Vector3(_gridSize.x * _nodeDistance / 2f, _maxWorldHeight / 2, _gridSize.y * _nodeDistance / 2f), new Vector3(_gridSize.x * _nodeDistance, _maxWorldHeight, _gridSize.y * _nodeDistance)
+            );
 
             if (_nodes != null)
+                return;
+            
+            foreach (Node node in _nodes)
             {
-                foreach (Node node in _nodes)
+                if (!node.IsWalkable)
+                    continue;
+
+                Gizmos.color = Color.blue;
+                Gizmos.DrawSphere(node.Position, 0.1f);
+
+                Gizmos.color = Color.cyan;
+                foreach (Node connectedNode in node.ConnectedNodes)
                 {
-                    if (!node.IsWalkable)
+                    if (!connectedNode.IsWalkable)
                         continue;
-                    
-                    Gizmos.color = Color.blue;
-                    Gizmos.DrawSphere(node.Position, 0.1f);
-                
-                    Gizmos.color = Color.cyan;
-                    foreach (Node connectedNode in node.ConnectedNodes)
-                    {
-                        if (!connectedNode.IsWalkable)
-                            continue;
-                        
-                        Gizmos.DrawLine(node.Position, connectedNode.Position);
-                    }
+
+                    Gizmos.DrawLine(node.Position, connectedNode.Position);
                 }
             }
         }
