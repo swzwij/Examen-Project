@@ -25,18 +25,16 @@ namespace Examen.Player
             _pointer.OnPointedGameobject += ProcessPointerGameObject;
         }
 
-        private void ProcessPointerGameObject(GameObject objectInQuestion)
+        private void ProcessPointerGameObject(GameObject pointedObject)
         {
             if (!IsOwner)
                 return;
-            PreProcessPointerObject(objectInQuestion);
+
+            PreProcessPointerObject(pointedObject);
         }
 
         [ServerRpc]
-        private void PreProcessPointerObject(GameObject objectInQuestion)
-        {
-            CheckForInteractable(objectInQuestion);
-        }
+        private void PreProcessPointerObject(GameObject pointedObject) => CheckForInteractable(pointedObject);
 
         [Server]
         private void CheckForInteractable(GameObject objectInQuestion)
