@@ -21,7 +21,7 @@ namespace Examen.Interactables.Resource
         public const int DamageAmount = 1;
 
         /// <summary>
-        /// Sets PoolSystem and HealthData Variables and add StartDeathTimer to the onDie Event.
+        /// Sets PoolSystem instance.
         /// </summary>
         public virtual void Start()
         {
@@ -29,75 +29,27 @@ namespace Examen.Interactables.Resource
         }
 
         /// <summary>
-        /// Resurrect the player if it has healthData.
+        /// If object isServer, it resurrects this gameobject and calls for the clients to mimic its position and active state
         /// </summary>
         public virtual void OnEnable()
         {
+            if (!IsServer)
+                return;
+
             if (!HasHealthData)
             {
                 HealthData = GetComponent<HealthData>();
                 HasHealthData = true;
 
                 HealthData.onDie.AddListener(StartDeathTimer);
+                HealthData.onDie.AddListener(ToggleGameobject);
+
+                HealthData.onResurrected.AddListener(ToggleGameobject);
             }
 
-
-            if (!IsServer)
-                return;
-            else
-                SetNewPostion(transform.position);
-
-            HealthData.onDie.AddListener(ToggleGameobject);
-            HealthData.onResurrected.AddListener(ToggleGameobject);
+            SetNewPostion(transform.position);
 
             HealthData.Resurrect(HealthData.MaxHealth);
-
-            HealthData.onResurrected.RemoveListener(ToggleGameobject);
-        }
-
-        public virtual void OnDisable()
-        {
-            HealthData.onDie.RemoveListener(ToggleGameobject);
-        } 
-
-        /// <summary>
-        /// Calls on every functionality, that needs to happen when interacting with the resources. 
-        /// </summary>
-        public virtual void Interact()
-        {
-            PlayInteractingSound();
-            InventorySystem.AddItem(ResourceItem, AmountToGive);
-
-            ServerInteract();
-        }
-
-        [Server]
-        public virtual void ServerInteract()
-        {
-            HealthData.TakeDamage(DamageAmount);
-            ReceiveInteract();
-
-        }
-
-        [ObserversRpc]
-        public virtual void ReceiveInteract()
-        {
-            //playanimation
-        }
-
-        [ObserversRpc]
-        public virtual void SetNewPostion(Vector3 newPosition)
-        {
-            transform.position = newPosition;
-        }
-
-
-        /// <summary>
-        /// Plays interacting sound.
-        /// </summary>
-        public virtual void PlayInteractingSound()
-        {
-
         }
 
         /// <summary>
@@ -109,8 +61,57 @@ namespace Examen.Interactables.Resource
             poolSystem.DespawnObject(ResourceItem.Name, gameObject);
         }
 
+        /// <summary>
+        /// Set the active to the opposite of its current active state.
+        /// </summary>
         [ObserversRpc]
         public void ToggleGameobject() => gameObject.SetActive(!gameObject.activeSelf);
 
+        /// <summary>
+        /// Sets client resource position to server resource postion.
+        /// </summary>
+        /// <param name="serverPosition"> the postion of the server resource</param>
+        [ObserversRpc]
+        public virtual void SetNewPostion(Vector3 serverPosition) => transform.position = serverPosition;
+
+        /// <summary>
+        /// Calls all functionalities that need to happen when you are interacting with this Resource
+        /// and sends that to the server.
+        /// </summary>
+        public virtual void Interact()
+        {
+            PlayInteractingSound();
+            InventorySystem.AddItem(ResourceItem, AmountToGive);
+
+            ServerInteract();
+        }
+
+        /// <summary>
+        /// Plays interacting sound.
+        /// </summary>
+        public virtual void PlayInteractingSound()
+        {
+
+        }
+
+        /// <summary>
+        /// Let the player interact to server resource.
+        /// </summary>
+        [Server]
+        public virtual void ServerInteract()
+        {
+            HealthData.TakeDamage(DamageAmount);
+            ReceiveInteract();
+
+        }
+
+        /// <summary>
+        /// Calls all functionalities that need to happen when someone else is interacting with this Resource
+        /// </summary>
+        [ObserversRpc]
+        public virtual void ReceiveInteract()
+        {
+            //playanimation
+        }
     }
 }

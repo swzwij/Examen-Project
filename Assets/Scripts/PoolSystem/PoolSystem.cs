@@ -24,8 +24,20 @@ namespace Examen.Poolsystem
                 _objectsActive.Add(nameTag, new List<GameObject>() { gameObject });
         }
 
+        /// <summary>
+        /// Creates new object if there aren't objects in the pool or put objects from the pool into the scene.
+        /// </summary>
+        /// <param name="nameTag">The name of the category the object is in</param>
+        /// <param name="spawnPrefab">The object you want to spawn in</param>
+        /// <param name="parentTransform">The object you want the spawnobject to be the childobject of</param>
         public void SpawnObject(string nameTag, GameObject spawnPrefab, Transform parentTransform = null) => SpawnObject(nameTag, parentTransform, spawnPrefab);
 
+        /// <summary>
+        /// Creates new object if there aren't objects in the pool or put objects from the pool into the scene.
+        /// </summary>
+        /// <param name="nameTag">The name of the category the object is in</param>
+        /// <param name="parentTransform">The object you want the spawnobject to be the childobject of</param>
+        /// <param name="spawnPrefab">The object you want to spawn in</param>
         public void SpawnObject(string nameTag, Transform parentTransform = null, GameObject spawnPrefab = null)
         {
             if (_objectsQueu.ContainsKey(nameTag) && _objectsQueu[nameTag].Count > 0)
@@ -48,6 +60,11 @@ namespace Examen.Poolsystem
             AddActiveObject(nameTag, newGameObject);
         }
 
+        /// <summary>
+        /// Puts the given object in the poolsystem
+        /// </summary>
+        /// <param name="nameTag">The name of the category the object should be in</param>
+        /// <param name="despawnObject">The object you want to despawn</param>
         public void DespawnObject(string nameTag, GameObject despawnObject)
         {
             if (_objectsActive.ContainsKey(nameTag) && _objectsActive[nameTag].Contains(despawnObject))
@@ -65,13 +82,20 @@ namespace Examen.Poolsystem
             Debug.LogError($"Can't find object {nameTag} to despawn");
         }
 
-        public void StartDeathTimer(int amountOfTimer, string resourceName, Transform previousParentTransform) => StartCoroutine(DeathTimer(amountOfTimer, resourceName,previousParentTransform));
+        /// <summary>
+        /// Starts coroutine DeathTimer
+        /// </summary>
+        /// <param name="amountOfTimer">How long do you want the death timer to last</param>
+        /// <param name="objectName">Name of the object you want to bring back after the timer</param>
+        /// <param name="previousParentTransform">The parent object you want the object to appear under</param>
+        public void StartDeathTimer(int amountOfTimer, string objectName, Transform previousParentTransform) 
+            => StartCoroutine(DeathTimer(amountOfTimer, objectName ,previousParentTransform));
 
-        private IEnumerator DeathTimer(int amountOfTimer, string resourceName, Transform previousParentTransform)
+        private IEnumerator DeathTimer(int amountOfTimer, string objectName, Transform previousParentTransform)
         {
             yield return new WaitForSeconds(amountOfTimer);
 
-            SpawnObject(resourceName, previousParentTransform);
+            SpawnObject(objectName, previousParentTransform);
         }
 
         private void MoveObjectToActiveScene(GameObject movingObject, Transform parentTransform)

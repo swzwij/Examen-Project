@@ -7,6 +7,9 @@ namespace Examen.Editors.Resource
     [CustomEditor(typeof(ResourceSpawner))]
     public class RecourcesSpawnerEditor : Editor
     {
+        /// <summary>
+        /// Draws Default inspector and adds a button, that spawns resources when clicked
+        /// </summary>
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();

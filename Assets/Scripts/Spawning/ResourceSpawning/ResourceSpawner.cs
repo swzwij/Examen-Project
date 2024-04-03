@@ -8,6 +8,9 @@ namespace Examen.Spawning.ResourceSpawning
     {
         [SerializeField] private List<SpawnAreas> spawnAreas;
 
+        /// <summary>
+        /// Spawns randomly resources
+        /// </summary>
         public void InitializedSpawning()
         {
             for (int i = 0; i < spawnAreas.Count; i++)
@@ -20,7 +23,8 @@ namespace Examen.Spawning.ResourceSpawning
                 {
                     if (spawnPercentage <= 0 || currentSpawnAmount <= 0)
                     {
-                        Debug.LogError($"Can't spawn {area.spawnableResources[j].SpawnResource.name}, because you can't spawn more then 100% Resources");
+                        Debug.LogError($"Can't spawn {area.spawnableResources[j].SpawnResource.name}, " +
+                            $"because you can't spawn more then 100% Resources");
                         break;
                     }
 
@@ -28,7 +32,8 @@ namespace Examen.Spawning.ResourceSpawning
 
                     if (spawnPercentage - percentage < 0)
                     {
-                        Debug.LogWarning($"Percentage of {area.spawnableResources[j].SpawnResource.name} was to high so we rounded it down to {spawnPercentage}");
+                        Debug.LogWarning($"Percentage of {area.spawnableResources[j].SpawnResource.name}" +
+                            $" was to high so we rounded it down to {spawnPercentage}");
                         percentage = spawnPercentage;
                         spawnPercentage = 0;
                     }
