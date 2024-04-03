@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Examen.Pathfinding.Grid;
 using FishNet.Object;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace Examen.Pathfinding
 {
@@ -11,6 +12,8 @@ namespace Examen.Pathfinding
         [SerializeField] private int _straightCost = 10;
 
         private GridSystem _gridSystem;
+        private HashSet<Node> _openSet = new();
+        private HashSet<Node> _closedSet = new();
 
         private void OnEnable() => _gridSystem = FindObjectOfType<GridSystem>();
 
@@ -26,49 +29,50 @@ namespace Examen.Pathfinding
             Node startNode = _gridSystem.GetNodeFromWorldPosition(startPos);
             Node targetNode = _gridSystem.GetNodeFromWorldPosition(targetPos);
 
-            List<Node> openSet = new();
-            HashSet<Node> closedSet = new();
+            _openSet.Clear();
+            _closedSet.Clear();
 
-            openSet.Add(startNode);
+            _openSet.Add(startNode);
 
-            while (openSet.Count > 0)
+            while (_openSet.Count > 0)
             {
-                Node currentNode = openSet[0];
-                for (int i = 1; i < openSet.Count; i++)
+                Node currentNode = null;
+                foreach (var node in _openSet)
                 {
-                    bool isLowerFCost = openSet[i].FCost < currentNode.FCost;
-                    bool isSameFCost = openSet[i].FCost == currentNode.FCost;
-                    bool isLowerHCost = openSet[i].HCost < currentNode.HCost;
-
-                    if (isLowerFCost || (isSameFCost && isLowerHCost))
-                        currentNode = openSet[i];
+                    if (currentNode == null || node.FCost < currentNode.FCost || (node.FCost == currentNode.FCost && node.HCost < currentNode.HCost))
+                    {
+                        currentNode = node;
+                    }
                 }
 
-                openSet.Remove(currentNode);
-                closedSet.Add(currentNode);
+                if (currentNode == null)
+                    break;
+
+                _openSet.Remove(currentNode);
+                _closedSet.Add(currentNode);
 
                 if (currentNode == targetNode)
                     return RetracePath(startNode, targetNode);
 
                 foreach (Node neighbor in currentNode.ConnectedNodes)
                 {
-                    if (!neighbor.IsWalkable || closedSet.Contains(neighbor))
+                    if (!neighbor.IsWalkable || _closedSet.TryGetValue(neighbor, out _))
                         continue;
 
                     int newMovementCostToNeighbor = currentNode.GCost + CalculateDistance(currentNode, neighbor);
-                    if (newMovementCostToNeighbor < neighbor.GCost || !openSet.Contains(neighbor))
+                    if (newMovementCostToNeighbor < neighbor.GCost || !_openSet.TryGetValue(neighbor, out _))
                     {
                         neighbor.GCost = newMovementCostToNeighbor;
                         neighbor.HCost = CalculateDistance(neighbor, targetNode);
                         neighbor.Parent = currentNode;
 
-                        if (!openSet.Contains(neighbor))
-                            openSet.Add(neighbor);
+                        if (!_openSet.TryGetValue(neighbor, out _))
+                            _openSet.Add(neighbor);
                     }
                 }
             }
 
-            return new();
+            return new List<Node>();
         }
 
         [Server]
