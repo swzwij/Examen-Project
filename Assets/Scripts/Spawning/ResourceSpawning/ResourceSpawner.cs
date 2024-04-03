@@ -1,3 +1,4 @@
+using Examen.Spawning.ResourceSpawning.Structs;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +7,7 @@ namespace Examen.Spawning.ResourceSpawning
 {
     public class ResourceSpawner : MonoBehaviour
     {
-        [SerializeField] private List<SpawnAreas> spawnAreas;
+        [SerializeField] private List<ResourceSpawnAreas> spawnAreas;
 
         private float _spawnPercentage;
         private float currentSpawnAmount;
@@ -19,29 +20,29 @@ namespace Examen.Spawning.ResourceSpawning
         {
             for (int i = 0; i < spawnAreas.Count; i++)
             {
-                SpawnAreas area = spawnAreas[i];
+                ResourceSpawnAreas area = spawnAreas[i];
                 _spawnPercentage = 100;
                 currentSpawnAmount = area.AmountOfResourcesInTheArea;
 
-                for (int j = 0; j < area.spawnableResources.Count; j++)
+                for (int j = 0; j < area.SpawnableResources.Count; j++)
                 {
                     if (_spawnPercentage <= 0 || currentSpawnAmount <= 0)
                     {
-                        Debug.LogError($"Can't spawn {area.spawnableResources[j].SpawnResource.name}, " +
+                        Debug.LogError($"Can't spawn {area.SpawnableResources[j].SpawnResource.name}, " +
                             $"because you can't spawn more then 100% Resources");
                         break;
                     }
 
-                    float amountOfResources = CalculateAmountofResources(area, area.spawnableResources[j]);
+                    float amountOfResources = CalculateAmountofResources(area, area.SpawnableResources[j]);
 
-                    SpawnResources(area ,area.spawnableResources[j].SpawnResource, amountOfResources);
+                    SpawnResources(area ,area.SpawnableResources[j].SpawnResource, amountOfResources);
                 }
             }
         }
 
-        private float CalculateAmountofResources(SpawnAreas area, ResourceSpawnInfo resourceSpawnInfo)
+        private float CalculateAmountofResources(ResourceSpawnAreas area, ResourceSpawnInfo resourceSpawnInfo)
         {
-            float percentage = resourceSpawnInfo.spawnChance;
+            float percentage = resourceSpawnInfo.SpawnChance;
 
             if (_spawnPercentage - percentage < 0)
             {
@@ -71,7 +72,7 @@ namespace Examen.Spawning.ResourceSpawning
             return amountOfRescources;
         }
 
-        private void SpawnResources(SpawnAreas spawnArea, GameObject gameObject, float amount)
+        private void SpawnResources(ResourceSpawnAreas spawnArea, GameObject gameObject, float amount)
         {
             _spawnedGameobjects.Clear();
 
@@ -79,21 +80,6 @@ namespace Examen.Spawning.ResourceSpawning
                 _spawnedGameobjects.Add(Instantiate(gameObject, spawnArea.Area.transform));
 
             spawnArea.Area.SpawnedResources = _spawnedGameobjects;
-        }
-
-        [Serializable]
-        private struct SpawnAreas
-        {
-            public SpawnArea Area;
-            public int AmountOfResourcesInTheArea;
-            public List<ResourceSpawnInfo> spawnableResources;
-        }
-
-        [Serializable]
-        private struct ResourceSpawnInfo
-        {
-            public GameObject SpawnResource;
-            [Range(0, 100)] public float spawnChance;
         }
     }
 }
