@@ -38,7 +38,7 @@ namespace Examen.Interactables.Resource
                 p_healthData = GetComponent<HealthData>();
                 p_hasHealthData = true;
 
-                p_healthData.onDie.AddListener(StartDeathTimer);
+                p_healthData.onDie.AddListener(StartRespawnTimer);
                 p_healthData.onDie.AddListener(ToggleGameobject);
 
                 p_healthData.onResurrected.AddListener(ToggleGameobject);
@@ -52,9 +52,9 @@ namespace Examen.Interactables.Resource
         /// <summary>
         /// Starts the deathTimer and despawns this object.
         /// </summary>
-        public virtual void StartDeathTimer()
+        public virtual void StartRespawnTimer()
         {
-            p_poolSystem.StartDeathTimer(p_deathTime, ResourceItem.Name, transform.parent);
+            p_poolSystem.StartRespawnTimer(p_deathTime, ResourceItem.Name, transform.parent);
             p_poolSystem.DespawnObject(ResourceItem.Name, gameObject);
         }
 
