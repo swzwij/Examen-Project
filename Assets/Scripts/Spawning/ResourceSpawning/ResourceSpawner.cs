@@ -8,6 +8,10 @@ namespace Examen.Spawning.ResourceSpawning
     {
         [SerializeField] private List<SpawnAreas> spawnAreas;
 
+        private float _spawnPercentage;
+        private float currentSpawnAmount;
+        private List<GameObject> _spawnedGameobjects = new();
+
         /// <summary>
         /// Spawns randomly resources
         /// </summary>
@@ -16,56 +20,65 @@ namespace Examen.Spawning.ResourceSpawning
             for (int i = 0; i < spawnAreas.Count; i++)
             {
                 SpawnAreas area = spawnAreas[i];
-                float spawnPercentage = 100;
-                float currentSpawnAmount = area.AmountOfResourcesInTheArea;
+                _spawnPercentage = 100;
+                currentSpawnAmount = area.AmountOfResourcesInTheArea;
 
                 for (int j = 0; j < area.spawnableResources.Count; j++)
                 {
-                    if (spawnPercentage <= 0 || currentSpawnAmount <= 0)
+                    if (_spawnPercentage <= 0 || currentSpawnAmount <= 0)
                     {
                         Debug.LogError($"Can't spawn {area.spawnableResources[j].SpawnResource.name}, " +
                             $"because you can't spawn more then 100% Resources");
                         break;
                     }
 
-                    float percentage = area.spawnableResources[j].spawnChance;
+                    float amountOfResources = CalculateAmountofResources(area.spawnableResources[j],)
 
-                    if (spawnPercentage - percentage < 0)
-                    {
-                        Debug.LogWarning($"Percentage of {area.spawnableResources[j].SpawnResource.name}" +
-                            $" was to high so we rounded it down to {spawnPercentage}");
-                        percentage = spawnPercentage;
-                        spawnPercentage = 0;
-                    }
-                    else
-                        spawnPercentage -= percentage;
-
-                    float amountOfrescoures = MathF.Round((float)area.AmountOfResourcesInTheArea / 100 * percentage);
-                    float newSpawnAmount = currentSpawnAmount - amountOfrescoures;
-
-                    if (newSpawnAmount < 0)
-                    {
-                        amountOfrescoures = currentSpawnAmount;
-                        currentSpawnAmount = 0;
-                    }
-                    else
-                        currentSpawnAmount = newSpawnAmount;
-
-                    SpawnResources(area ,area.spawnableResources[j].SpawnResource, amountOfrescoures);
+                    SpawnResources(area ,area.spawnableResources[j].SpawnResource, amountOfResources);
                 }
             }
         }
 
-        private void SpawnResources(SpawnAreas spawnArea, GameObject gameObject, float amount)
+        private float CalculateAmountofResources(SpawnAreas area, ResourceSpawnInfo resourceSpawnInfo)
         {
-            List<GameObject> spawnedGameobjects = new();
+            float percentage = resourceSpawnInfo.spawnChance;
 
-            for (int i = 0; i < amount; i++)
+            if (_spawnPercentage - percentage < 0)
             {
-                spawnedGameobjects.Add(Instantiate(gameObject, spawnArea.Area.transform));
+                Debug.LogWarning($"Percentage of {resourceSpawnInfo.SpawnResource.name}" +
+                    $" was to high so we rounded it down to {_spawnPercentage}");
+                percentage = _spawnPercentage;
+                _spawnPercentage = 0;
+            }
+            else
+            {
+                _spawnPercentage -= percentage;
             }
 
-            spawnArea.Area.SpawnedResources = spawnedGameobjects;
+            float amountOfRescources = MathF.Round((float)area.AmountOfResourcesInTheArea / 100 * percentage);
+            float newSpawnAmount = currentSpawnAmount - amountOfRescources;
+
+            if (newSpawnAmount < 0)
+            {
+                amountOfRescources = currentSpawnAmount;
+                currentSpawnAmount = 0;
+            }
+            else
+            {
+                currentSpawnAmount = newSpawnAmount;
+            }
+
+            return amountOfRescources;
+        }
+
+        private void SpawnResources(SpawnAreas spawnArea, GameObject gameObject, float amount)
+        {
+            _spawnedGameobjects.Clear();
+
+            for (int i = 0; i < amount; i++)
+                _spawnedGameobjects.Add(Instantiate(gameObject, spawnArea.Area.transform));
+
+            spawnArea.Area.SpawnedResources = _spawnedGameobjects;
         }
 
         [Serializable]
