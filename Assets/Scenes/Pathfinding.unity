@@ -392,11 +392,11 @@ PrefabInstance:
       objectReference: {fileID: 2080137326}
     - target: {fileID: 9181585673909579258, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: _scenePathHash
-      value: 4256646570
+      value: 993922286
       objectReference: {fileID: 0}
     - target: {fileID: 9181585673909579258, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: <SceneId>k__BackingField
-      value: 18282157811768756071
+      value: 4268863713175698573
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -821,11 +821,11 @@ PrefabInstance:
       objectReference: {fileID: 1149311782}
     - target: {fileID: 9181585673909579258, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: _scenePathHash
-      value: 4256646570
+      value: 993922286
       objectReference: {fileID: 0}
     - target: {fileID: 9181585673909579258, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: <SceneId>k__BackingField
-      value: 18282157812239845005
+      value: 4268863717191082733
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3578,8 +3578,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.14184657, y: -0.85716134, z: 0.32430336, w: -0.37414074}
-  m_LocalPosition: {x: -113.89926, y: 80.94264, z: 144.013}
+  m_LocalRotation: {x: 0.20409603, y: 0.7944966, z: -0.43216974, w: 0.37463224}
+  m_LocalPosition: {x: -113.35506, y: 125.58221, z: 115.20127}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9061,11 +9061,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3257970021276251748, guid: 34897c4085f09da43910d23ff1810b6e, type: 3}
       propertyPath: _scenePathHash
-      value: 4256646570
+      value: 993922286
       objectReference: {fileID: 0}
     - target: {fileID: 3257970021276251748, guid: 34897c4085f09da43910d23ff1810b6e, type: 3}
       propertyPath: <SceneId>k__BackingField
-      value: 18282157810232443808
+      value: 4268863714261896965
       objectReference: {fileID: 0}
     - target: {fileID: 3257970021276251748, guid: 34897c4085f09da43910d23ff1810b6e, type: 3}
       propertyPath: _networkBehaviours.Array.size
@@ -9282,11 +9282,11 @@ PrefabInstance:
       objectReference: {fileID: 1823634975853929828}
     - target: {fileID: 9181585673909579258, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: _scenePathHash
-      value: 4256646570
+      value: 993922286
       objectReference: {fileID: 0}
     - target: {fileID: 9181585673909579258, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: <SceneId>k__BackingField
-      value: 18282157812309427741
+      value: 4268863716769253489
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
