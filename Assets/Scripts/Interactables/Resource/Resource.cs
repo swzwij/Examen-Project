@@ -25,7 +25,6 @@ namespace Examen.Interactables.Resource
         /// </summary>
         public virtual void Start() => p_poolSystem = PoolSystem.Instance;
 
-
         /// <summary>
         /// If object isServer, it resurrects this gameobject and calls for the clients to mimic its position and active state.
         /// </summary>
