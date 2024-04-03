@@ -13,7 +13,7 @@ namespace Examen.Spawning.ResourceSpawning.Structs
         [Range(0, 100)]
         [SerializeField] private float _spawnChance;
 
-        public GameObject SpawnResource { get { return _spawnResource; } }
-        public float SpawnChance { get { return _spawnChance; } }
+        public readonly GameObject SpawnResource { get { return _spawnResource; } }
+        public readonly float SpawnChance { get { return _spawnChance; } }
     }
 }

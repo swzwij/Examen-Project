@@ -7,26 +7,27 @@ namespace Examen.Spawning.ResourceSpawning
 {
     public class ResourceSpawner : MonoBehaviour
     {
-        [SerializeField] private List<ResourceSpawnAreas> spawnAreas;
+        [SerializeField] private List<ResourceSpawnAreas> _spawnAreas;
 
         private float _spawnPercentage;
-        private float currentSpawnAmount;
-        private List<GameObject> _spawnedGameobjects = new();
+        private float _currentSpawnAmount;
+
+        private readonly List<GameObject> _spawnedGameobjects = new();
 
         /// <summary>
         /// Spawns randomly resources
         /// </summary>
         public void InitializedSpawning()
         {
-            for (int i = 0; i < spawnAreas.Count; i++)
+            for (int i = 0; i < _spawnAreas.Count; i++)
             {
-                ResourceSpawnAreas area = spawnAreas[i];
+                ResourceSpawnAreas area = _spawnAreas[i];
                 _spawnPercentage = 100;
-                currentSpawnAmount = area.AmountOfResourcesInTheArea;
+                _currentSpawnAmount = area.AmountOfResourcesInTheArea;
 
                 for (int j = 0; j < area.SpawnableResources.Count; j++)
                 {
-                    if (_spawnPercentage <= 0 || currentSpawnAmount <= 0)
+                    if (_spawnPercentage <= 0 || _currentSpawnAmount <= 0)
                     {
                         Debug.LogError($"Can't spawn {area.SpawnableResources[j].SpawnResource.name}, " +
                             $"because you can't spawn more then 100% Resources");
@@ -57,16 +58,16 @@ namespace Examen.Spawning.ResourceSpawning
             }
 
             float amountOfRescources = MathF.Round((float)area.AmountOfResourcesInTheArea / 100 * percentage);
-            float newSpawnAmount = currentSpawnAmount - amountOfRescources;
+            float newSpawnAmount = _currentSpawnAmount - amountOfRescources;
 
             if (newSpawnAmount < 0)
             {
-                amountOfRescources = currentSpawnAmount;
-                currentSpawnAmount = 0;
+                amountOfRescources = _currentSpawnAmount;
+                _currentSpawnAmount = 0;
             }
             else
             {
-                currentSpawnAmount = newSpawnAmount;
+                _currentSpawnAmount = newSpawnAmount;
             }
 
             return amountOfRescources;

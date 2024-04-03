@@ -15,8 +15,8 @@ namespace Examen.Poolsystem
         /// <summary>
         /// Puts the given gameobject in the active objects dictonary under the given tag.
         /// </summary>
-        /// <param name="nameTag">The name of the catergory, you want the gameobject to be in</param>
-        /// <param name="gameObject">The object you want to add to the active objects dictionary</param>
+        /// <param name="nameTag">The name of the catergory, you want the gameobject to be in.</param>
+        /// <param name="gameObject">The object you want to add to the active objects dictionary.</param>
         public void AddActiveObject(string nameTag, GameObject gameObject)
         {
             if (_objectsActive.ContainsKey(nameTag))
@@ -28,18 +28,18 @@ namespace Examen.Poolsystem
         /// <summary>
         /// Creates new object if there aren't objects in the pool or put objects from the pool into the scene.
         /// </summary>
-        /// <param name="nameTag">The name of the category the object is in</param>
-        /// <param name="spawnPrefab">The object you want to spawn in</param>
-        /// <param name="parentTransform">The object you want the spawnobject to be the childobject of</param>
+        /// <param name="nameTag">The name of the category the object is in.</param>
+        /// <param name="spawnPrefab">The object you want to spawn in.</param>
+        /// <param name="parentTransform">The object you want the spawnobject to be the childobject of.</param>
         public void SpawnObject(string nameTag, GameObject spawnPrefab, Transform parentTransform = null) 
             => SpawnObject(nameTag, parentTransform, spawnPrefab);
 
         /// <summary>
         /// Creates new object if there aren't objects in the pool or put objects from the pool into the scene.
         /// </summary>
-        /// <param name="nameTag">The name of the category the object is in</param>
-        /// <param name="parentTransform">The object you want the spawnobject to be the childobject of</param>
-        /// <param name="spawnPrefab">The object you want to spawn in</param>
+        /// <param name="nameTag">The name of the category the object is in.</param>
+        /// <param name="parentTransform">The object you want the spawnobject to be the childobject of.</param>
+        /// <param name="spawnPrefab">The object you want to spawn in.</param>
         public void SpawnObject(string nameTag, Transform parentTransform = null, GameObject spawnPrefab = null)
         {
             if (_objectQueu?.ContainsKey(nameTag) == true && _objectQueu[nameTag].Any())
@@ -63,10 +63,10 @@ namespace Examen.Poolsystem
         }
 
         /// <summary>
-        /// Puts the given object in the poolsystem
+        /// Puts the given object in the poolsystem.
         /// </summary>
-        /// <param name="nameTag">The name of the category the object should be in</param>
-        /// <param name="despawnObject">The object you want to despawn</param>
+        /// <param name="nameTag">The name of the category the object should be in.</param>
+        /// <param name="despawnObject">The object you want to despawn.</param>
         public void DespawnObject(string nameTag, GameObject despawnObject)
         {
             if (!(_objectsActive.ContainsKey(nameTag) && _objectsActive[nameTag].Contains(despawnObject)))
