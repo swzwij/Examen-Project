@@ -2,7 +2,7 @@ namespace Examen.BrotherEye
 {
     public enum ZoomTypes
     {
-        Decreased,
+        Half,
         Normal,
         Double,
         Triple,

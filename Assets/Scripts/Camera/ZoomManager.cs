@@ -8,7 +8,7 @@ namespace Examen.BrotherEye
         private ZoomTypes _currentZoom = ZoomTypes.Normal;
         private Dictionary<ZoomTypes, float> _zoomSettings = new()
         {
-            {ZoomTypes.Decreased, 0.75f},
+            {ZoomTypes.Half, 0.5f},
             {ZoomTypes.Normal, 1f},
             {ZoomTypes.Double, 2f},
             {ZoomTypes.Triple, 3f},
@@ -41,7 +41,7 @@ namespace Examen.BrotherEye
         {
             int nextZoom = (int) _currentZoom + 1;
             if (nextZoom > (int) ZoomTypes.Quintuple)
-                nextZoom = (int) ZoomTypes.Decreased;
+                nextZoom = (int) ZoomTypes.Half;
             _currentZoom = (ZoomTypes) nextZoom;
             return _zoomSettings[_currentZoom];
         }

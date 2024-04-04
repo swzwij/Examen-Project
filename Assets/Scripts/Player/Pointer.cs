@@ -22,10 +22,13 @@ namespace Examen.Player
             InputManager.SubscribeToAction("Click", OnPointPerformed, out _clickAction);
             InputManager.TryGetAction("PointerPosition").Enable();
 
-            if (TryGetComponent(out Camera camera))
-                _myCamera = camera;
-            else
-                _myCamera = Camera.main;
+            InitCamera();
+        }
+
+        private void InitCamera()
+        {
+            _myCamera = GetComponentInChildren<Camera>();
+            _myCamera.transform.SetParent(null);
         }
 
         /// <summary>
