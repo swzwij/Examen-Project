@@ -27,7 +27,7 @@ namespace Examen.Player.PlayerDatabase
         {
             PlayerData playerData = new(GetLocalIPv4(), exp);
             PlayerDataUpdateRequest request = new(playerData);
-            APIManager.Instance.GetCall<PlayerDataUpdateResponse>(request, OnDataUpdateSuccess, OnRequestError);
+            APIManager.Instance.GetCall(request, OnDataUpdateSuccess, OnRequestError);
         }
 
         private static void OnRequestError(APIStatus status) => Debug.LogError("Request Error: " + status);
