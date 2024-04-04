@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Pathfinding.unity
+    guid: b521e19865746fa4da6de43e88fd70ce
+  - enabled: 1
     path: Assets/Scenes/FishNet Networking.unity
     guid: bc380048850769d4fb20263325c6152e
   m_configObjects: {}
