@@ -15,6 +15,8 @@ namespace Examen.Player
             => Debug.DrawLine(transform.position, position, Color.red, 1f);
         #endregion
 
+        [SerializeField] private float damageAmount = 1;
+
         private Pointer _pointer;
 
         public Action<Interactable> OnInteractableFound;
@@ -40,7 +42,7 @@ namespace Examen.Player
         private void CheckForInteractable(GameObject objectInQuestion)
         {
             if (objectInQuestion.TryGetComponent<Interactable>(out Interactable interactable))
-                interactable.Interact();//Replace this later with OnInteractableFound?.Invoke(interactable);
+                interactable.Interact(damageAmount);//Replace this later with OnInteractableFound?.Invoke(interactable);
         }
     }
 }

@@ -12,7 +12,6 @@ namespace Examen.Interactables.Resource
     {
         [SerializeField] protected Item p_resourceItem;
         [SerializeField] protected int p_supplyAmount = 1;
-        [SerializeField] protected int p_damageAmount = 1;
         [SerializeField] protected int p_respawnTime;
 
         protected HealthData p_healthData;
@@ -77,12 +76,12 @@ namespace Examen.Interactables.Resource
         /// Calls all functionalities that need to happen when you are interacting with this Resource
         /// and sends that to the server.
         /// </summary>
-        public virtual void Interact()
+        public virtual void Interact(float damageAmount = 0)
         {
             PlayInteractingSound();
             InventorySystem.AddItem(p_resourceItem, p_supplyAmount);
 
-            ServerInteract();
+            ServerInteract(damageAmount);
         }
 
         /// <summary>
@@ -97,9 +96,9 @@ namespace Examen.Interactables.Resource
         /// Let the player interact to server resource.
         /// </summary>
         [Server]
-        public virtual void ServerInteract()
+        public virtual void ServerInteract(float damageAmount)
         {
-            p_healthData.TakeDamage(p_damageAmount);
+            p_healthData.TakeDamage(damageAmount);
             ReceiveInteract();
         }
 
