@@ -9,27 +9,20 @@ namespace Examen.Player
     public class Pointer : NetworkBehaviour
     {
         [SerializeField] private LayerMask _pointerLayerMask;
+        [SerializeField] private float _pointerDistance = 100f;
         private Camera _myCamera; // Replace with camera manager once this is implemented
         private Vector3 _pointerWorldPosition;
         private InputAction _clickAction;
 
-        public Action<Vector3> OnPointedAtPosition;
 
-        private void OnEnable()
+        public Action<Vector3> OnPointedAtPosition;
+        public Action<GameObject> OnPointedGameobject;
+
+        private void Start()
         {
             InputManager.SubscribeToAction("Click", OnPointPerformed, out _clickAction);
             InputManager.TryGetAction("PointerPosition").Enable();
-        }
 
-        private void OnDisable()
-        {
-            _clickAction.Disable();
-            _clickAction.performed -= OnPointPerformed;
-            InputManager.TryGetAction("PointerPosition").Disable();
-        }
-
-        private void Awake()
-        {
             if (TryGetComponent(out Camera camera))
                 _myCamera = camera;
             else
@@ -41,13 +34,22 @@ namespace Examen.Player
         /// </summary>
         public void PointAtPosition()
         {
+            if (!IsOwner)
+                return;
+
             Vector2 pointerPosition = InputManager.TryGetAction("PointerPosition").ReadValue<Vector2>();
-            
             Ray pointerRay = _myCamera.ScreenPointToRay(pointerPosition);
-            if (Physics.Raycast(pointerRay, out RaycastHit hit, _pointerLayerMask))
+
+            ProcessPointerPosition(pointerPosition, pointerRay);
+        }
+
+        private void ProcessPointerPosition(Vector2 pointerPosition, Ray pointerRay)
+        {
+            if (Physics.Raycast(pointerRay, out RaycastHit hit, _pointerDistance, _pointerLayerMask))
             {
                 _pointerWorldPosition = hit.point;
                 OnPointedAtPosition?.Invoke(_pointerWorldPosition);
+                OnPointedGameobject?.Invoke(hit.transform.gameObject);
             }
         }
 
@@ -57,6 +59,13 @@ namespace Examen.Player
                 return;
 
             PointAtPosition();
+        }
+
+        private void OnDestroy() 
+        {
+            _clickAction.Disable();
+            _clickAction.performed -= OnPointPerformed;
+            InputManager.TryGetAction("PointerPosition").Disable();
         }
     }
 }
