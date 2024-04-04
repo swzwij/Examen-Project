@@ -8,11 +8,11 @@ namespace Examen.Spawning.ResourceSpawning.Structs
     public struct ResourceSpawnAreas
     {
         [SerializeField] private SpawnArea _area;
-        [SerializeField] private int _amountOfResourcesInTheArea;
+        [SerializeField] private int _resourceAmount;
         [SerializeField] private List<ResourceSpawnInfo> _spawnableResources;
 
-        public readonly SpawnArea Area { get { return _area; } }
-        public readonly int AmountOfResourcesInTheArea { get { return _amountOfResourcesInTheArea; } }
-        public readonly List<ResourceSpawnInfo> SpawnableResources { get { return _spawnableResources; } }
+        public readonly SpawnArea Area { get => _area; }
+        public readonly int ResourceAmount { get => _resourceAmount; }
+        public readonly List<ResourceSpawnInfo> SpawnableResources { get => _spawnableResources; }
     }
 }

@@ -9,7 +9,7 @@ namespace Examen.Poolsystem
 {
     public class PoolSystem : SingletonInstance<PoolSystem>
     {
-        private Dictionary<string, List<GameObject>> _objectQueu = new();
+        private Dictionary<string, List<GameObject>> _objectStack = new();
         private Dictionary<string, List<GameObject>> _objectsActive = new();
 
         /// <summary>
@@ -42,10 +42,10 @@ namespace Examen.Poolsystem
         /// <param name="spawnPrefab">The object you want to spawn in.</param>
         public void SpawnObject(string nameTag, Transform parentTransform = null, GameObject spawnPrefab = null)
         {
-            if (_objectQueu?.ContainsKey(nameTag) == true && _objectQueu[nameTag].Any())
+            if (_objectStack?.ContainsKey(nameTag) == true && _objectStack[nameTag].Any())
             {
-                GameObject lastObject = _objectQueu[nameTag].LastOrDefault();
-                _objectQueu[nameTag].Remove(lastObject);
+                GameObject lastObject = _objectStack[nameTag].LastOrDefault();
+                _objectStack[nameTag].Remove(lastObject);
 
                 MoveObjectToActiveScene(lastObject, parentTransform);
                 AddActiveObject(nameTag, lastObject);
@@ -75,23 +75,21 @@ namespace Examen.Poolsystem
                 return;
             }
 
-            List<GameObject> objects = _objectsActive[nameTag];
-
             MoveObjectToDontDestroyOnLoadScene(despawnObject);
             AddQueuObject(nameTag, despawnObject);
 
             despawnObject.SetActive(false);
-            objects.Remove(despawnObject);
+            _objectsActive[nameTag].Remove(despawnObject);
         }
 
         /// <summary>
-        /// Starts coroutine DeathTimer
+        /// Starts coroutine DeathTimer.
         /// </summary>
-        /// <param name="respawnTime">How long do you want the death timer to last</param>
-        /// <param name="objectName">Name of the object you want to bring back after the timer</param>
-        /// <param name="previousParentTransform">The parent object you want the object to appear under</param>
+        /// <param name="respawnTime">How long do you want the death timer to last.</param>
+        /// <param name="objectName">Name of the object you want to bring back after the timer.</param>
+        /// <param name="previousParentTransform">The parent object you want the object to appear under.</param>
         public void StartRespawnTimer(int respawnTime, string objectName, Transform previousParentTransform) 
-            => StartCoroutine(RespawnTimer(respawnTime, objectName ,previousParentTransform));
+            => StartCoroutine(RespawnTimer(respawnTime, objectName, previousParentTransform));
 
         private IEnumerator RespawnTimer(int respawnTime, string objectName, Transform previousParentTransform)
         {
@@ -113,10 +111,10 @@ namespace Examen.Poolsystem
 
         private void AddQueuObject(string nameTag, GameObject gameObject)
         {
-            if (_objectQueu.ContainsKey(nameTag))
-                _objectQueu[nameTag].Add(gameObject);
+            if (_objectStack.ContainsKey(nameTag))
+                _objectStack[nameTag].Add(gameObject);
             else
-                _objectQueu.Add(nameTag, new List<GameObject>() { gameObject });
+                _objectStack.Add(nameTag, new List<GameObject>() { gameObject });
         }
     }
 }

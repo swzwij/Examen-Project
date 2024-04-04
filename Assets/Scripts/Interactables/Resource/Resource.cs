@@ -10,20 +10,16 @@ namespace Examen.Interactables.Resource
     [RequireComponent(typeof(HealthData))]
     public class Resource : NetworkBehaviour, Interactable
     {
-        public Item ResourceItem;
-
-        [SerializeField] protected int p_amountToGive = 1;
+        [SerializeField] protected Item p_resourceItem;
+        [SerializeField] protected int p_supplyAmount = 1;
         [SerializeField] protected int p_damageAmount = 1;
-        [SerializeField] protected int p_deathTime;
+        [SerializeField] protected int p_respawnTime;
 
         protected HealthData p_healthData;
-        protected PoolSystem p_poolSystem;
         protected bool p_hasHealthData;
 
-        /// <summary>
-        /// Sets PoolSystem instance.
-        /// </summary>
-        public virtual void Start() => p_poolSystem = PoolSystem.Instance;
+        public Item ResourceItem { get => p_resourceItem; }
+
 
         /// <summary>
         /// If object isServer, it resurrects this gameobject and calls for the clients to mimic its position and active state.
@@ -39,9 +35,9 @@ namespace Examen.Interactables.Resource
                 p_hasHealthData = true;
 
                 p_healthData.onDie.AddListener(StartRespawnTimer);
-                p_healthData.onDie.AddListener(ToggleGameobject);
+                p_healthData.onDie.AddListener(DisableObject);
 
-                p_healthData.onResurrected.AddListener(ToggleGameobject);
+                p_healthData.onResurrected.AddListener(SetObjectActive);
             }
 
             SetNewPostion(transform.position);
@@ -54,22 +50,28 @@ namespace Examen.Interactables.Resource
         /// </summary>
         public virtual void StartRespawnTimer()
         {
-            p_poolSystem.StartRespawnTimer(p_deathTime, ResourceItem.Name, transform.parent);
-            p_poolSystem.DespawnObject(ResourceItem.Name, gameObject);
+            PoolSystem.Instance.StartRespawnTimer(p_respawnTime, p_resourceItem.Name, transform.parent);
+            PoolSystem.Instance.DespawnObject(p_resourceItem.Name, gameObject);
         }
 
         /// <summary>
-        /// Set the active to the opposite of its current active state.
+        /// Set the object Active.
         /// </summary>
         [ObserversRpc]
-        public void ToggleGameobject() => gameObject.SetActive(!gameObject.activeSelf);
+        public void SetObjectActive() => gameObject.SetActive(true);
+
+        /// <summary>
+        /// Disables the object.
+        /// </summary>
+        [ObserversRpc]
+        public void DisableObject() => gameObject.SetActive(false);
 
         /// <summary>
         /// Sets client resource position to server resource postion.
         /// </summary>
-        /// <param name="serverPosition"> the postion of the server resource</param>
+        /// <param name="newPosition"> the postion of the server resource</param>
         [ObserversRpc]
-        public virtual void SetNewPostion(Vector3 serverPosition) => transform.position = serverPosition;
+        public virtual void SetNewPostion(Vector3 newPosition) => transform.position = newPosition;
 
         /// <summary>
         /// Calls all functionalities that need to happen when you are interacting with this Resource
@@ -78,7 +80,7 @@ namespace Examen.Interactables.Resource
         public virtual void Interact()
         {
             PlayInteractingSound();
-            InventorySystem.AddItem(ResourceItem, p_amountToGive);
+            InventorySystem.AddItem(p_resourceItem, p_supplyAmount);
 
             ServerInteract();
         }
@@ -102,7 +104,7 @@ namespace Examen.Interactables.Resource
         }
 
         /// <summary>
-        /// Calls all functionalities that need to happen when someone else is interacting with this Resource
+        /// Calls all functionalities that need to happen when someone else is interacting with this Resource.
         /// </summary>
         [ObserversRpc]
         public virtual void ReceiveInteract()

@@ -7,7 +7,7 @@ namespace Examen.Spawning.ResourceSpawning
 {
     public class ResourceSpawner : MonoBehaviour
     {
-        [SerializeField] private List<ResourceSpawnAreas> _spawnAreas;
+        [SerializeField] private List<ResourceSpawnAreas> _spawnAreas = new();
 
         private float _spawnPercentage;
         private float _currentSpawnAmount;
@@ -23,7 +23,7 @@ namespace Examen.Spawning.ResourceSpawning
             {
                 ResourceSpawnAreas area = _spawnAreas[i];
                 _spawnPercentage = 100;
-                _currentSpawnAmount = area.AmountOfResourcesInTheArea;
+                _currentSpawnAmount = area.ResourceAmount;
 
                 for (int j = 0; j < area.SpawnableResources.Count; j++)
                 {
@@ -34,14 +34,14 @@ namespace Examen.Spawning.ResourceSpawning
                         break;
                     }
 
-                    float amountOfResources = CalculateAmountofResources(area, area.SpawnableResources[j]);
+                    float amountOfResources = CalculateResrouceAmount(area, area.SpawnableResources[j]);
 
                     SpawnResources(area ,area.SpawnableResources[j].SpawnResource, amountOfResources);
                 }
             }
         }
 
-        private float CalculateAmountofResources(ResourceSpawnAreas area, ResourceSpawnInfo resourceSpawnInfo)
+        private float CalculateResrouceAmount(ResourceSpawnAreas area, ResourceSpawnInfo resourceSpawnInfo)
         {
             float percentage = resourceSpawnInfo.SpawnChance;
 
@@ -57,7 +57,7 @@ namespace Examen.Spawning.ResourceSpawning
                 _spawnPercentage -= percentage;
             }
 
-            float amountOfRescources = MathF.Round((float)area.AmountOfResourcesInTheArea / 100 * percentage);
+            float amountOfRescources = MathF.Round((float)area.ResourceAmount / 100 * percentage);
             float newSpawnAmount = _currentSpawnAmount - amountOfRescources;
 
             if (newSpawnAmount < 0)
