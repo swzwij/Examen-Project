@@ -16,11 +16,12 @@ namespace Examen.Pathfinding
         [SerializeField] protected LayerMask p_obstaclesLayerMask;
         [SerializeField] protected float p_waitTime = 1f;
 
-        protected GameObject p_targetGameObject;
+        protected Interactable p_targetInteractable;
         protected Vector3 p_currentTarget;
         protected bool p_hasFoundBlockage;
         protected Pathfinder p_pathfinder;
         protected Pointer p_pointer;
+        protected Interactor p_interactor;
         protected List<Node> p_currentPath = new();
         protected List<Vector3> P_CurrentPathPositions => p_currentPath.ConvertAll(node => node.Position);
         protected int p_currentNodeIndex = 0;
@@ -33,6 +34,7 @@ namespace Examen.Pathfinding
             => Physics.Raycast(transform.position, transform.forward, out p_hitObstacle, p_obstacleCheckDistance, p_obstaclesLayerMask);
 
         public event Action OnPathCompleted;
+        public event Action<Interactable> OnInteractableReached;
         public event Action<GameObject> OnGameObjectReached;
 
         protected virtual void Start() 
@@ -41,9 +43,10 @@ namespace Examen.Pathfinding
             p_pathRenderer = GetComponent<LineRenderer>();
 
             if (TryGetComponent(out p_pointer))
-            {
                 p_pointer.OnPointedAtPosition += ProcessPointerPosition;
-            }
+
+            if (TryGetComponent(out p_interactor))
+                p_interactor.OnInteractableFound += ProcessPointerPosition;
         }
 
         protected virtual void FixedUpdate()
@@ -54,10 +57,20 @@ namespace Examen.Pathfinding
             if (!IsPathBlocked || p_hasFoundBlockage)
                 return;
 
-             OnGameObjectReached?.Invoke(p_hitObstacle.transform.gameObject);
+             if (p_hitObstacle.transform == p_targetInteractable.Transform)
+            {
+                OnInteractableReached?.Invoke(p_targetInteractable);
+                return;
+            }
 
             p_hasFoundBlockage = true;
             StartPath(p_currentTarget);
+        }
+
+        protected void ProcessPointerPosition(Interactable targetInteractable)
+        {
+            p_targetInteractable = targetInteractable;
+            ProcessPointerPosition(p_targetInteractable.Transform.position);
         }
 
         protected void ProcessPointerPosition(Vector3 position)

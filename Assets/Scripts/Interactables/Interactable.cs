@@ -1,5 +1,9 @@
+using UnityEngine;
+
 public interface Interactable
 {
+    public Transform Transform { get; }
+
     /// <summary>
     /// Calls all functionalities that need to happen when you are interacting with this object
     /// </summary>

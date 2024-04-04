@@ -5,7 +5,7 @@ using Examen.Pathfinding;
 
 namespace Examen.Player
 {
-    [RequireComponent(typeof(PathFollower))]
+    [RequireComponent(typeof(Pointer), typeof(PathFollower))]
     public class Interactor : NetworkBehaviour
     {
         #region Testing
@@ -17,21 +17,18 @@ namespace Examen.Player
         [SerializeField] private float damageAmount = 1;
 
         private Pointer _pointer;
-        private PathFollower pathFollower;
-        private GameObject clickedObject;
+        private PathFollower _pathFollower;
 
         public Action<Interactable> OnInteractableFound;
 
         private void OnEnable()
         {
             _pointer = GetComponent<Pointer>();
-            pathFollower = GetComponent<PathFollower>();
+            _pathFollower = GetComponent<PathFollower>();
 
-            _pointer.OnPointedGameobject += SetObject;
-            pathFollower.OnGameObjectReached += ProcessPointerGameObject;
+            _pointer.OnPointedGameobject += ProcessPointerGameObject;
+            _pathFollower.OnInteractableReached += Interact;
         }
-
-        private void SetObject(GameObject obj) => clickedObject = obj;
 
         private void ProcessPointerGameObject(GameObject pointedObject)
         {
@@ -47,11 +44,14 @@ namespace Examen.Player
         [Server]
         private void CheckForInteractable(GameObject objectInQuestion)
         {
-            if (clickedObject == objectInQuestion && objectInQuestion.TryGetComponent<Interactable>(out Interactable interactable))
+            if (objectInQuestion.TryGetComponent(out Interactable interactable))
             {
-                interactable.Interact(damageAmount);
+                //interactable.Interact(damageAmount);
                 OnInteractableFound?.Invoke(interactable);
             }
         }
+
+        [Server]
+        private void Interact(Interactable interactable) => interactable.Interact(damageAmount);
     }
 }

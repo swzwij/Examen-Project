@@ -19,6 +19,7 @@ namespace Examen.Interactables.Resource
 
         public Item ResourceItem => p_resourceItem;
 
+        Transform Interactable.Transform => transform;
 
         /// <summary>
         /// If object isServer, it resurrects this gameobject and calls for the clients to mimic its position and active state.
@@ -36,7 +37,7 @@ namespace Examen.Interactables.Resource
                 p_healthData.onDie.AddListener(StartRespawnTimer);
                 p_healthData.onDie.AddListener(DisableObject);
 
-                p_healthData.onResurrected.AddListener(EnableObject);
+                p_healthData.onResurrected.AddListener(SetObjectActive);
             }
 
             SetNewPostion(transform.position);
@@ -57,7 +58,7 @@ namespace Examen.Interactables.Resource
         /// Set the object Active.
         /// </summary>
         [ObserversRpc]
-        public void EnableObject() => gameObject.SetActive(true);
+        public void SetObjectActive() => gameObject.SetActive(true);
 
         /// <summary>
         /// Disables the object.
@@ -109,6 +110,16 @@ namespace Examen.Interactables.Resource
         public virtual void ReceiveInteract()
         {
             // Todo: Play given animation
+        }
+
+        void Interactable.Interact(float damageAmount)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        void Interactable.PlayInteractingSound()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
