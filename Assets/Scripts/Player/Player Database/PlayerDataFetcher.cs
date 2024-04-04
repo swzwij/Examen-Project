@@ -16,7 +16,7 @@ namespace Examen.Player.PlayerDatabase
         public static void Fetch(Action<PlayerData> OnDataRecieved)
         {
             PlayerDataFetchRequest request = new(GetLocalIPv4());
-            APIManager.Instance.GetCall<PlayerData>(request, OnDataRecieved, OnRequestError);
+            APIManager.Instance.GetCall(request, OnDataRecieved, OnRequestError);
         }
 
         /// <summary>
