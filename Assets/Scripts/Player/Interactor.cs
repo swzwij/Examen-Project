@@ -1,10 +1,11 @@
 using UnityEngine;
 using System;
 using FishNet.Object;
+using Examen.Pathfinding;
 
 namespace Examen.Player
 {
-    [RequireComponent(typeof(Pointer))]
+    [RequireComponent(typeof(PathFollower))]
     public class Interactor : NetworkBehaviour
     {
         #region Testing
@@ -15,14 +16,14 @@ namespace Examen.Player
 
         [SerializeField] private float damageAmount = 1;
 
-        private Pointer _pointer;
+        private PathFollower _pointer;
 
         public Action<Interactable> OnInteractableFound;
 
         private void OnEnable()
         {
-            _pointer = GetComponent<Pointer>();
-            _pointer.OnPointedGameobject += ProcessPointerGameObject;
+            _pointer = GetComponent<PathFollower>();
+            _pointer.OnGameObjectReached += ProcessPointerGameObject;
         }
 
         private void ProcessPointerGameObject(GameObject pointedObject)
@@ -40,7 +41,10 @@ namespace Examen.Player
         private void CheckForInteractable(GameObject objectInQuestion)
         {
             if (objectInQuestion.TryGetComponent<Interactable>(out Interactable interactable))
-                interactable.Interact(damageAmount);//Replace this later with OnInteractableFound?.Invoke(interactable);
+            {
+                interactable.Interact(damageAmount);
+                OnInteractableFound?.Invoke(interactable);
+            }
         }
     }
 }

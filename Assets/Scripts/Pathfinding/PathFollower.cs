@@ -16,6 +16,7 @@ namespace Examen.Pathfinding
         [SerializeField] protected LayerMask p_obstaclesLayerMask;
         [SerializeField] protected float p_waitTime = 1f;
 
+        protected GameObject p_targetGameObject;
         protected Vector3 p_currentTarget;
         protected bool p_hasFoundBlockage;
         protected Pathfinder p_pathfinder;
@@ -26,11 +27,13 @@ namespace Examen.Pathfinding
         protected Coroutine p_followPathCoroutine;
         protected Coroutine p_waitForClearance;
         protected LineRenderer p_pathRenderer;
+        protected RaycastHit p_hitObstacle;
 
         public bool IsPathBlocked 
-            => Physics.Raycast(transform.position, transform.forward, p_obstacleCheckDistance, p_obstaclesLayerMask);
-        
+            => Physics.Raycast(transform.position, transform.forward, out p_hitObstacle, p_obstacleCheckDistance, p_obstaclesLayerMask);
+
         public event Action OnPathCompleted;
+        public event Action<GameObject> OnGameObjectReached;
 
         protected virtual void Start() 
         {
@@ -38,7 +41,9 @@ namespace Examen.Pathfinding
             p_pathRenderer = GetComponent<LineRenderer>();
 
             if (TryGetComponent(out p_pointer))
+            {
                 p_pointer.OnPointedAtPosition += ProcessPointerPosition;
+            }
         }
 
         protected virtual void FixedUpdate()
@@ -48,6 +53,13 @@ namespace Examen.Pathfinding
 
             if (!IsPathBlocked || p_hasFoundBlockage)
                 return;
+
+            if (p_hitObstacle.transform.gameObject == p_targetGameObject)
+            {
+                OnGameObjectReached?.Invoke(p_targetGameObject);
+                OnPathCompleted?.Invoke();
+                return;
+            }
 
             p_hasFoundBlockage = true;
             StartPath(p_currentTarget);
