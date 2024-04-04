@@ -12,6 +12,8 @@ namespace Examen.Spawning.ResourceSpawning
         private float _spawnPercentage;
         private float _currentSpawnAmount;
 
+        private const float MAX_PERCENTAGE = 100;
+
         private readonly List<GameObject> _spawnedGameobjects = new();
 
         /// <summary>
@@ -22,7 +24,7 @@ namespace Examen.Spawning.ResourceSpawning
             for (int i = 0; i < _spawnAreas.Count; i++)
             {
                 ResourceSpawnAreas area = _spawnAreas[i];
-                _spawnPercentage = 100;
+                _spawnPercentage = MAX_PERCENTAGE;
                 _currentSpawnAmount = area.ResourceAmount;
 
                 for (int j = 0; j < area.SpawnableResources.Count; j++)

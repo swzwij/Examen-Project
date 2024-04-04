@@ -1,5 +1,3 @@
-using GameKit.Utilities.Types;
-
 public interface Interactable
 {
     /// <summary>

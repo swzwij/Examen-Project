@@ -17,7 +17,7 @@ namespace Examen.Interactables.Resource
         protected HealthData p_healthData;
         protected bool p_hasHealthData;
 
-        public Item ResourceItem { get => p_resourceItem; }
+        public Item ResourceItem => p_resourceItem;
 
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Examen.Interactables.Resource
                 p_healthData.onDie.AddListener(StartRespawnTimer);
                 p_healthData.onDie.AddListener(DisableObject);
 
-                p_healthData.onResurrected.AddListener(SetObjectActive);
+                p_healthData.onResurrected.AddListener(EnableObject);
             }
 
             SetNewPostion(transform.position);
@@ -57,7 +57,7 @@ namespace Examen.Interactables.Resource
         /// Set the object Active.
         /// </summary>
         [ObserversRpc]
-        public void SetObjectActive() => gameObject.SetActive(true);
+        public void EnableObject() => gameObject.SetActive(true);
 
         /// <summary>
         /// Disables the object.
