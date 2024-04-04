@@ -58,10 +58,9 @@ namespace Examen.Pathfinding
             currentNode = null;
             foreach (Node node in _openSet)
             {
-                if (currentNode == null || node.FinalCost < currentNode.FinalCost || (node.FinalCost == currentNode.FinalCost && node.HeuristicCost < currentNode.HeuristicCost))
-                {
+                if (currentNode == null || node.FinalCost < currentNode.FinalCost 
+                || (node.FinalCost == currentNode.FinalCost && node.HeuristicCost < currentNode.HeuristicCost))
                     currentNode = node;
-                }
             }
 
             return currentNode;

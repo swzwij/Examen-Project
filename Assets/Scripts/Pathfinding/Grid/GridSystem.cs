@@ -273,7 +273,7 @@ namespace Examen.Pathfinding.Grid
             return cellCenter;
         }
 
-        private void OnDrawGizmos() // Mark Todo: Clean up this method. Move drawing to owner classes.
+        private void OnDrawGizmos()
         {
             if (!_showGrid)
                 return;

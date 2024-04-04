@@ -22,7 +22,7 @@ namespace Examen.Pathfinding.Grid
 
         public int GoalCost { get => _goalCost; set => _goalCost = value; }
         public int HeuristicCost { get => _heuristicCost; set => _heuristicCost = value; }
-        public int FinalCost { get { return _goalCost + _heuristicCost; } }
+        public int FinalCost => return _goalCost + _heuristicCost;
 
         public List<Node> ConnectedNodes => _connectedNodes;
         public Node Parent { get => _parent; set => _parent = value; }
