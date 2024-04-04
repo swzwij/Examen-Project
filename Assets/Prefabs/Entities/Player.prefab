@@ -132,7 +132,7 @@ MonoBehaviour:
   p_obstacleCheckDistance: 0.5
   p_obstaclesLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 119
   p_waitTime: 1
 --- !u!114 &4964243218378621144
 MonoBehaviour:

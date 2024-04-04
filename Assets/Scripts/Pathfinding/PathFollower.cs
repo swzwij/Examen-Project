@@ -57,17 +57,21 @@ namespace Examen.Pathfinding
             if (!IsPathBlocked || p_hasFoundBlockage)
                 return;
 
-             if (p_hitObstacle.transform == p_targetInteractable.Transform)
+            if (p_targetInteractable != null)
             {
-                OnInteractableReached?.Invoke(p_targetInteractable);
-                return;
+                print($"{p_hitObstacle.transform} - {p_targetInteractable.Transform}");
+                if (p_hitObstacle.transform == p_targetInteractable.Transform)
+                {
+                    OnInteractableReached?.Invoke(p_targetInteractable);
+                    return;
+                }
             }
 
             p_hasFoundBlockage = true;
             StartPath(p_currentTarget);
         }
 
-        protected void ProcessPointerPosition(Interactable targetInteractable)
+        public void ProcessPointerPosition(Interactable targetInteractable)
         {
             p_targetInteractable = targetInteractable;
             ProcessPointerPosition(p_targetInteractable.Transform.position);

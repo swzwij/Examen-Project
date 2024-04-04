@@ -41,7 +41,7 @@ namespace Examen.Player
         [ServerRpc]
         private void PreProcessPointerObject(GameObject pointedObject) => CheckForInteractable(pointedObject);
 
-        [Server]
+        [ObserversRpc]
         private void CheckForInteractable(GameObject objectInQuestion)
         {
             if (objectInQuestion.TryGetComponent(out Interactable interactable))
