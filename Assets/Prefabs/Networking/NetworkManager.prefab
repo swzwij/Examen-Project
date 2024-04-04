@@ -776,6 +776,7 @@ GameObject:
   - component: {fileID: 1866760123394007718}
   - component: {fileID: 2376879355401910748}
   - component: {fileID: 7890953761736754471}
+  - component: {fileID: 7026543096244696711}
   - component: {fileID: 2422130988488462587}
   - component: {fileID: 8055427934339130085}
   - component: {fileID: 1496661146538621641}
@@ -853,6 +854,28 @@ MonoBehaviour:
   _playerPrefab: {fileID: 1474325579737520305, guid: 7c5ce871609f39742968f4575ec02620, type: 3}
   _addToDefaultScene: 1
   Spawns: []
+--- !u!114 &7026543096244696711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8094575235105439866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 362dfd7e6009fb44c90beec3df0ad853, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _useWss: 1
+  _sslConfiguration:
+    Enabled: 0
+    CertificatePath: 
+    CertificatePassword: 
+    SslProtocol: 0
+  _mtu: 1023
+  _port: 7770
+  _maximumClients: 2000
+  _clientAddress: localhost
 --- !u!114 &2422130988488462587
 MonoBehaviour:
   m_ObjectHideFlags: 0
