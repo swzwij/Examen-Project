@@ -54,12 +54,7 @@ namespace Examen.Pathfinding
             if (!IsPathBlocked || p_hasFoundBlockage)
                 return;
 
-            if (p_hitObstacle.transform.gameObject == p_targetGameObject)
-            {
-                OnGameObjectReached?.Invoke(p_targetGameObject);
-                OnPathCompleted?.Invoke();
-                return;
-            }
+             OnGameObjectReached?.Invoke(p_hitObstacle.transform.gameObject);
 
             p_hasFoundBlockage = true;
             StartPath(p_currentTarget);

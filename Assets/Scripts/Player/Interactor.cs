@@ -16,15 +16,22 @@ namespace Examen.Player
 
         [SerializeField] private float damageAmount = 1;
 
-        private PathFollower _pointer;
+        private Pointer _pointer;
+        private PathFollower pathFollower;
+        private GameObject clickedObject;
 
         public Action<Interactable> OnInteractableFound;
 
         private void OnEnable()
         {
-            _pointer = GetComponent<PathFollower>();
-            _pointer.OnGameObjectReached += ProcessPointerGameObject;
+            _pointer = GetComponent<Pointer>();
+            pathFollower = GetComponent<PathFollower>();
+
+            _pointer.OnPointedGameobject += SetObject;
+            pathFollower.OnGameObjectReached += ProcessPointerGameObject;
         }
+
+        private void SetObject(GameObject obj) => clickedObject = obj;
 
         private void ProcessPointerGameObject(GameObject pointedObject)
         {
@@ -40,7 +47,7 @@ namespace Examen.Player
         [Server]
         private void CheckForInteractable(GameObject objectInQuestion)
         {
-            if (objectInQuestion.TryGetComponent<Interactable>(out Interactable interactable))
+            if (clickedObject == objectInQuestion && objectInQuestion.TryGetComponent<Interactable>(out Interactable interactable))
             {
                 interactable.Interact(damageAmount);
                 OnInteractableFound?.Invoke(interactable);
