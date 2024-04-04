@@ -8,16 +8,11 @@ namespace Examen.Player
     [RequireComponent(typeof(Pointer), typeof(PathFollower))]
     public class Interactor : NetworkBehaviour
     {
-        #region Testing
-
-        private void DebugPointer(Vector3 position)
-            => Debug.DrawLine(transform.position, position, Color.red, 1f);
-        #endregion
-
         [SerializeField] private float damageAmount = 1;
 
         private Pointer _pointer;
         private PathFollower _pathFollower;
+        private bool p_hasInteracted;
 
         public Action<Interactable> OnInteractableFound;
 
@@ -26,11 +21,11 @@ namespace Examen.Player
             _pointer = GetComponent<Pointer>();
             _pathFollower = GetComponent<PathFollower>();
 
-            _pointer.OnPointedGameobject += ProcessPointerGameObject;
+            _pointer.OnPointedAtInteractable += ProcessPointerGameObject;
             _pathFollower.OnInteractableReached += Interact;
         }
 
-        private void ProcessPointerGameObject(GameObject pointedObject)
+        private void ProcessPointerGameObject(Interactable pointedObject)
         {
             if (!IsOwner)
                 return;
@@ -38,20 +33,22 @@ namespace Examen.Player
             PreProcessPointerObject(pointedObject);
         }
 
-        [ServerRpc]
-        private void PreProcessPointerObject(GameObject pointedObject) => CheckForInteractable(pointedObject);
+        private void PreProcessPointerObject(Interactable pointedObject) => CheckForInteractable(pointedObject);
 
-        [ObserversRpc]
-        private void CheckForInteractable(GameObject objectInQuestion)
+        private void CheckForInteractable(Interactable objectInQuestion)
         {
-            if (objectInQuestion.TryGetComponent(out Interactable interactable))
-            {
-                //interactable.Interact(damageAmount);
-                OnInteractableFound?.Invoke(interactable);
-            }
+            p_hasInteracted = false;
+            OnInteractableFound?.Invoke(objectInQuestion);
         }
 
-        [Server]
-        private void Interact(Interactable interactable) => interactable.Interact(damageAmount);
+        private void Interact(Interactable interactable)
+        {
+            if (p_hasInteracted)
+                return;
+
+            p_hasInteracted = true;
+            interactable.Interact(damageAmount);
+            Debug.LogError("Interacted with " + interactable.name);
+        }
     }
 }

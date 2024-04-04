@@ -1,5 +1,6 @@
 using Examen.Inventory;
 using Examen.Items;
+using Examen.Networking;
 using Examen.Poolsystem;
 using FishNet.Object;
 using MarkUlrich.Health;
@@ -8,7 +9,7 @@ using UnityEngine;
 namespace Examen.Interactables.Resource
 {
     [RequireComponent(typeof(HealthData))]
-    public class Resource : NetworkBehaviour, Interactable
+    public class Resource : Interactable
     {
         [SerializeField] protected Item p_resourceItem;
         [SerializeField] protected int p_supplyAmount = 1;
@@ -19,12 +20,12 @@ namespace Examen.Interactables.Resource
 
         public Item ResourceItem => p_resourceItem;
 
-        Transform Interactable.Transform => transform;
+        private void Start() => ServerInstance.Instance.OnServerStarted += InitResource;
 
         /// <summary>
         /// If object isServer, it resurrects this gameobject and calls for the clients to mimic its position and active state.
         /// </summary>
-        public virtual void OnEnable()
+        public virtual void InitResource()
         {
             if (!IsServer)
                 return;
@@ -43,6 +44,8 @@ namespace Examen.Interactables.Resource
             SetNewPostion(transform.position);
 
             p_healthData.Resurrect(p_healthData.MaxHealth);
+
+            print("Resource initialized");
         }
 
         /// <summary>
@@ -77,21 +80,24 @@ namespace Examen.Interactables.Resource
         /// Calls all functionalities that need to happen when you are interacting with this Resource
         /// and sends that to the server.
         /// </summary>
-        public virtual void Interact(float damageAmount = 0)
+        public override void Interact(float damageAmount = 0)
         {
             PlayInteractingSound();
             InventorySystem.AddItem(p_resourceItem, p_supplyAmount);
 
-            ServerInteract(damageAmount);
+            RequestServerInteract(damageAmount);
         }
 
         /// <summary>
         /// Plays interacting sound.
         /// </summary>
-        public virtual void PlayInteractingSound()
+        public override void PlayInteractingSound()
         {
             // Todo: Play interacting sound
         }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void RequestServerInteract(float damageAmount) => ServerInteract(damageAmount);
 
         /// <summary>
         /// Let the player interact to server resource.
@@ -101,6 +107,7 @@ namespace Examen.Interactables.Resource
         {
             p_healthData.TakeDamage(damageAmount);
             ReceiveInteract();
+            Debug.LogError("Server Interacted with " + name);
         }
 
         /// <summary>
@@ -112,14 +119,6 @@ namespace Examen.Interactables.Resource
             // Todo: Play given animation
         }
 
-        void Interactable.Interact(float damageAmount)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        void Interactable.PlayInteractingSound()
-        {
-            throw new System.NotImplementedException();
-        }
+        private void OnDestroy() => ServerInstance.Instance.OnServerStarted -= InitResource;
     }
 }

@@ -1,10 +1,7 @@
-using System;
-using UnityEngine;
+using FishNet.Object;
 
-public interface Interactable
+public abstract class Interactable : NetworkBehaviour
 {
-    public Transform Transform { get; }
-
     /// <summary>
     /// Calls all functionalities that need to happen when you are interacting with this object
     /// </summary>

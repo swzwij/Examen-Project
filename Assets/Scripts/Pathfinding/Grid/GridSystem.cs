@@ -262,6 +262,27 @@ namespace Examen.Pathfinding.Grid
             return currentNode;
         }
 
+        public Node GetClosestWalkableNode(Vector3 position)
+        {
+            Node closestNode = null;
+            float closestDistance = float.MaxValue;
+
+            foreach (Node node in _nodes)
+            {
+                if (!node.IsWalkable)
+                    continue;
+
+                float distance = Vector3.Distance(node.Position, position);
+                if (distance < closestDistance)
+                {
+                    closestNode = node;
+                    closestDistance = distance;
+                }
+            }
+
+            return closestNode;
+        }
+
         [Server]
         private Vector3 GetCellPosition(int xIndex, int yIndex)
         {
