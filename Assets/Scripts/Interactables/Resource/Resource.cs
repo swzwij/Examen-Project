@@ -20,6 +20,8 @@ namespace Examen.Interactables.Resource
 
         public Item ResourceItem => p_resourceItem;
 
+        private void OnEnable() => RespawnResource();
+
         private void Start() => ServerInstance.Instance.OnServerStarted += InitResource;
 
         /// <summary>
@@ -30,22 +32,23 @@ namespace Examen.Interactables.Resource
             if (!IsServer)
                 return;
 
-            if (!p_hasHealthData)
-            {
-                p_healthData = GetComponent<HealthData>();
-                p_hasHealthData = true;
+            if (p_hasHealthData)
+                return;
 
-                p_healthData.onDie.AddListener(StartRespawnTimer);
-                p_healthData.onDie.AddListener(DisableObject);
+            p_healthData = GetComponent<HealthData>();
+            p_hasHealthData = true;
 
-                p_healthData.onResurrected.AddListener(SetObjectActive);
-            }
+            p_healthData.onDie.AddListener(StartRespawnTimer);
+            p_healthData.onDie.AddListener(DisableObject);
 
+            p_healthData.onResurrected.AddListener(SetObjectActive);
+        }
+
+        [Server]
+        protected virtual void RespawnResource()
+        {
             SetNewPostion(transform.position);
-
             p_healthData.Resurrect(p_healthData.MaxHealth);
-
-            print("Resource initialized");
         }
 
         /// <summary>
