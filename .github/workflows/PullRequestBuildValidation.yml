@@ -1,8 +1,6 @@
 name: Build Unity Project
 
-on: 
-  push:
-    branches: [ develop ] 
+on: push
 
 jobs:
   build:
