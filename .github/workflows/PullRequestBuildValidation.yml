@@ -6,15 +6,29 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@master 
+    runs-on: ubuntu-latest 
+    steps: # Notice the alignment
+      - uses: actions/checkout@v3
+      - name: Activate Unity License
+        uses: game-ci/unity-builder@v2 
+        env:
+          UNITY_VERSION: 2022.3.12f1
+        with:
+          allowDirtyBuild: true 
 
       - name: Activate Unity License
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-        run: echo $UNITY_LICENSE | tr -d '\r' | unity-setup activate-license 
+          uses: game-ci/unity-builder@v2
+          env:
+            UNITY_VERSION: 2022.3.12f1  # Install this version 
+          with: 
+            allowDirtyBuild: true  # In case you need to activate the license before building
+            buildName: MyGameBuild  # Remove this if you don't want to build at the same time
+
+      - name: Activate Unity License  # (Run your license activation after Unity is installed)
+         env:
+           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+         run: echo $UNITY_LICENSE | tr -d '\r' | unity-setup activate-license 
+
 
       - name: Build Unity Game
         uses: game-ci/unity-builder@v2
