@@ -13,6 +13,10 @@ jobs:
         uses: game-ci/unity-builder@v2 
         with:
           unityVersion: '2022.3.12f1'
+          
+      - name: Set Unity License
+         env:
+           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
       - name: Build Unity Project
         run: |   
