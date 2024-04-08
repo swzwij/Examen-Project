@@ -1,10 +1,13 @@
+using Examen.Player;
+using MarkUlrich.Utils;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Examen.Building
 {
-    public class BuildingManager : MonoBehaviour
+    public class BuildingManager : SingletonInstance<BuildingManager>
     {
         [SerializeField] private Material _placeAllowed;
         [SerializeField] private Material _placeDisallowed;
@@ -25,15 +28,24 @@ namespace Examen.Building
 
         private GameObject rotationButtons;
 
+        private Pointer _pointer;
+        private Vector3 _pointerLocation;
+
+        private void Start()
+        {
+            _pointer = GetComponent<Pointer>();
+            _pointer.OnPointedAtPosition += SetPointerVector;
+        }
+
         void Update()
         {
             if (!_isHolding || _currentPreview == null)
                 return;
-
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+           
+            Ray ray = Camera.main.ScreenPointToRay(_pointerLocation);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                if (hit.transform.gameObject.layer != 3)
+                if (hit.transform.gameObject.layer != 7)
                     return;
 
                 if (hit.point == _lastMousePosition)
@@ -99,7 +111,7 @@ namespace Examen.Building
 
         private void SetStructurePosition(RaycastHit hit)
         {
-            if (hit.collider.gameObject.layer != 3)
+            if (hit.collider.gameObject.layer != 7)
                 return;
 
             Vector3 mousePosition = hit.point;
@@ -148,6 +160,8 @@ namespace Examen.Building
                 }
             }
         }
+
+        private void SetPointerVector(Vector3 pointerLocation) => _pointerLocation = pointerLocation;
     }
 
 }

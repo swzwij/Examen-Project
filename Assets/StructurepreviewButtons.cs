@@ -5,15 +5,12 @@ using UnityEngine;
 
 public class StructurepreviewButtons : MonoBehaviour
 {
-    [SerializeField] private BuildingManager _manager;
     private Camera _camera;
     private Canvas _canvas;
 
     // Start is called before the first frame update
     void Start()
     {
-        _manager = FindObjectOfType<BuildingManager>();
-
         _camera = Camera.main;
 
         _canvas = GetComponent<Canvas>();
@@ -29,11 +26,11 @@ public class StructurepreviewButtons : MonoBehaviour
     public void RotateStructure(bool nagativeDiraction)
     {
         int rotationAmount = 15 * (nagativeDiraction ? -1 : 1);
-        _manager.RotateStructure(rotationAmount);
+        BuildingManager.Instance.RotateStructure(rotationAmount);
     }
 
     public void PlaceStructure()
     {
-        _manager.SetStructure();
+        BuildingManager.Instance.SetStructure();
     }
 }
