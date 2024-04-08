@@ -1,8 +1,8 @@
 name: Build Unity Project
 
 on:
-  push:  # Build on pushes to any branch
-  pull_request: # Build on pull requests
+  push:
+  pull_request:
 
 jobs:
   build:
@@ -12,19 +12,19 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install Unity
-        uses: game-ci/unity-builder@v2 
+        uses: game-ci/unity-builder@v2 
         with:
           unityVersion: '2022.3.12f1'
-      
+          
       - name: Set Unity License
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+         env:
+           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
       - name: Build Unity Project
-        run: |  
+        run: |   
           ./path/to/Unity -batchmode -nographics -silent-crashes -logFile \
           -projectPath $(pwd) -buildTarget StandaloneWindows64 \
-          -quit outputPath/mygame.exe  
+          -quit outputPath/mygame.exe  
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
