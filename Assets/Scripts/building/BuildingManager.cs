@@ -1,9 +1,11 @@
 using Examen.Player;
 using MarkUlrich.Utils;
+using Minoord.Input;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Examen.Building
 {
@@ -28,13 +30,22 @@ namespace Examen.Building
 
         private GameObject rotationButtons;
 
-        private Pointer _pointer;
+        private InputAction _clickAction;
+        private Player.Pointer _pointer;
         private Vector3 _pointerLocation;
 
         private void Start()
         {
-            _pointer = GetComponent<Pointer>();
+            InputManager.SubscribeToAction("HoldDown", OnHoldpressed, out _clickAction);
+
+            _pointer = GetComponent<Player.Pointer>();
             _pointer.OnPointedAtPosition += SetPointerVector;
+
+        }
+
+        private void OnHoldpressed(InputAction.CallbackContext context)
+        {
+            Debug.Log("AA");
         }
 
         void Update()
