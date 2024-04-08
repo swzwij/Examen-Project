@@ -37,17 +37,21 @@ namespace Examen.Building
         private void Start()
         {
             InputManager.SubscribeToAction("HoldDown", OnHoldpressed, out _clickAction);
-
             _pointer = GetComponent<Player.Pointer>();
             _pointer.OnPointedAtPosition += SetPointerVector;
 
+            _clickAction.started += OnReleasePressed;
         }
 
         private void OnHoldpressed(InputAction.CallbackContext context)
         {
             Debug.Log("AA");
         }
-
+        private void OnReleasePressed(InputAction.CallbackContext context)
+        {
+            Debug.Log("BB");
+        }
+        
         void Update()
         {
             if (!_isHolding || _currentPreview == null)
@@ -62,7 +66,7 @@ namespace Examen.Building
                 if (hit.point == _lastMousePosition)
                     return;
 
-                if (Input.GetKey(KeyCode.Mouse0))
+                if (_clickAction.inProgress)
                 {
                     if (rotationButtons != null)
                         rotationButtons.SetActive(false);
