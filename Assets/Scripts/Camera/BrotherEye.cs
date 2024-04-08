@@ -40,7 +40,7 @@ namespace Examen.BrotherEye
 
         private void Update() => TrackObject(_trackedObject);
 
-        private void OnZoomPerformed(InputAction.CallbackContext context) => _cameraManager.GetNextCameraSettings();
+        private void OnZoomPerformed(InputAction.CallbackContext context) => _cameraManager.GetNextCameraType();
         
         private void TrackObject(Transform trackedObject)
         {
@@ -51,6 +51,7 @@ namespace Examen.BrotherEye
             if (CameraOffset == Vector3.zero)
                 offset = new(0, CameraDistance, -CameraDistance);
 
+            offset.y += CameraDistance;
             Vector3 newPosition = Vector3.Lerp(transform.position, trackedObject.position + offset, TransitionSpeed);
             transform.position = newPosition;
 

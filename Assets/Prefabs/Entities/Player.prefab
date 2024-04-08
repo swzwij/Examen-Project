@@ -136,16 +136,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _currentCameraType: 0
   _cameraSettings:
-  - _distance: 10
-    _zoomLevel: 1
-    _angle: 45
-    _transitionSpeed: 0.05
-    _offset: {x: 0, y: 0, z: 0}
-  - _distance: 10
-    _zoomLevel: 2
-    _angle: 90
-    _transitionSpeed: 0.05
-    _offset: {x: 0, y: 10, z: -1}
+  - _cameraType: 0
+    _cameraSettings:
+      _distance: 10
+      _zoomLevel: 1
+      _angle: 45
+      _transitionSpeed: 0.05
+      _offset: {x: 0, y: 0, z: 0}
+  - _cameraType: 1
+    _cameraSettings:
+      _distance: 10
+      _zoomLevel: 4
+      _angle: 80
+      _transitionSpeed: 0.075
+      _offset: {x: 0, y: 0, z: -1}
 --- !u!1 &6297853107807436002
 GameObject:
   m_ObjectHideFlags: 0
@@ -275,7 +279,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
-  p_speed: 15
+  p_speed: 25
   p_obstacleCheckDistance: 0.5
   p_obstaclesLayerMask:
     serializedVersion: 2
