@@ -66,6 +66,7 @@ namespace Examen.Pathfinding
 
         public void ProcessPointerPosition(Interactable targetInteractable)
         {
+            p_hasInteracted = false;
             p_targetInteractable = targetInteractable;
             PreProcessPointerPosition(p_targetInteractable.transform.position);
         }
@@ -176,11 +177,15 @@ namespace Examen.Pathfinding
 
         private void BroadcastInteractableReached()
         {
-            p_hasInteracted = true;
             Vector3 targetPosition = p_targetInteractable.transform.position;
             targetPosition.y = transform.position.y;
             transform.LookAt(targetPosition);
-            OnInteractableReached?.Invoke(p_targetInteractable);
+
+            if (!p_hasInteracted)
+            {
+                p_hasInteracted = true;
+                OnInteractableReached?.Invoke(p_targetInteractable);
+            }
         }
         
         protected void DrawPath(List<Vector3> path)

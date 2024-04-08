@@ -16,7 +16,7 @@ namespace Examen.Player
 
         public Action<Interactable> OnInteractableFound;
 
-        private void OnEnable()
+        private void Start()
         {
             _pointer = GetComponent<Pointer>();
             _pathFollower = GetComponent<PathFollower>();
@@ -46,9 +46,11 @@ namespace Examen.Player
             if (p_hasInteracted)
                 return;
 
+            SentInteract(interactable);
             p_hasInteracted = true;
-            interactable.Interact(damageAmount);
-            Debug.LogError("Interacted with " + interactable.name);
         }
+
+        [ServerRpc]
+        private void SentInteract(Interactable interactable) => interactable.Interact(ClientManager.Connection, damageAmount);
     }
 }
