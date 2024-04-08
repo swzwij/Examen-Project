@@ -21,10 +21,10 @@ jobs:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
       - name: Build Unity Project
-        run: |  
+        run: |   
           ./path/to/Unity -batchmode -nographics -silent-crashes -logFile \
           -projectPath $(pwd) -buildTarget StandaloneWindows64 \
-          -quit outputPath/mygame.exe  
+          -quit outputPath/mygame.exe
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
