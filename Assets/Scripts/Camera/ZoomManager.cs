@@ -15,6 +15,8 @@ namespace Examen.BrotherEye
             {ZoomTypes.Quintuple, 5f}
         };
 
+        public Dictionary<ZoomTypes, float> ZoomSettings => _zoomSettings;
+
         private void OnEnable() => SetZoom(_currentZoom);
 
         /// <summary>

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 979122043619016983}
   - component: {fileID: 6352420988358970581}
   - component: {fileID: 7296310588199703723}
+  - component: {fileID: 3713117069067843006}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -121,9 +122,30 @@ MonoBehaviour:
   _componentIndexCache: 4
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
-  _cameraDistance: 10
-  _cameraAngle: 45
-  _transitionSpeed: 0.05
+--- !u!114 &3713117069067843006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 974880927668487516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8c17d5dde41eb3409ae16268b26b680, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentCameraType: 0
+  _cameraSettings:
+  - _distance: 10
+    _zoomLevel: 1
+    _angle: 45
+    _transitionSpeed: 0.05
+    _offset: {x: 0, y: 0, z: 0}
+  - _distance: 10
+    _zoomLevel: 2
+    _angle: 90
+    _transitionSpeed: 0.05
+    _offset: {x: 0, y: 10, z: -1}
 --- !u!1 &6297853107807436002
 GameObject:
   m_ObjectHideFlags: 0

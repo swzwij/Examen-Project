@@ -20,11 +20,17 @@ namespace Examen.BrotherEye
 
         public void SetCameraType(CameraTypes cameraType)
         {
-            if (_cameraSettingsIndex.TryGetValue(cameraType, out int index))
-            {
+            if (_cameraSettingsIndex.TryGetValue(cameraType, out int _))
                 _currentCameraType = cameraType;
-                _currentCameraSettings = _cameraSettings[index];
-            }
+        }
+
+        public CameraSettings GetNextCameraSettings()
+        {
+            int nextCamera = (int) _currentCameraType + 1;
+            if (nextCamera > (int) CameraTypes.Ballistae)
+                nextCamera = (int) CameraTypes.Player;
+            _currentCameraType = (CameraTypes) nextCamera;
+            return _cameraSettings[_cameraSettingsIndex[_currentCameraType]];
         }
     }
 }

@@ -523,6 +523,14 @@ PrefabInstance:
       propertyPath: _player
       value: 
       objectReference: {fileID: 1795651103}
+    - target: {fileID: 4097887202438711477, guid: 46ec62aafa7a48942b202eeb31836899, type: 3}
+      propertyPath: _scenePathHash
+      value: 1137259981
+      objectReference: {fileID: 0}
+    - target: {fileID: 4097887202438711477, guid: 46ec62aafa7a48942b202eeb31836899, type: 3}
+      propertyPath: <SceneId>k__BackingField
+      value: 4884494426378558819
+      objectReference: {fileID: 0}
     - target: {fileID: 6467100665241263801, guid: 46ec62aafa7a48942b202eeb31836899, type: 3}
       propertyPath: m_Name
       value: Camera
@@ -567,6 +575,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7500515137237130082, guid: 46ec62aafa7a48942b202eeb31836899, type: 3}
+      propertyPath: _cameraSettings.Array.data[0]._trackedObject
+      value: 
+      objectReference: {fileID: 1795651103}
+    - target: {fileID: 7500515137237130082, guid: 46ec62aafa7a48942b202eeb31836899, type: 3}
+      propertyPath: _cameraSettings.Array.data[1]._trackedObject
+      value: 
+      objectReference: {fileID: 1795651103}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
