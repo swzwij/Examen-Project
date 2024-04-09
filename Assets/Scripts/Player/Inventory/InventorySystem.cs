@@ -22,8 +22,6 @@ namespace Examen.Inventory
                 _currentItems.Add(newItem, amountOfItem);
             else
                 _currentItems[newItem] += amountOfItem;
-
-            print($"{newItem.Name} has {_currentItems[newItem]} of itself");
         }
 
         /// <summary>
@@ -31,7 +29,7 @@ namespace Examen.Inventory
         /// </summary>
         /// <param name="removeItem"> The item you want to remove.</param>
         /// <param name="amountOfItem"> Amount of the certain item you want to remove.</param>
-        public void RemoveItem(Item removeItem, int amountOfItem)
+        public void RemoveItem(Item removeItem, int itemAmount)
         {
             if (!_currentItems.ContainsKey(removeItem))
                 return;

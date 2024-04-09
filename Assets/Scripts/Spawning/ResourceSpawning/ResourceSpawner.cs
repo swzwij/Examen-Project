@@ -31,25 +31,25 @@ namespace Examen.Spawning.ResourceSpawning
                 {
                     if (_spawnPercentage <= 0 || _currentSpawnAmount <= 0)
                     {
-                        Debug.LogError($"Can't spawn {area.SpawnableResources[j].SpawnResource.name}, " +
+                        Debug.LogError($"Can't spawn {area.SpawnableResources[j].resource.name}, " +
                             $"because you can't spawn more then 100% Resources");
                         break;
                     }
 
-                    float amountOfResources = CalculateResrouceAmount(area, area.SpawnableResources[j]);
+                    float resourcesAmount = CalculateResrouceAmount(area, area.SpawnableResources[j]);
 
-                    SpawnResources(area ,area.SpawnableResources[j].SpawnResource, amountOfResources);
+                    SpawnResources(area ,area.SpawnableResources[j].resource, resourcesAmount);
                 }
             }
         }
 
         private float CalculateResrouceAmount(ResourceSpawnAreas area, ResourceSpawnInfo resourceSpawnInfo)
         {
-            float percentage = resourceSpawnInfo.SpawnChance;
+            float percentage = resourceSpawnInfo.Chance;
 
             if (_spawnPercentage - percentage < 0)
             {
-                Debug.LogWarning($"Percentage of {resourceSpawnInfo.SpawnResource.name}" +
+                Debug.LogWarning($"Percentage of {resourceSpawnInfo.resource.name}" +
                     $" was to high so we rounded it down to {_spawnPercentage}");
                 percentage = _spawnPercentage;
                 _spawnPercentage = 0;
@@ -59,12 +59,12 @@ namespace Examen.Spawning.ResourceSpawning
                 _spawnPercentage -= percentage;
             }
 
-            float amountOfRescources = MathF.Round((float)area.ResourceAmount / 100 * percentage);
-            float newSpawnAmount = _currentSpawnAmount - amountOfRescources;
+            float resourcesAmount = MathF.Round((float)area.ResourceAmount / 100 * percentage);
+            float newSpawnAmount = _currentSpawnAmount - resourcesAmount;
 
             if (newSpawnAmount < 0)
             {
-                amountOfRescources = _currentSpawnAmount;
+                resourcesAmount = _currentSpawnAmount;
                 _currentSpawnAmount = 0;
             }
             else
@@ -72,7 +72,7 @@ namespace Examen.Spawning.ResourceSpawning
                 _currentSpawnAmount = newSpawnAmount;
             }
 
-            return amountOfRescources;
+            return resourcesAmount;
         }
 
         private void SpawnResources(ResourceSpawnAreas spawnArea, GameObject gameObject, float amount)

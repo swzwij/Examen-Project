@@ -31,7 +31,7 @@ namespace Examen.Pathfinding
         protected LineRenderer p_pathRenderer;
         
         public bool IsPathBlocked 
-            => Physics.Raycast(transform.position, transform.forward,p_obstacleCheckDistance, p_obstaclesLayerMask);
+            => Physics.Raycast(transform.position, transform.forward, p_obstacleCheckDistance, p_obstaclesLayerMask);
 
         public event Action OnPathCompleted;
         public event Action<Interactable> OnInteractableReached;
@@ -64,7 +64,7 @@ namespace Examen.Pathfinding
             StartPath(p_currentTarget);
         }
 
-        public void ProcessPointerPosition(Interactable targetInteractable)
+        protected void ProcessPointerPosition(Interactable targetInteractable)
         {
             p_hasInteracted = false;
             p_targetInteractable = targetInteractable;

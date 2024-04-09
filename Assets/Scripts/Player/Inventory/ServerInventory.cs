@@ -12,25 +12,25 @@ public class ServerInventory : NetworkBehaviour
     private ClientManager _clientManager = new();
 
     [Server]
-    public void AddItem(NetworkConnection connection, Item newItem, int amountOfItem)
+    public void AddItem(NetworkConnection connection, Item newItem, int itemAmount)
     {
         string connectionName = connection.ToString();
 
         if (!_inventorySystems.ContainsKey(connectionName))
               _inventorySystems.Add(connectionName, new InventorySystem());
 
-        _inventorySystems[connectionName].AddItem(newItem, amountOfItem);
+        _inventorySystems[connectionName].AddItem(newItem, itemAmount);
 
         UpdateClientInventory(connection, _inventorySystems[connectionName]);
     }
 
     [Server]
-    public void RemoveItem(NetworkConnection connection, Item newItem, int amountOfItem)
+    public void RemoveItem(NetworkConnection connection, Item newItem, int itemAmount)
     {
         if (!_inventorySystems.ContainsKey(connection.ToString()))
             return;
 
-        _inventorySystems[connection.ToString()].RemoveItem(newItem, amountOfItem);
+        _inventorySystems[connection.ToString()].RemoveItem(newItem, itemAmount);
 
         UpdateClientInventory(connection, _inventorySystems[connection.ToString()]);
     }

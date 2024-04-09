@@ -12,7 +12,7 @@ namespace Examen.Player
 
         private Pointer _pointer;
         private PathFollower _pathFollower;
-        private bool p_hasInteracted;
+        private bool _hasInteracted;
 
         public Action<Interactable> OnInteractableFound;
 
@@ -35,19 +35,19 @@ namespace Examen.Player
 
         private void PreProcessPointerObject(Interactable pointedObject) => CheckForInteractable(pointedObject);
 
-        private void CheckForInteractable(Interactable objectInQuestion)
+        private void CheckForInteractable(Interactable currentInteractable)
         {
-            p_hasInteracted = false;
-            OnInteractableFound?.Invoke(objectInQuestion);
+            _hasInteracted = false;
+            OnInteractableFound?.Invoke(currentInteractable);
         }
 
         private void Interact(Interactable interactable)
         {
-            if (p_hasInteracted)
+            if (_hasInteracted)
                 return;
 
             SentInteract(interactable);
-            p_hasInteracted = true;
+            _hasInteracted = true;
         }
 
         [ServerRpc]

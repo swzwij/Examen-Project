@@ -18,16 +18,12 @@ namespace Examen.Interactables.Resource
         [SerializeField] protected int p_respawnTime;
 
         protected HealthData p_healthData;
-        protected bool p_hasHealthData;
 
         public Item ResourceItem => p_resourceItem;
 
         private void OnEnable() => RespawnResource();
 
-        private void Start()
-        { 
-            ServerInstance.Instance.OnServerStarted += InitResource; 
-        }
+        private void Start() => ServerInstance.Instance.OnServerStarted += InitResource; 
 
         /// <summary>
         /// If object isServer, it resurrects this gameobject and calls for the clients to mimic its position and active state.
@@ -37,16 +33,12 @@ namespace Examen.Interactables.Resource
             if (!IsServer)
                 return;
 
-            if (p_hasHealthData)
-                return;
-
             p_healthData = GetComponent<HealthData>();
-            p_hasHealthData = true;
 
             p_healthData.onDie.AddListener(StartRespawnTimer);
             p_healthData.onDie.AddListener(DisableObject);
 
-            p_healthData.onResurrected.AddListener(SetObjectActive);
+            p_healthData.onResurrected.AddListener(EnableObject);
         }
 
         [Server]
@@ -69,7 +61,7 @@ namespace Examen.Interactables.Resource
         /// Set the object Active.
         /// </summary>
         [ObserversRpc]
-        public void SetObjectActive() => gameObject.SetActive(true);
+        public void EnableObject() => gameObject.SetActive(true);
 
         /// <summary>
         /// Disables the object.
@@ -89,7 +81,7 @@ namespace Examen.Interactables.Resource
         /// and sends that to the server.
         /// </summary>
         [Server]
-        public override void Interact(NetworkConnection connection ,float damageAmount = 0)
+        public override void Interact(NetworkConnection connection, float damageAmount = 0)
         {
             PlayInteractingSound();
 
@@ -97,7 +89,6 @@ namespace Examen.Interactables.Resource
             p_healthData.TakeDamage(damageAmount);
 
             ReceiveInteract();
-            Debug.LogError("Server Interacted with " + name);
         }
 
         /// <summary>

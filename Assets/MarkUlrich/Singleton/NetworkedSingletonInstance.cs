@@ -37,8 +37,6 @@ namespace MarkUlrich.Utils
 
             if (Instance != this)
                 Destroy(gameObject);
-/*            else
-                DontDestroyOnLoad(gameObject);*/
 
             return Instance;
         }
