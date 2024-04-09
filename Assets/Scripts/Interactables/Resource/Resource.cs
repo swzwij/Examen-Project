@@ -12,7 +12,6 @@ namespace Examen.Interactables.Resource
     [RequireComponent(typeof(HealthData))]
     public class Resource : Interactable
     {
-        [SerializeField] protected ServerInventory p_serverInventory;
         [SerializeField] protected Item p_resourceItem;
         [SerializeField] protected int p_supplyAmount = 1;
         [SerializeField] protected int p_respawnTime;
@@ -85,7 +84,7 @@ namespace Examen.Interactables.Resource
         {
             PlayInteractingSound();
 
-            p_serverInventory.AddItem(connection, p_resourceItem, p_supplyAmount);
+            ServerInventory.Instance.AddItem(connection, p_resourceItem, p_supplyAmount);
             p_healthData.TakeDamage(damageAmount);
 
             ReceiveInteract();

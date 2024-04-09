@@ -4,10 +4,11 @@ using Examen.Networking;
 using FishNet.Connection;
 using FishNet.Managing;
 using FishNet.Object;
+using MarkUlrich.Utils;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ServerInventory : NetworkBehaviour
+public class ServerInventory : NetworkedSingletonInstance<ServerInventory>
 {
     private Dictionary<int, Dictionary<Item, int>> _inventorySystems = new();
     private NetworkManager _networkManager;
