@@ -5,22 +5,22 @@ using UnityEngine.UI;
 
 namespace Examen.Networking
 {
-    [RequireComponent(typeof(NetworkClientManager))]
-    public class NetworkClientManagerConsole : MonoBehaviour
+    [RequireComponent(typeof(NetworkConfigurationManager))]
+    public class NetworkInterfaceConsole : MonoBehaviour
     {
         [SerializeField] private InputField _inputField;
         [SerializeField] private Button _consoleToggle;
         [SerializeField] private Text _consoleCallback;
         [SerializeField] private GameObject _consoleWindow;
 
-        private NetworkClientManager _networkClientManager;
+        private NetworkConfigurationManager _networkClientManager;
 
         private Dictionary<string, Action<int>> _commands;
 
 
         private void Awake()
         {
-            _networkClientManager = GetComponent<NetworkClientManager>();
+            _networkClientManager = GetComponent<NetworkConfigurationManager>();
             _consoleWindow.gameObject.SetActive(false);
             InitCommands();
         }

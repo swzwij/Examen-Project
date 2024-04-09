@@ -1,11 +1,11 @@
-using FishNet.Managing;
 using FishNet.Transporting.Tugboat;
+using FishNet.Managing;
 using UnityEngine;
 
 namespace Examen.Networking
 {
     [RequireComponent(typeof(NetworkManager), typeof(Tugboat))]
-    public class NetworkClientManager : MonoBehaviour
+    public class NetworkConfigurationManager : MonoBehaviour
     {
         [SerializeField] private bool _isDevelopment;
 
