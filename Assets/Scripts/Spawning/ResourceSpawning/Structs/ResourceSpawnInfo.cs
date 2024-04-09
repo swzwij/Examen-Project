@@ -10,7 +10,7 @@ namespace Examen.Spawning.ResourceSpawning.Structs
         [Range(0, 100)]
         [SerializeField] private float _chance;
 
-        public readonly GameObject resource => _resource;
+        public readonly GameObject Resource => _resource;
         public readonly float Chance => _chance;
     }
 }

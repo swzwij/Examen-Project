@@ -29,6 +29,9 @@ namespace Examen.Player
             _pathFollower.OnInteractableReached += Interact;
 
             ServerInstance.Instance.TryGetComponent(out _networkManager);
+
+            if (_networkManager == null)
+                Debug.LogError("Couldn't find NetworkManager");
         }
 
         private void ProcessPointerGameObject(Interactable pointedObject)
@@ -57,6 +60,7 @@ namespace Examen.Player
         }
 
         [ServerRpc]
-        private void SentInteract(Interactable interactable, NetworkConnection connection) => interactable.Interact(connection, damageAmount);
+        private void SentInteract(Interactable interactable, NetworkConnection connection) 
+            => interactable.Interact(connection, damageAmount);
     }
 }

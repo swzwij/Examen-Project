@@ -12,7 +12,13 @@ public class ServerInventory : NetworkBehaviour
     private Dictionary<int, Dictionary<Item, int>> _inventorySystems = new();
     private NetworkManager _networkManager;
 
-    private void Start() => ServerInstance.Instance.TryGetComponent(out _networkManager);
+    private void Start()
+    {
+        ServerInstance.Instance.TryGetComponent(out _networkManager);
+
+        if (_networkManager == null)
+            Debug.LogError("Couldn't find NetworkManager");
+    }
 
     /// <summary>
     /// Adds given item amount to the inventory of the client.
@@ -30,8 +36,6 @@ public class ServerInventory : NetworkBehaviour
             _inventorySystems[connection.ClientId].Add(newItem, itemAmount);
         else
             _inventorySystems[connection.ClientId][newItem] += itemAmount;
-
-        Debug.Log(_inventorySystems[connection.ClientId][newItem]);
 
         UpdateClientInventory(connection, _inventorySystems[connection.ClientId]);
     }
