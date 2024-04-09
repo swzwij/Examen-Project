@@ -1,15 +1,18 @@
 using Examen.Inventory;
 using Examen.Items;
+using Examen.Networking;
 using FishNet.Connection;
-using FishNet.Managing.Client;
+using FishNet.Managing;
 using FishNet.Object;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ServerInventory : NetworkBehaviour
 {
-    private Dictionary<string, InventorySystem> _inventorySystems = new();
-    private ClientManager _clientManager = new();
+    private Dictionary<int, Dictionary<Item, int>> _inventorySystems = new();
+    private NetworkManager _networkManager;
+
+    private void Start() => ServerInstance.Instance.TryGetComponent(out _networkManager);
 
     /// <summary>
     /// Adds given item amount to the inventory of the client.
@@ -20,14 +23,17 @@ public class ServerInventory : NetworkBehaviour
     [Server]
     public void AddItem(NetworkConnection connection, Item newItem, int itemAmount)
     {
-        string connectionName = connection.ToString();
+        if (!_inventorySystems.ContainsKey(connection.ClientId))
+            _inventorySystems.Add(connection.ClientId, new());
 
-        if (!_inventorySystems.ContainsKey(connectionName))
-              _inventorySystems.Add(connectionName, new InventorySystem());
+        if (!_inventorySystems[connection.ClientId].ContainsKey(newItem))
+            _inventorySystems[connection.ClientId].Add(newItem, itemAmount);
+        else
+            _inventorySystems[connection.ClientId][newItem] += itemAmount;
 
-        _inventorySystems[connectionName].AddItem(newItem, itemAmount);
+        Debug.Log(_inventorySystems[connection.ClientId][newItem]);
 
-        UpdateClientInventory(connection, _inventorySystems[connectionName]);
+        UpdateClientInventory(connection, _inventorySystems[connection.ClientId]);
     }
 
     /// <summary>
@@ -39,20 +45,20 @@ public class ServerInventory : NetworkBehaviour
     [Server]
     public void RemoveItem(NetworkConnection connection, Item newItem, int itemAmount)
     {
-        if (!_inventorySystems.ContainsKey(connection.ToString()))
+        if (!_inventorySystems.ContainsKey(connection.ClientId) || _inventorySystems[connection.ClientId][newItem] - itemAmount < 0)
             return;
 
-        _inventorySystems[connection.ToString()].RemoveItem(newItem, itemAmount);
+        _inventorySystems[connection.ClientId][newItem] -= itemAmount;
 
-        UpdateClientInventory(connection, _inventorySystems[connection.ToString()]);
+        UpdateClientInventory(connection, _inventorySystems[connection.ClientId]);
     }
 
     [ObserversRpc]
-    private void UpdateClientInventory(NetworkConnection connection, InventorySystem newInventorySystem)
+    private void UpdateClientInventory(NetworkConnection connection, Dictionary<Item, int> _currentItems)
     {
-        if (_clientManager.Connection != connection)
+        if (_networkManager.ClientManager.Connection.ClientId != connection.ClientId)
             return;
 
-        InventorySystem.Instance.SetItems(newInventorySystem.CurrentItems);
+        InventorySystem.Instance.SetItems(_currentItems);
     }
 }

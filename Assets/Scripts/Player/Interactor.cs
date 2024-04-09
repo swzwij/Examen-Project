@@ -2,6 +2,9 @@ using UnityEngine;
 using System;
 using FishNet.Object;
 using Examen.Pathfinding;
+using Examen.Networking;
+using FishNet.Managing;
+using FishNet.Connection;
 
 namespace Examen.Player
 {
@@ -10,6 +13,7 @@ namespace Examen.Player
     {
         [SerializeField] private float damageAmount = 1;
 
+        private NetworkManager _networkManager;
         private Pointer _pointer;
         private PathFollower _pathFollower;
         private bool _hasInteracted;
@@ -23,6 +27,8 @@ namespace Examen.Player
 
             _pointer.OnPointedAtInteractable += ProcessPointerGameObject;
             _pathFollower.OnInteractableReached += Interact;
+
+            ServerInstance.Instance.TryGetComponent(out _networkManager);
         }
 
         private void ProcessPointerGameObject(Interactable pointedObject)
@@ -46,11 +52,11 @@ namespace Examen.Player
             if (_hasInteracted)
                 return;
 
-            SentInteract(interactable);
+            SentInteract(interactable, _networkManager.ClientManager.Connection);
             _hasInteracted = true;
         }
 
         [ServerRpc]
-        private void SentInteract(Interactable interactable) => interactable.Interact(ClientManager.Connection, damageAmount);
+        private void SentInteract(Interactable interactable, NetworkConnection connection) => interactable.Interact(connection, damageAmount);
     }
 }

@@ -43,14 +43,6 @@ namespace Examen.Inventory
         /// Overrides currentItems with the new given items.
         /// </summary>
         /// <param name="newItems">The new items you want the current items to override with.</param>
-        public void SetItems(Dictionary<Item, int> newItems)
-        {
-            _currentItems = newItems;
-
-            foreach (var item in _currentItems)
-            {
-                Debug.Log(item);
-            }
-        }
+        public void SetItems(Dictionary<Item, int> newItems) => _currentItems = newItems;
     }
 }
