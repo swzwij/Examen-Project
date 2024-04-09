@@ -30,6 +30,15 @@ namespace Examen.Networking
 
         private void Start()
         {
+#if UNITY_SERVER
+            InitializeServerClient();
+#else
+            InitializeUserClient();
+#endif
+        }
+
+        public void ReconnectClient()
+        {
             InitializeUserClient();
         }
 

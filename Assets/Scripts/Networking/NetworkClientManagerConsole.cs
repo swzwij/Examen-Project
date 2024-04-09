@@ -45,7 +45,14 @@ namespace Examen.Networking
                     {
                         bool isServer = argument != 0;
                         _networkClientManager.IsServer = isServer;
-                        SendCallback("Command successfully parsed.", LogType.Log);
+                        SendCallback("Client starting to convert.", LogType.Log);
+                    }
+                },
+                { "connect", (argument) =>
+                    {
+                        bool shouldConnect = argument != 0;
+                        _networkClientManager.ReconnectClient();
+                        SendCallback("Client started reconnecting.", LogType.Log);
                     }
                 }
             };
