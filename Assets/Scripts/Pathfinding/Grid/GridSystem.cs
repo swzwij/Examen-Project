@@ -246,8 +246,10 @@ namespace Examen.Pathfinding.Grid
         }
 
         /// <summary>
-        /// Represents a node in the grid system.
+        /// Returns the node at the specified world position.
         /// </summary>
+        /// <param name="worldPosition">The world position to check.</param>
+        /// <returns>The node at the specified world position.</returns>
         [Server]
         public Node GetNodeFromWorldPosition(Vector3 worldPosition)
         {
@@ -262,6 +264,11 @@ namespace Examen.Pathfinding.Grid
             return currentNode;
         }
 
+        /// <summary>
+        /// Returns the closest walkable node to the specified position.
+        /// </summary>
+        /// <param name="position">The position to check.</param>
+        /// <returns>The closest walkable node to the specified position.</returns>
         public Node GetClosestWalkableNode(Vector3 position)
         {
             Node closestNode = null;
