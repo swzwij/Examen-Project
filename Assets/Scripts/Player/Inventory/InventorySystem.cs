@@ -40,9 +40,9 @@ namespace Examen.Inventory
         }
 
         /// <summary>
-        /// 
+        /// Overrides currentItems with the new given items.
         /// </summary>
-        /// <param name="newItems"></param>
+        /// <param name="newItems">The new items you want the current items to override with.</param>
         public void SetItems(Dictionary<Item, int> newItems)
         {
             _currentItems = newItems;
