@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Examen.BrotherEye
+namespace Examen.Camera.BrotherEye
 {
     public class ZoomManager : MonoBehaviour
     {

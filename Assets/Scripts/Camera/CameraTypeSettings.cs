@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Examen.BrotherEye
+namespace Examen.Camera.BrotherEye
 {
     [Serializable]
     public struct CameraTypeSettings

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Examen.BrotherEye
+namespace Examen.Camera.BrotherEye
 {
     public class CameraManager : MonoBehaviour
     {
@@ -17,8 +17,10 @@ namespace Examen.BrotherEye
         private void InitCameraSettings()
         {
             foreach (CameraTypeSettings cameraTypeSetting in _cameraSettings)
+            {
                 if (_cameraTypeSettings.TryGetValue(cameraTypeSetting.CameraType, out CameraTypeSettings _) == false)
                     _cameraTypeSettings.Add(cameraTypeSetting.CameraType, cameraTypeSetting);
+            }
         }
 
         public void SetCameraType(CameraTypes cameraType)

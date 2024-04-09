@@ -1,4 +1,4 @@
-namespace Examen.BrotherEye
+namespace Examen.Camera.BrotherEye
 {
     public enum ZoomTypes
     {
