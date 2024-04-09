@@ -14,7 +14,8 @@ namespace Examen.Camera.BrotherEye
         private ZoomManager _zoomManager;
         private Transform _trackedObject;
         private Transform _player;
-        public float CameraDistance => _cameraManager.CurrentCameraSettings.Distance * _zoomManager.ZoomSettings[_cameraManager.CurrentCameraSettings.ZoomLevel];
+        public float CameraDistance => _cameraManager.CurrentCameraSettings.Distance 
+            * _zoomManager.ZoomSettings[_cameraManager.CurrentCameraSettings.ZoomLevel];
         public float CameraAngle => _cameraManager.CurrentCameraSettings.Angle;
         public float TransitionSpeed => _cameraManager.CurrentCameraSettings.TransitionSpeed;
         public Vector3 CameraOffset => _cameraManager.CurrentCameraSettings.Offset;
