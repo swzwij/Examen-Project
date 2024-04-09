@@ -34,11 +34,15 @@ namespace Examen.Inventory
             if (!_currentItems.ContainsKey(removeItem))
                 return;
           
-           _currentItems[removeItem] = _currentItems[removeItem] - amountOfItem < 0 
+           _currentItems[removeItem] = _currentItems[removeItem] - itemAmount < 0 
                 ?  0 
-                : _currentItems[removeItem] - amountOfItem;
+                : _currentItems[removeItem] - itemAmount;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="newItems"></param>
         public void SetItems(Dictionary<Item, int> newItems)
         {
             _currentItems = newItems;
