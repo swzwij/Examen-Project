@@ -67,7 +67,6 @@ namespace Examen.Player
             PointAtPosition();
         }
         private void OnDestroy() 
-
         {
             _clickAction.Disable();
             _clickAction.performed -= OnPointPerformed;
