@@ -90,7 +90,7 @@ namespace Examen.Networking
             _commands[commandName](argument);
         }
 
-        private void SendCallback(string callback, LogType logType)
+        public void SendCallback(string callback, LogType logType)
         {
             _consoleCallback.color = logType switch
             {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Examen.Networking
 {
-    [RequireComponent(typeof(NetworkManager), typeof(Tugboat))]
+    [RequireComponent(typeof(NetworkManager), typeof(Tugboat), typeof(NetworkInterfaceConsole))]
     public class NetworkConfigurationManager : MonoBehaviour
     {
         [SerializeField] private bool _isDevelopment;
@@ -19,6 +19,7 @@ namespace Examen.Networking
 
         private Tugboat _tugboat;
         private NetworkManager _networkManager;
+        private NetworkInterfaceConsole _console;
 
         private bool _isServer;
 
@@ -38,8 +39,9 @@ namespace Examen.Networking
 
         private void Awake()
         {
-            _networkManager = GetComponent<NetworkManager>();
             _tugboat = GetComponent<Tugboat>();
+            _networkManager = GetComponent<NetworkManager>();
+            _console = GetComponent<NetworkInterfaceConsole>();
         }
 
         private void Start()
@@ -58,12 +60,9 @@ namespace Examen.Networking
 
         private void InitializeUserClient()
         {
-            string clientAdress = _isDevelopment ? _developmentAddress : _productionAddress;
-            _tugboat.SetClientAddress(clientAdress);
-
-            ushort port = _isDevelopment ? _developmentPort : _productionPort;
-            _tugboat.SetPort(port);
-
+            SetConnectionClientAddress();
+            SetConnectionPort();
+            
             _networkManager.ClientManager.StartConnection();
         }
 
@@ -76,13 +75,44 @@ namespace Examen.Networking
         {
             DeinitializeUserClient();
             _networkManager.ServerManager.StartConnection();
-
         }
 
         private void DeinitializeServerClient()
         {
             _networkManager.ServerManager.StopConnection(true);
             InitializeUserClient();
+        }
+
+        private void SetConnectionClientAddress()
+        {
+            string clientAdress = _isDevelopment ? _developmentAddress : _productionAddress;
+
+            if (string.IsNullOrEmpty(clientAdress))
+            {
+                CallbackError("Invalid client address.");
+                return;
+            }
+
+            _tugboat.SetClientAddress(clientAdress);
+        }
+
+        private void SetConnectionPort()
+        {
+            ushort port = _isDevelopment ? _developmentPort : _productionPort;
+
+            if (port == 0)
+            {
+                CallbackError("Invalid port.");
+                return;
+            }
+
+            _tugboat.SetPort(port);
+        }
+
+        private void CallbackError(string message) 
+        {
+            Debug.LogError(message);
+            _console.SendCallback(message, LogType.Error);
         }
     }
 }
