@@ -1,12 +1,25 @@
 using FishNet.Managing;
+using FishNet.Transporting.Tugboat;
 using UnityEngine;
 
 namespace Examen.Networking
 {
-    [RequireComponent(typeof(NetworkManager))]
+    [RequireComponent(typeof(NetworkManager), typeof(Tugboat))]
     public class NetworkClientManager : MonoBehaviour
     {
+        [SerializeField] private bool _isDevelopment;
+
+        [Header("Production Settings")]
+        [SerializeField] private string _productionAddress;
+        [SerializeField] private ushort _productionPort;
+
+        [Header("Development Settings")]
+        [SerializeField] private string _developmentAddress;
+        [SerializeField] private ushort _developmentPort;
+
+        private Tugboat _tugboat;
         private NetworkManager _networkManager;
+
         private bool _isServer;
 
         public bool IsServer
@@ -26,6 +39,7 @@ namespace Examen.Networking
         private void Awake()
         {
             _networkManager = GetComponent<NetworkManager>();
+            _tugboat = GetComponent<Tugboat>();
         }
 
         private void Start()
@@ -44,6 +58,12 @@ namespace Examen.Networking
 
         private void InitializeUserClient()
         {
+            string clientAdress = _isDevelopment ? _developmentAddress : _productionAddress;
+            _tugboat.SetClientAddress(clientAdress);
+
+            ushort port = _isDevelopment ? _developmentPort : _productionPort;
+            _tugboat.SetPort(port);
+
             _networkManager.ClientManager.StartConnection();
         }
 
