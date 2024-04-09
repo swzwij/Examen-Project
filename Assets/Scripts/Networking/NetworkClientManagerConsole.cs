@@ -20,17 +20,20 @@ namespace Examen.Networking
         private void OnEnable()
         {
             _consoleToggle.onClick.AddListener(ToggleConsoleVisablity);
-            // Listen to inut field.
+            _inputField.onSubmit.AddListener(HandleCommand);
         }
 
         private void OnDisable()
         {
             _consoleToggle.onClick.RemoveListener(ToggleConsoleVisablity);
-            
+            _inputField.onSubmit.RemoveListener(HandleCommand);
         }
 
-        public void ToggleConsoleVisablity() => _inputField.gameObject.SetActive(!_inputField.gameObject.active);
+        private void ToggleConsoleVisablity() => _inputField.gameObject.SetActive(!_inputField.gameObject.active);
         
-        // Is server command
+        private void HandleCommand(string command)
+        {
+
+        }
     }
 }
