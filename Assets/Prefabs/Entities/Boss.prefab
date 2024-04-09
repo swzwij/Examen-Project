@@ -127,6 +127,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 9181585673909579258}
   _networkObjectCache: {fileID: 9181585673909579258}
+  _followerType: 1
   _diagonalCost: 14
   _straightCost: 10
 --- !u!114 &6810126444432453413
@@ -149,7 +150,6 @@ MonoBehaviour:
   p_obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 64
-  p_pathColor: {r: 1, g: 0, b: 0, a: 1}
   p_waitTime: 5
   _waypoints: []
 --- !u!114 &9181585673909579258
@@ -299,7 +299,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2652453575789195522}
-  m_Layer: 2
+  m_Layer: 7
   m_Name: BossWaypoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -316,8 +316,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 30, y: 30, z: 30}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1834133555745107547}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

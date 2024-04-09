@@ -7,6 +7,7 @@ namespace Examen.Pathfinding
 {
     public class Pathfinder : NetworkBehaviour
     {
+        [SerializeField] private FollowerTypes _followerType = FollowerTypes.Player;
         [SerializeField] private int _diagonalCost = 14;
         [SerializeField] private int _straightCost = 10;
 
@@ -77,6 +78,9 @@ namespace Examen.Pathfinding
             foreach (Node neighbour in currentNode.ConnectedNodes)
             {
                 if (!neighbour.IsWalkable || _closedSet.TryGetValue(neighbour, out _))
+                    continue;
+
+                if (_followerType == FollowerTypes.Enemy && !neighbour.IsEnemyWalkable)
                     continue;
 
                 int newMovementCostToNeighbor = currentNode.GoalCost + CalculateDistance(currentNode, neighbour);

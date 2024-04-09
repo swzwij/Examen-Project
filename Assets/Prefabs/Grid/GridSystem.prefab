@@ -55,6 +55,9 @@ MonoBehaviour:
   _walkableLayerMask:
     serializedVersion: 2
     m_Bits: 1
+  _enemyWalkableLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
   _obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 64

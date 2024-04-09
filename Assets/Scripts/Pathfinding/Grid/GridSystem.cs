@@ -12,6 +12,7 @@ namespace Examen.Pathfinding.Grid
         [SerializeField] private float _maxConnectionDistance = 1f;
         [SerializeField] private float _nodeHeightOffset = 0.2f;
         [SerializeField] private LayerMask _walkableLayerMask;
+        [SerializeField] private LayerMask _enemyWalkableLayerMask;
         [SerializeField] private LayerMask _obstacleLayerMask;
         [SerializeField] private Cell _cellPrefab;
         [SerializeField] private int _cellSize = 10;
@@ -75,8 +76,13 @@ namespace Examen.Pathfinding.Grid
         [Server]
         private Node ConfigureNode(Node node, Vector3 nodePosition)
         {
-            if (!IsWalkableArea(nodePosition, out float elevation))
+            if (!IsWalkableArea(nodePosition, out float elevation, _walkableLayerMask))
                 return node;
+
+            if (IsWalkableArea(nodePosition, out float _, _enemyWalkableLayerMask))
+                        node.IsEnemyWalkable = true;
+                    else
+                        node.IsEnemyWalkable = false;
             
             node.Elevation = elevation;
             node.Position = new Vector3(nodePosition.x, elevation, nodePosition.z);
@@ -145,7 +151,7 @@ namespace Examen.Pathfinding.Grid
         /// <param name="elevation">The elevation of the walkable area.</param>
         /// <returns>True if the area is walkable, false otherwise.</returns>
         [Server]
-        public bool IsWalkableArea(Vector3 position, out float elevation)
+        public bool IsWalkableArea(Vector3 position, out float elevation, LayerMask walkableMask)
         {
             Ray ray = new(position + Vector3.up * _maxWorldHeight, Vector3.down);
 
@@ -155,7 +161,7 @@ namespace Examen.Pathfinding.Grid
                 return false;
             }
 
-            if (Physics.Raycast(ray, out hit, 200f, _walkableLayerMask))
+            if (Physics.Raycast(ray, out hit, 200f, walkableMask))
             {
                 elevation = hit.point.y + _nodeHeightOffset;
                 return true;
@@ -178,8 +184,13 @@ namespace Examen.Pathfinding.Grid
             foreach (Node node in cell.Nodes)
             {
                 Vector3 position = node.Position;
-                if (IsWalkableArea(position, out float elevation))
+                if (IsWalkableArea(position, out float elevation, _walkableLayerMask))
                 {
+                    if (IsWalkableArea(position, out float _, _enemyWalkableLayerMask))
+                        node.IsEnemyWalkable = true;
+                    else
+                        node.IsEnemyWalkable = false;
+
                     node.IsWalkable = true;
                     node.Elevation = elevation;
                     node.Position = new Vector3(position.x, elevation, position.z);
@@ -302,6 +313,11 @@ namespace Examen.Pathfinding.Grid
                 {
                     if (!connectedNode.IsWalkable)
                         continue;
+                    
+                    if (!connectedNode.IsEnemyWalkable)
+                        Gizmos.color = Color.cyan;
+                    else
+                        Gizmos.color = Color.red;
 
                     Gizmos.DrawLine(node.Position, connectedNode.Position);
                 }
