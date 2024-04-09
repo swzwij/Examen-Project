@@ -31,14 +31,14 @@ namespace Examen.Spawning.ResourceSpawning
                 {
                     if (_spawnPercentage <= 0 || _currentSpawnAmount <= 0)
                     {
-                        Debug.LogError($"Can't spawn {area.SpawnableResources[j].resource.name}, " +
+                        Debug.LogError($"Can't spawn {area.SpawnableResources[j].Resource.name}, " +
                             $"because you can't spawn more then 100% Resources");
                         break;
                     }
 
                     float resourcesAmount = CalculateResrouceAmount(area, area.SpawnableResources[j]);
 
-                    SpawnResources(area, area.SpawnableResources[j].resource, resourcesAmount);
+                    SpawnResources(area, area.SpawnableResources[j].Resource, resourcesAmount);
                 }
             }
         }
@@ -49,7 +49,7 @@ namespace Examen.Spawning.ResourceSpawning
 
             if (_spawnPercentage - percentage < 0)
             {
-                Debug.LogWarning($"Percentage of {resourceSpawnInfo.resource.name}" +
+                Debug.LogWarning($"Percentage of {resourceSpawnInfo.Resource.name}" +
                     $" was to high so we rounded it down to {_spawnPercentage}");
                 percentage = _spawnPercentage;
                 _spawnPercentage = 0;
