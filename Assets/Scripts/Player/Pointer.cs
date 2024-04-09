@@ -9,7 +9,7 @@ namespace Examen.Player
     public class Pointer : NetworkBehaviour
     {
         [SerializeField] private float _pointerDistance = 10000f;
-        private Camera _myCamera; // Replace with camera manager once this is implemented
+        [SerializeField] private UnityEngine.Camera _myCamera;
         private Vector3 _pointerWorldPosition;
         private InputAction _clickAction;
 
@@ -22,10 +22,16 @@ namespace Examen.Player
             InputManager.SubscribeToAction("Click", OnPointPerformed, out _clickAction);
             InputManager.TryGetAction("PointerPosition").Enable();
 
-            if (TryGetComponent(out Camera camera))
-                _myCamera = camera;
-            else
-                _myCamera = Camera.main;
+            InitCamera();
+        }
+
+        private void InitCamera()
+        {
+            if (!IsOwner)
+                return;
+
+            _myCamera.gameObject.SetActive(true);
+            _myCamera.transform.SetParent(null);
         }
 
         /// <summary>
