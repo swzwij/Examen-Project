@@ -9,7 +9,7 @@ namespace Examen.Player
     public class Pointer : NetworkBehaviour
     {
         [SerializeField] private float _pointerDistance = 10000f;
-        private Camera _myCamera; // Replace with camera manager once this is implemented
+        [SerializeField] private Camera _myCamera; // Replace with camera manager once this is implemented
         private Vector3 _pointerWorldPosition;
         private InputAction _clickAction;
 
@@ -27,7 +27,11 @@ namespace Examen.Player
 
         private void InitCamera()
         {
-            _myCamera = GetComponentInChildren<Camera>();
+            if (!IsOwner)
+                return;
+
+            //_myCamera = GetComponentInChildren<Camera>();
+            _myCamera.gameObject.SetActive(true);
             _myCamera.transform.SetParent(null);
         }
 

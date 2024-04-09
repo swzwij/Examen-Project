@@ -20,7 +20,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4081051270432361184
 Transform:
   m_ObjectHideFlags: 0
@@ -318,6 +318,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
   _pointerDistance: 10000
+  _myCamera: {fileID: 2467539732417906286}
 --- !u!114 &3679868855582776512
 MonoBehaviour:
   m_ObjectHideFlags: 0
