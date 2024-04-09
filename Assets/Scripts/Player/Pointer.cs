@@ -9,7 +9,7 @@ namespace Examen.Player
     public class Pointer : NetworkBehaviour
     {
         [SerializeField] private float _pointerDistance = 10000f;
-        [SerializeField] private Camera _myCamera;
+        [SerializeField] private UnityEngine.Camera _myCamera;
         private Vector3 _pointerWorldPosition;
         private InputAction _clickAction;
 
