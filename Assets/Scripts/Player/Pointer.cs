@@ -13,9 +13,8 @@ namespace Examen.Player
         private Vector3 _pointerWorldPosition;
         private InputAction _clickAction;
 
-
         public Action<Vector3> OnPointedAtPosition;
-        public Action<GameObject> OnPointedGameobject;
+        public Action<Interactable> OnPointedAtInteractable;
 
         private void Start()
         {
@@ -54,18 +53,19 @@ namespace Examen.Player
             {
                 _pointerWorldPosition = hit.point;
                 OnPointedAtPosition?.Invoke(_pointerWorldPosition);
-                OnPointedGameobject?.Invoke(hit.transform.gameObject);
+
+                if (hit.transform.TryGetComponent(out Interactable interactable))
+                    OnPointedAtInteractable?.Invoke(interactable);
             }
         }
 
         private void OnPointPerformed(InputAction.CallbackContext context)
         {
-            if(!IsOwner) 
+            if (!IsOwner)
                 return;
 
             PointAtPosition();
         }
-
         private void OnDestroy() 
         {
             _clickAction.Disable();

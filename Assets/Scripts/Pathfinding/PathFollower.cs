@@ -16,21 +16,25 @@ namespace Examen.Pathfinding
         [SerializeField] protected LayerMask p_obstaclesLayerMask;
         [SerializeField] protected float p_waitTime = 1f;
 
+        protected Interactable p_targetInteractable;
+        protected bool p_hasInteracted;
         protected Vector3 p_currentTarget;
         protected bool p_hasFoundBlockage;
         protected Pathfinder p_pathfinder;
         protected Pointer p_pointer;
+        protected Interactor p_interactor;
         protected List<Node> p_currentPath = new();
         protected List<Vector3> P_CurrentPathPositions => p_currentPath.ConvertAll(node => node.Position);
         protected int p_currentNodeIndex = 0;
         protected Coroutine p_followPathCoroutine;
         protected Coroutine p_waitForClearance;
         protected LineRenderer p_pathRenderer;
-
+        
         public bool IsPathBlocked 
             => Physics.Raycast(transform.position, transform.forward, p_obstacleCheckDistance, p_obstaclesLayerMask);
-        
+
         public event Action OnPathCompleted;
+        public event Action<Interactable> OnInteractableReached;
 
         protected virtual void Start() 
         {
@@ -39,6 +43,9 @@ namespace Examen.Pathfinding
 
             if (TryGetComponent(out p_pointer))
                 p_pointer.OnPointedAtPosition += ProcessPointerPosition;
+
+            if (TryGetComponent(out p_interactor))
+                p_interactor.OnInteractableFound += ProcessPointerPosition;
         }
 
         protected virtual void FixedUpdate()
@@ -46,11 +53,22 @@ namespace Examen.Pathfinding
             if (!IsOwner)
                 return;
 
+            RequestDIstanceToTarget();
+            if (p_hasInteracted)
+                return;
+
             if (!IsPathBlocked || p_hasFoundBlockage)
                 return;
 
             p_hasFoundBlockage = true;
             StartPath(p_currentTarget);
+        }
+
+        protected void ProcessPointerPosition(Interactable targetInteractable)
+        {
+            p_hasInteracted = false;
+            p_targetInteractable = targetInteractable;
+            PreProcessPointerPosition(p_targetInteractable.transform.position);
         }
 
         protected void ProcessPointerPosition(Vector3 position)
@@ -136,6 +154,39 @@ namespace Examen.Pathfinding
 
         [Server]
         protected void ResetBlockage() => p_hasFoundBlockage = false;
+
+        private void RequestDIstanceToTarget()
+        {
+            if (p_targetInteractable == null)
+                return;
+
+            if (DistanceToTarget(p_targetInteractable.transform.position) >= p_obstacleCheckDistance)
+                return;
+            
+            BroadcastInteractableReached();
+        }
+
+        private float DistanceToTarget(Vector3 target)
+        {
+            Vector3 difference = transform.position - target;
+            float distance = Mathf.Sqrt(Mathf.Pow(difference.x, 2f) 
+                + Mathf.Pow(difference.y, 2f) + Mathf.Pow(difference.z, 2f));
+
+            return distance;
+        }
+
+        private void BroadcastInteractableReached()
+        {
+            Vector3 targetPosition = p_targetInteractable.transform.position;
+            targetPosition.y = transform.position.y;
+            transform.LookAt(targetPosition);
+
+            if (!p_hasInteracted)
+            {
+                p_hasInteracted = true;
+                OnInteractableReached?.Invoke(p_targetInteractable);
+            }
+        }
         
         protected void DrawPath(List<Vector3> path)
         {
