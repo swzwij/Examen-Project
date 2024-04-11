@@ -1,9 +1,10 @@
+using Examen.Spawning.ResourceSpawning;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Examen.Pathfinding.Grid
 {
-    [RequireComponent(typeof(BoxCollider))]
+    [RequireComponent(typeof(BoxCollider), typeof(SpawnArea))]
     public class Cell : MonoBehaviour
     {
         [SerializeField] private LayerMask _updateCellMask;
@@ -16,6 +17,7 @@ namespace Examen.Pathfinding.Grid
         public int CellY { private get; set; }
 
         public HashSet<Node> Nodes => _nodes;
+        public BoxCollider Collider => GetComponent<BoxCollider>();
 
         private void OnEnable()
         {
@@ -24,8 +26,12 @@ namespace Examen.Pathfinding.Grid
             _collider.includeLayers = _updateCellMask;
             _collider.excludeLayers = ~_updateCellMask;
         }
-        
-        private void OnTriggerEnter(Collider other) => GridSystem.UpdateCell(CellX, CellY);
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if(GridSystem != null)
+                GridSystem.UpdateCell(CellX, CellY);
+        }
         private void OnTriggerExit(Collider other) => GridSystem.UpdateCell(CellX, CellY);
 
         /// <summary>

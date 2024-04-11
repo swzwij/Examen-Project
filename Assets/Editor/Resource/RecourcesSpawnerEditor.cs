@@ -21,6 +21,9 @@ namespace Examen.Editors.Resource
 
             ResourceSpawner spawner = (ResourceSpawner)target;
 
+            if (spawner.SpawnAreas.Count <= 0)
+                return;
+
             EditorGUILayout.BeginHorizontal();
 
             if (GUILayout.Button("All (Re)Spawn Resources"))

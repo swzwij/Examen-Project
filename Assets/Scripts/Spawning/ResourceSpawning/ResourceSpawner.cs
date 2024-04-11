@@ -1,12 +1,12 @@
 using Examen.Spawning.ResourceSpawning.Structs;
+using MarkUlrich.Utils;
 using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
 using UnityEngine;
 
 namespace Examen.Spawning.ResourceSpawning
 {
-    public class ResourceSpawner : MonoBehaviour
+    public class ResourceSpawner : SingletonInstance<ResourceSpawner>
     {
         [SerializeField] private List<ResourceSpawnAreas> _spawnAreas = new();
 
