@@ -15,7 +15,7 @@ namespace Examen.Networking
 
         private NetworkConfigurationManager _networkClientManager;
 
-        private Dictionary<string, Action<int>> _commands;
+        private Dictionary<string, Action<string>> _commands;
 
 
         private void Awake()
@@ -43,16 +43,21 @@ namespace Examen.Networking
             {
                 { "server", (argument) =>
                     {
-                        bool isServer = argument != 0;
+                        bool isServer = int.Parse(argument) != 0;
                         _networkClientManager.IsServer = isServer;
-                        SendCallback("Client starting to convert.", LogType.Log);
+                        SendCallback("Converting to server.", LogType.Log);
                     }
                 },
                 { "connect", (argument) =>
                     {
-                        bool shouldConnect = argument != 0;
                         _networkClientManager.ReconnectClient();
-                        SendCallback("Client started reconnecting.", LogType.Log);
+                        SendCallback("Started reconnecting.", LogType.Log);
+                    }
+                },
+                { "connectip", (argument) =>
+                    {
+                        _networkClientManager.ReconnectClient(argument);
+                        SendCallback($"connecting to {argument}.", LogType.Log);
                     }
                 }
             };
@@ -73,13 +78,7 @@ namespace Examen.Networking
             }
 
             string commandName = parts[0];
-            string argumentString = parts[1];
-
-            if (!int.TryParse(argumentString, out int argument))
-            {
-                SendCallback("Invalid argument. Expected an integer.", LogType.Error);
-                return;
-            }
+            string argument = parts[1];
 
             if (!_commands.ContainsKey(commandName))
             {

@@ -7,8 +7,5 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/Pathfinding.unity
-    guid: b521e19865746fa4da6de43e88fd70ce
-  - enabled: 1
-    path: Assets/Scenes/FishNet Networking.unity
-    guid: bc380048850769d4fb20263325c6152e
+    guid: 4c99032c5385ec742870c732723e6563
   m_configObjects: {}

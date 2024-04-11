@@ -53,8 +53,10 @@ namespace Examen.Networking
 #endif
         }
 
-        public void ReconnectClient()
+        public void ReconnectClient(string address = "")
         {
+            if (address != string.Empty)
+                _tugboat.SetClientAddress(address);
             InitializeUserClient();
         }
 
