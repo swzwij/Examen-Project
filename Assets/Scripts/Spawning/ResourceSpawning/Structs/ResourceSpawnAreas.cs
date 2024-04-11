@@ -11,7 +11,7 @@ namespace Examen.Spawning.ResourceSpawning.Structs
         [SerializeField] private int _resourceAmount;
         [SerializeField] private List<ResourceSpawnInfo> _spawnableResources;
 
-        public readonly SpawnArea Area => _area;
+        public SpawnArea Area { get => _area; set => _area = value; }
         public readonly int ResourceAmount => _resourceAmount;
         public readonly List<ResourceSpawnInfo> SpawnableResources => _spawnableResources;
     }
