@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Examen.Spawning.ResourceSpawning;
 using Examen.Spawning.ResourceSpawning.Structs;
@@ -24,6 +25,8 @@ namespace Examen.Pathfinding.Grid
         private Node[,] _nodes;
         private Cell[,] _cells;
         private bool _isInitialized;
+
+        public Action<Vector2Int> OnCellCreated;
 
         private Vector3 CellSize 
             => new(_cellSize * _nodeDistance, _cellSize * _nodeDistance, _cellSize * _nodeDistance);
@@ -103,6 +106,8 @@ namespace Examen.Pathfinding.Grid
 
             ConfigureCell(newCell, x, y);
             PopulateCellWithNodes(newCell, x, y);
+
+            OnCellCreated?.Invoke(new Vector2Int(x, y));
 
            ResourceSpawner.Instance.SpawnAreas.Add(new ResourceSpawnAreas() { Area = newCell.GetComponent<SpawnArea>()}); 
         }
