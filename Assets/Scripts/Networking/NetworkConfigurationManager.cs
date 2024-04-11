@@ -53,6 +53,10 @@ namespace Examen.Networking
 #endif
         }
 
+        /// <summary>
+        /// Reconnect the client to the default or the given server address.
+        /// </summary>
+        /// <param name="address">The server address the client will connect to.</param>
         public void ReconnectClient(string address = "")
         {
             if (address != string.Empty)
@@ -68,10 +72,7 @@ namespace Examen.Networking
             _networkManager.ClientManager.StartConnection();
         }
 
-        private void DeinitializeUserClient()
-        {
-            _networkManager.ClientManager.StopConnection();
-        }
+        private void DeinitializeUserClient() => _networkManager.ClientManager.StopConnection();
 
         private void InitializeServerClient()
         {

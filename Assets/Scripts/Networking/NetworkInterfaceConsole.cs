@@ -17,11 +17,10 @@ namespace Examen.Networking
 
         private Dictionary<string, Action<string>> _commands;
 
-
         private void Awake()
         {
             _networkClientManager = GetComponent<NetworkConfigurationManager>();
-            _consoleWindow.gameObject.SetActive(false);
+            _consoleWindow.SetActive(false);
             InitCommands();
         }
 
@@ -35,6 +34,24 @@ namespace Examen.Networking
         {
             _consoleToggle.onClick.RemoveListener(ToggleConsoleVisablity);
             _inputField.onSubmit.RemoveListener(HandleCommand);
+        }
+
+        /// <summary>
+        /// Sends a callback message to the console, coloring the text based on the provided log type.
+        /// </summary>
+        /// <param name="callback">The text of the callback message.</param>
+        /// <param name="logType">The log type (e.g., Error, Warning) determining the message color.</param>
+
+        public void SendCallback(string callback, LogType logType)
+        {
+            _consoleCallback.color = logType switch
+            {
+                LogType.Error => Color.red,
+                LogType.Warning => Color.yellow,
+                _ => Color.white,
+            };
+
+            _consoleCallback.text = callback;
         }
 
         private void InitCommands()
@@ -87,18 +104,6 @@ namespace Examen.Networking
             }
 
             _commands[commandName](argument);
-        }
-
-        public void SendCallback(string callback, LogType logType)
-        {
-            _consoleCallback.color = logType switch
-            {
-                LogType.Error => Color.red,
-                LogType.Warning => Color.yellow,
-                _ => Color.white,
-            };
-
-            _consoleCallback.text = callback;
         }
     }
 }
