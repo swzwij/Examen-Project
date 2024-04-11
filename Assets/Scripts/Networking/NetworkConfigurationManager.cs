@@ -16,6 +16,8 @@ namespace Examen.Networking
         [Header("Development Settings")]
         [SerializeField] private string _developmentAddress;
         [SerializeField] private ushort _developmentPort;
+        [Range(1, 1800)]
+        [SerializeField] private float _timeout;
 
         private Tugboat _tugboat;
         private NetworkManager _networkManager;
@@ -68,7 +70,8 @@ namespace Examen.Networking
         {
             SetConnectionClientAddress();
             SetConnectionPort();
-            
+            SetTimeout();
+
             _networkManager.ClientManager.StartConnection();
         }
 
@@ -110,6 +113,14 @@ namespace Examen.Networking
             }
 
             _tugboat.SetPort(port);
+        }
+
+        private void SetTimeout()
+        {
+            if (!_isDevelopment)
+                return;
+
+            _tugboat.SetTimeout(_timeout, false);
         }
 
         private void CallbackError(string message) 

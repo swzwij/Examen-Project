@@ -739,6 +739,7 @@ MonoBehaviour:
   _productionPort: 7770
   _developmentAddress: localhost
   _developmentPort: 7770
+  _timeout: 1800
 --- !u!114 &1866760123394007718
 MonoBehaviour:
   m_ObjectHideFlags: 0

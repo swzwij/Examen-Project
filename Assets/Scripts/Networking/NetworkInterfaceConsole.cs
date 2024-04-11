@@ -41,7 +41,6 @@ namespace Examen.Networking
         /// </summary>
         /// <param name="callback">The text of the callback message.</param>
         /// <param name="logType">The log type (e.g., Error, Warning) determining the message color.</param>
-
         public void SendCallback(string callback, LogType logType)
         {
             _consoleCallback.color = logType switch
@@ -80,7 +79,7 @@ namespace Examen.Networking
             };
         }
 
-        private void ToggleConsoleVisablity() => _consoleWindow.SetActive(!_consoleWindow.active);
+        private void ToggleConsoleVisablity() => _consoleWindow.SetActive(!_consoleWindow.activeSelf);
 
         private void HandleCommand(string command)
         {
