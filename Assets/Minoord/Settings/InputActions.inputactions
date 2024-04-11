@@ -24,13 +24,13 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "HoldDown",
-                    "type": "Value",
-                    "id": "3b3efc34-5439-428d-b838-6bf2fdcd92c1",
+                    "name": "Zoom",
+                    "type": "Button",
+                    "id": "9da97ec4-6c10-448f-a7f3-1dc196c79084",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -80,12 +80,12 @@
                 },
                 {
                     "name": "",
-                    "id": "abea3587-fc84-496c-a0eb-7380f2dffad4",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "Hold(duration=1.401298E-45)",
+                    "id": "94092bef-2b53-4e42-8f64-a1899cfae8f1",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "HoldDown",
+                    "action": "Zoom",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
