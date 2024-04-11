@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &9056923320497934694
+--- !u!1 &5557482214120456628
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,69 +8,69 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5192036811111712545}
-  - component: {fileID: 7198666531720544297}
-  - component: {fileID: 6802409018907052684}
+  - component: {fileID: 3107846746781051208}
+  - component: {fileID: 2519144976069543625}
+  - component: {fileID: 2127048258373748558}
+  - component: {fileID: 1795323398928968516}
   m_Layer: 0
-  m_Name: GridSystem
+  m_Name: Building Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5192036811111712545
+--- !u!4 &3107846746781051208
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9056923320497934694}
+  m_GameObject: {fileID: 5557482214120456628}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -30.3, y: 0, z: -30.2}
+  m_LocalPosition: {x: -0.05071418, y: 7.39802, z: 4.9867496}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7198666531720544297
+--- !u!114 &2519144976069543625
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9056923320497934694}
+  m_GameObject: {fileID: 5557482214120456628}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49966f502814c704ebbedcef60efa90b, type: 3}
+  m_Script: {fileID: 11500000, guid: 5df33346329c9df45abaaab7b955478d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _placeAllowed: {fileID: 2100000, guid: de8e4d3314c2d464889c2450c9b4620f, type: 2}
+  _placeDisallowed: {fileID: 2100000, guid: ae4342f4c28796f44b1032da04ac6dfb, type: 2}
+--- !u!114 &2127048258373748558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5557482214120456628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72487ff4dc28fb8418848132a371b17e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _componentIndexCache: 0
-  _addedNetworkObject: {fileID: 6802409018907052684}
-  _networkObjectCache: {fileID: 0}
-  _showGrid: 0
-  _maxWorldHeight: 30
-  _maxElevationDifference: 1.4
-  _maxConnectionDistance: 3
-  _nodeHeightOffset: 0.3
-  _walkableLayerMask:
-    serializedVersion: 2
-    m_Bits: 1
-  _obstacleLayerMask:
-    serializedVersion: 2
-    m_Bits: 64
-  _cellPrefab: {fileID: 6240166786542947317, guid: 16fc201a78392d74bb4502a776621619, type: 3}
-  _cellSize: 8
-  _gridSize: {x: 54, y: 126}
-  _nodeDistance: 2
-  _maxNodeConnections: 3
---- !u!114 &6802409018907052684
+  _addedNetworkObject: {fileID: 1795323398928968516}
+  _networkObjectCache: {fileID: 1795323398928968516}
+  _pointerDistance: 10000
+--- !u!114 &1795323398928968516
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9056923320497934694}
+  m_GameObject: {fileID: 5557482214120456628}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
@@ -79,13 +79,14 @@ MonoBehaviour:
   <IsNested>k__BackingField: 0
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
-  _networkBehaviours: []
+  _networkBehaviours:
+  - {fileID: 2127048258373748558}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
-    Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0, w: 0}
-    LocalScale: {x: 0, y: 0, z: 0}
+    Position: {x: -0.05071418, y: 7.39802, z: 4.9867496}
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    LocalScale: {x: 1, y: 1, z: 1}
   _isNetworked: 1
   _isGlobal: 0
   _initializeOrder: 0
@@ -93,6 +94,6 @@ MonoBehaviour:
   NetworkObserver: {fileID: 0}
   <PrefabId>k__BackingField: 0
   <SpawnableCollectionId>k__BackingField: 0
-  _scenePathHash: 0
+  _scenePathHash: 242422736
   <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 13166327773201220790
+  <AssetPathHash>k__BackingField: 13069884294862510901

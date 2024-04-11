@@ -47,12 +47,12 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""HoldDown"",
-                    ""type"": ""Button"",
+                    ""type"": ""Value"",
                     ""id"": ""3b3efc34-5439-428d-b838-6bf2fdcd92c1"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [

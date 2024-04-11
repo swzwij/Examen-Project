@@ -25,12 +25,15 @@ public class StructurepreviewButtons : MonoBehaviour
 
     public void RotateStructure(bool nagativeDiraction)
     {
+        Debug.Log("TRY ROTATING");
+
         int rotationAmount = 15 * (nagativeDiraction ? -1 : 1);
         BuildingManager.Instance.RotateStructure(rotationAmount);
     }
 
     public void PlaceStructure()
     {
+        Debug.Log("TRY PLACING");
         BuildingManager.Instance.SetStructure();
     }
 }

@@ -16,6 +16,7 @@ namespace Examen.Player
 
         public Action<Vector3> OnPointedAtPosition;
         public Action<GameObject> OnPointedGameobject;
+        public Action<RaycastHit> OnPointedHitInfo;
 
         private void Start()
         {
@@ -49,6 +50,7 @@ namespace Examen.Player
                 _pointerWorldPosition = hit.point;
                 OnPointedAtPosition?.Invoke(_pointerWorldPosition);
                 OnPointedGameobject?.Invoke(hit.transform.gameObject);
+                OnPointedHitInfo?.Invoke(hit);
             }
         }
 

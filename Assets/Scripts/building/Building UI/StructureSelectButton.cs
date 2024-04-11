@@ -9,13 +9,11 @@ namespace Examen.Building
     [RequireComponent(typeof(Button))]
     public class StructureSelectButton : MonoBehaviour, IPointerDownHandler
     {
-        [SerializeField] private BuildingManager _manager;
         [SerializeField] protected GameObject _structurePreview;
         [SerializeField] protected GameObject _structure;
 
+        [System.Obsolete]
         public void OnPointerDown(PointerEventData eventData)
-        {
-            _manager.SpawnStructurePreview(_structurePreview, _structure);
-        }
+            => BuildingManager.Instance.SpawnStructurePreview(_structurePreview, _structure);
     }
 }

@@ -1,14 +1,11 @@
-using Examen.Player;
-using MarkUlrich.Utils;
-using Minoord.Input;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Minoord.Input;
+using MarkUlrich.Utils;
 using UnityEngine.InputSystem;
 
 namespace Examen.Building
 {
+    [RequireComponent(typeof(Player.Pointer))]
     public class BuildingManager : SingletonInstance<BuildingManager>
     {
         [SerializeField] private Material _placeAllowed;
@@ -23,82 +20,70 @@ namespace Examen.Building
         private Vector3 _currentRotation;
         private Vector3 _currentNormal;
 
-        private Vector3 _lastMousePosition;
-
         private bool _canPlace = false;
-        private bool _isHolding = false;
+        private bool _isHolding;
 
         private GameObject rotationButtons;
 
         private InputAction _clickAction;
+
         private Player.Pointer _pointer;
         private Vector3 _pointerLocation;
+        private RaycastHit _pointerHitInfo;
 
         private void Start()
         {
-            InputManager.SubscribeToAction("HoldDown", OnHoldpressed, out _clickAction);
+            InputManager.SubscribeToAction("HoldDown", OnHoldPressed, out _clickAction);
+            _clickAction.canceled += OnReleasePressed;
+
             _pointer = GetComponent<Player.Pointer>();
             _pointer.OnPointedAtPosition += SetPointerVector;
-
-            _clickAction.started += OnReleasePressed;
+            _pointer.OnPointedHitInfo += SetPointerHitInfo;
         }
 
-        private void OnHoldpressed(InputAction.CallbackContext context)
-        {
-            Debug.Log("AA");
-        }
-        private void OnReleasePressed(InputAction.CallbackContext context)
-        {
-            Debug.Log("BB");
-        }
-        
         void Update()
         {
             if (!_isHolding || _currentPreview == null)
                 return;
-           
-            Ray ray = Camera.main.ScreenPointToRay(_pointerLocation);
-            if (Physics.Raycast(ray, out RaycastHit hit))
-            {
-                if (hit.transform.gameObject.layer != 7)
-                    return;
 
-                if (hit.point == _lastMousePosition)
-                    return;
+            _pointer.PointAtPosition();
+            if (_pointerHitInfo.collider.gameObject.layer != 7) //Ground layer
+                return;
 
-                if (_clickAction.inProgress)
-                {
-                    if (rotationButtons != null)
-                        rotationButtons.SetActive(false);
-
-                    SetStructurePosition(hit);
-                }
-                else
-                {
-                    if(rotationButtons != null)
-                        rotationButtons.SetActive(true);
-
-                    return;
-                }
-            }
-            _lastMousePosition = hit.point;
+            if (_isHolding)
+                SetStructurePosition();
         }
 
+        /// <summary>
+        /// Returns the current structure preview GameObject.
+        /// </summary>
+        /// <returns>The current structure preview GameObject.</returns>
         public GameObject GetCurrentStructure() => _currentPreview;
 
+        /// <summary>
+        /// Sets the structure position based on the current pointer location and hit information.
+        /// </summary>
         public void SetStructure()
         {
             _currentRotation = _currentPreview.transform.rotation.eulerAngles;
             PlaceStructure(_placePrefab, _currentPosition, _currentRotation);
         }
 
+        /// <summary>
+        /// Rotates the structure preview by the specified amount.
+        /// </summary>
+        /// <param name="rotationAmount">The amount to rotate the structure preview.</param>
         public void RotateStructure(int rotationAmount)
         {
             _currentPreview.transform.Rotate(Vector3.up, rotationAmount);
             _currentRotation = _currentPreview.transform.rotation.eulerAngles;
         }
 
-        [System.Obsolete]
+        /// <summary>
+        /// Spawns a structure preview GameObject.
+        /// </summary>
+        /// <param name="structurePreview">The structure preview GameObject to spawn.</param>
+        /// <param name="structure">The structure GameObject to place.</param>
         public void SpawnStructurePreview(GameObject structurePreview, GameObject structure)
         {
             if (_currentPreview != null)
@@ -107,7 +92,10 @@ namespace Examen.Building
             _placePrefab = structure;
 
             _currentPreview = Instantiate(structurePreview);
-            rotationButtons = _currentPreview.transform.FindChild("RotationButtons").gameObject;
+
+            rotationButtons = _currentPreview.transform.Find("RotationButtons").gameObject;
+            rotationButtons.SetActive(false);
+
             _meshRenderer = _currentPreview.GetComponentInChildren<MeshRenderer>();
 
             _isHolding = true;
@@ -124,37 +112,23 @@ namespace Examen.Building
             StructureList.AddStructure(placedStructure);
         }
 
-        private void SetStructurePosition(RaycastHit hit)
+        private void SetStructurePosition()
         {
-            if (hit.collider.gameObject.layer != 7)
-                return;
-
-            Vector3 mousePosition = hit.point;
-
-            _currentPosition = new Vector3(mousePosition.x, hit.point.y, mousePosition.z);
+            _currentPosition = _pointerLocation;
             _currentPreview.transform.position = _currentPosition;
 
-            _currentNormal = hit.normal;
+            _currentNormal = _pointerHitInfo.normal;
             _currentPreview.transform.up = _currentNormal;
 
+            float dotProduct = Vector3.Dot(_pointerHitInfo.normal, Vector3.up);
+            CheckPlaceable();
 
-            float dotProduct = Vector3.Dot(hit.normal, Vector3.up);
-            CheckPlacable();
-
-            if (dotProduct > 0.5 && _canPlace == true)
-            {
-                _meshRenderer.material = _placeAllowed;
-            }
-            else
-            {
-                _canPlace = false;
-                _meshRenderer.material = _placeDisallowed;
-            }
+            _meshRenderer.material = dotProduct > 0.5 && _canPlace ? _placeAllowed : _placeDisallowed;
+            _canPlace = dotProduct > 0.5 && _canPlace;
         }
 
-        private void CheckPlacable()
+        private void CheckPlaceable()
         {
-            print("Start Check");
             _canPlace = true;
 
             foreach (var structure in StructureList.GetList())
@@ -176,7 +150,30 @@ namespace Examen.Building
             }
         }
 
-        private void SetPointerVector(Vector3 pointerLocation) => _pointerLocation = pointerLocation;
-    }
+        private void OnHoldPressed(InputAction.CallbackContext context)
+        {
+            if (_pointerHitInfo.collider.gameObject.layer == 5) //UI layer
+                return;
 
+            _isHolding = true;
+
+            if (rotationButtons != null)
+                rotationButtons.SetActive(false);
+        }
+
+        private void OnReleasePressed(InputAction.CallbackContext context)
+        {
+            if (_pointerHitInfo.collider.gameObject.layer == 5) //UI layer
+                return;
+
+            _isHolding = false;
+
+            if (rotationButtons != null)
+                rotationButtons.SetActive(true);
+        }
+
+        private void SetPointerVector(Vector3 pointerLocation) => _pointerLocation = pointerLocation;
+
+        private void SetPointerHitInfo(RaycastHit hitInfo) => _pointerHitInfo = hitInfo;
+    }
 }
