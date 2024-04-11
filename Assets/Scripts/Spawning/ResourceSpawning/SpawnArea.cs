@@ -10,7 +10,7 @@ namespace Examen.Spawning.ResourceSpawning
     {
         [SerializeField] private List<GameObject> _spawnedResources;
 
-        public List<GameObject> SpawnedResources { set => _spawnedResources.AddRange(value); }
+        public List<GameObject> SpawnedResources { set => _spawnedResources.AddRange(value); get => _spawnedResources; }
 
         private void OnEnable()
         {
