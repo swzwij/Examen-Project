@@ -53,6 +53,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""HoldDown"",
+                    ""type"": ""Value"",
+                    ""id"": ""1a345e5f-a24a-4a72-8e40-7aa9222b2111"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -110,6 +119,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Zoom"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c063a56f-0c32-414d-b6de-0caaca10d8d3"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": ""Hold(duration=0.01)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HoldDown"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -121,6 +141,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_Player_Click = m_Player.FindAction("Click", throwIfNotFound: true);
         m_Player_PointerPosition = m_Player.FindAction("PointerPosition", throwIfNotFound: true);
         m_Player_Zoom = m_Player.FindAction("Zoom", throwIfNotFound: true);
+        m_Player_HoldDown = m_Player.FindAction("HoldDown", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -185,6 +206,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Click;
     private readonly InputAction m_Player_PointerPosition;
     private readonly InputAction m_Player_Zoom;
+    private readonly InputAction m_Player_HoldDown;
     public struct PlayerActions
     {
         private @InputActions m_Wrapper;
@@ -192,6 +214,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         public InputAction @Click => m_Wrapper.m_Player_Click;
         public InputAction @PointerPosition => m_Wrapper.m_Player_PointerPosition;
         public InputAction @Zoom => m_Wrapper.m_Player_Zoom;
+        public InputAction @HoldDown => m_Wrapper.m_Player_HoldDown;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -210,6 +233,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Zoom.started += instance.OnZoom;
             @Zoom.performed += instance.OnZoom;
             @Zoom.canceled += instance.OnZoom;
+            @HoldDown.started += instance.OnHoldDown;
+            @HoldDown.performed += instance.OnHoldDown;
+            @HoldDown.canceled += instance.OnHoldDown;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -223,6 +249,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Zoom.started -= instance.OnZoom;
             @Zoom.performed -= instance.OnZoom;
             @Zoom.canceled -= instance.OnZoom;
+            @HoldDown.started -= instance.OnHoldDown;
+            @HoldDown.performed -= instance.OnHoldDown;
+            @HoldDown.canceled -= instance.OnHoldDown;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -245,5 +274,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         void OnClick(InputAction.CallbackContext context);
         void OnPointerPosition(InputAction.CallbackContext context);
         void OnZoom(InputAction.CallbackContext context);
+        void OnHoldDown(InputAction.CallbackContext context);
     }
 }

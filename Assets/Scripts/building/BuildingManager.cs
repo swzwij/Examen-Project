@@ -47,7 +47,7 @@ namespace Examen.Building
                 return;
 
             _pointer.PointAtPosition();
-            if (_pointerHitInfo.collider.gameObject.layer != 7) //Ground layer
+            if (_pointerHitInfo.collider?.gameObject.layer != 7) //Ground layer
                 return;
 
             if (_isHolding)
@@ -152,8 +152,7 @@ namespace Examen.Building
 
         private void OnHoldPressed(InputAction.CallbackContext context)
         {
-            if (_pointerHitInfo.collider.gameObject.layer == 5) //UI layer
-                return;
+            if (_pointerHitInfo.collider?.gameObject.layer == 5) return;
 
             _isHolding = true;
 
@@ -163,8 +162,7 @@ namespace Examen.Building
 
         private void OnReleasePressed(InputAction.CallbackContext context)
         {
-            if (_pointerHitInfo.collider.gameObject.layer == 5) //UI layer
-                return;
+            if (_pointerHitInfo.collider?.gameObject.layer == 5) return;
 
             _isHolding = false;
 

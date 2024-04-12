@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -12,8 +10,7 @@ namespace Examen.Building
         [SerializeField] protected GameObject _structurePreview;
         [SerializeField] protected GameObject _structure;
 
-        [System.Obsolete]
         public void OnPointerDown(PointerEventData eventData)
-            => BuildingManager.Instance.SpawnStructurePreview(_structurePreview, _structure);
+            => FindAnyObjectByType<BuildingManager>().SpawnStructurePreview(_structurePreview, _structure);
     }
 }

@@ -174,7 +174,7 @@ PrefabInstance:
     - target: {fileID: 7890953761736754471, guid: eb2513c2f7a02bc45a68ec0aa9b2216a, type: 3}
       propertyPath: _playerPrefab
       value: 
-      objectReference: {fileID: 1795323398928968516, guid: 0baf075f60286b9458304932caf14e7a, type: 3}
+      objectReference: {fileID: 3679868855582776512, guid: 620526d4530230c4191eb9e938930f61, type: 3}
     - target: {fileID: 7890953761736754471, guid: eb2513c2f7a02bc45a68ec0aa9b2216a, type: 3}
       propertyPath: Spawns.Array.size
       value: 0
@@ -213,7 +213,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &213130384
 AudioListener:
   m_ObjectHideFlags: 0
@@ -1009,7 +1009,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 0
-  m_Camera: {fileID: 213130385}
+  m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -1143,8 +1143,8 @@ Transform:
   m_GameObject: {fileID: 2004882285}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 3.6064}
-  m_LocalScale: {x: 1, y: 1, z: 1.4787}
+  m_LocalPosition: {x: 12.0762, y: 0, z: 3.6064}
+  m_LocalScale: {x: 3.4152, y: 1, z: 1.4787}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1377919352}

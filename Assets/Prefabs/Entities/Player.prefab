@@ -20,7 +20,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4081051270432361184
 Transform:
   m_ObjectHideFlags: 0
@@ -167,6 +167,7 @@ GameObject:
   - component: {fileID: 431041323644128263}
   - component: {fileID: 3679868855582776512}
   - component: {fileID: 7692977816705919355}
+  - component: {fileID: 3694398312710353908}
   - component: {fileID: 5753440854157603489}
   m_Layer: 2
   m_Name: Player
@@ -351,7 +352,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 0
+  <PrefabId>k__BackingField: 1
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
@@ -372,6 +373,20 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
   damageAmount: 1
+--- !u!114 &3694398312710353908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6297853107807436002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5df33346329c9df45abaaab7b955478d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _placeAllowed: {fileID: 2100000, guid: de8e4d3314c2d464889c2450c9b4620f, type: 2}
+  _placeDisallowed: {fileID: 2100000, guid: ae4342f4c28796f44b1032da04ac6dfb, type: 2}
 --- !u!120 &5753440854157603489
 LineRenderer:
   serializedVersion: 2
