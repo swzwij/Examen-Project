@@ -3,6 +3,7 @@ using Examen.Items;
 using Examen.Networking;
 using Examen.Pathfinding.Grid;
 using Examen.Poolsystem;
+using Examen.Spawning.ResourceSpawning;
 using FishNet.Connection;
 using FishNet.Object;
 using MarkUlrich.Health;
@@ -48,7 +49,7 @@ namespace Examen.Interactables.Resource
         [Server]
         protected virtual void RespawnResource()
         {
-            SetRandomPosition();
+            ResourceSpawner.Instance.SetResourcePosition(this);
             p_healthData.Resurrect(p_healthData.MaxHealth);
         }
 
@@ -80,14 +81,16 @@ namespace Examen.Interactables.Resource
         [ObserversRpc]
         public virtual void SetNewPostion(Vector3 newPosition) => transform.position = newPosition;
 
-        public virtual void SetRandomPosition()
+        public virtual void SetRandomPosition(out bool HasGottenSetPosition)
         {
             Cell currentCell = GridSystem.Instance.GetCellFromWorldPosition(transform.TransformPoint(transform.position));
             Debug.Log(currentCell.ToString());
-            transform.position = RandomisePosition(currentCell.Nodes);
+            transform.position = RandomisePosition(currentCell.Nodes, out HasGottenSetPosition);
+
+            if(!HasGottenSetPosition)
+                return;
 
             SetNewPostion(transform.position);
-
             StartCoroutine(WaitToUpdateCell(currentCell));
         }
         
@@ -97,16 +100,18 @@ namespace Examen.Interactables.Resource
             GridSystem.Instance.UpdateCell(currentCell.CellX, currentCell.CellY);
         }
 
-        public Vector3 RandomisePosition(HashSet<Node> nodes)
+        public Vector3 RandomisePosition(HashSet<Node> nodes, out bool HasGottenSetPosition)
         {
             int randomNumber = Random.Range(0, nodes.Count);
             Node randomNode = nodes.ElementAt(randomNumber);
 
-            if(!randomNode.IsWalkable)
-                return RandomisePosition(nodes);
+            if (!randomNode.IsWalkable)
+            {
+                HasGottenSetPosition = false;
+                return transform.position;
+            }
 
-            //Debug.Log(randomNode.Position);
-
+            HasGottenSetPosition = true;
             return randomNode.Position;
         }
 

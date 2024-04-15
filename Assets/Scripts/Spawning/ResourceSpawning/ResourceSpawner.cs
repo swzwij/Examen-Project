@@ -3,8 +3,8 @@ using Examen.Pathfinding.Grid;
 using Examen.Spawning.ResourceSpawning.Structs;
 using MarkUlrich.Utils;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Examen.Spawning.ResourceSpawning
@@ -22,7 +22,6 @@ namespace Examen.Spawning.ResourceSpawning
         private readonly List<GameObject> _spawnedGameobjects = new();
 
         public List<ResourceSpawnAreas> SpawnAreas => _spawnAreas;
-        public bool isDoneSpawning;
 
         public void CreateSpawnAreas()
         {
@@ -81,6 +80,7 @@ namespace Examen.Spawning.ResourceSpawning
         {
             for (int i = 0; i < _spawnAreas.Count; i++)
                 DestroyAreaResources(i);
+            StopAllCoroutines();
         }
 
         public void DestroyAreaResources(int spawnAreaCount)
@@ -93,6 +93,16 @@ namespace Examen.Spawning.ResourceSpawning
             for (int i = 1; i < resources.Length; i++)
                 DestroyImmediate(resources[i].gameObject);
         }
+
+
+        public void SetResourcePosition(Resource resource)
+        {
+             resource.SetRandomPosition(out bool HasGottenSetPosition);
+
+             if (HasGottenSetPosition)
+                SetResourcePosition(resource);
+        }
+
 
         private float CalculateResrouceAmount(ResourceSpawnAreas area, ResourceSpawnInfo resourceSpawnInfo)
         {
@@ -126,21 +136,53 @@ namespace Examen.Spawning.ResourceSpawning
             return resourcesAmount;
         }
 
+/*        public void SpawnResourcesInQueue(List<Resource> resources)
+        {
+            StartCoroutine(resources);
+        }
+
+        private IEnumerator SpawnQueue(List<Resource> resources)
+        {
+            // wait for seconds or smth
+            // spawn resource
+        }*/
+
         private void SpawnResources(ResourceSpawnAreas spawnArea, GameObject gameObject, float amount)
         {
-            isDoneSpawning = false;
             _spawnedGameobjects.Clear();
+            List<Resource> resourcesToSet = new();
 
             for (int i = 0; i < amount; i++)
             {
-               GameObject newResource = Instantiate(gameObject, spawnArea.Area.transform);
-                Debug.Log(newResource.transform.position);
-                newResource.GetComponent<Resource>().SetRandomPosition();
+                GameObject newResource = Instantiate(gameObject, spawnArea.Area.transform);
+                Resource resourceComponent = newResource.GetComponent<Resource>();
+
+                resourceComponent.SetRandomPosition(out bool HasGottenSetPosition);
+
+                if(!HasGottenSetPosition) 
+                    resourcesToSet.Add(resourceComponent);
+
                 _spawnedGameobjects.Add(newResource);
             }
 
+            if(resourcesToSet.Count > 0)
+                SetResourcesPosition(resourcesToSet);
+
             spawnArea.Area.SpawnedResources = _spawnedGameobjects;
-            isDoneSpawning = true;
+        }
+
+        private void SetResourcesPosition(List<Resource> resources) => StartCoroutine(WaitToSetPosition(resources));
+
+        IEnumerator WaitToSetPosition(List<Resource> resources)
+        {
+            for (int i = 0; i < resources.Count; i++)
+                yield return new WaitUntil(() => GetPositionBool(resources[i]));
+        }
+
+        private bool GetPositionBool(Resource resource)
+        {
+            resource.SetRandomPosition(out bool HasGottenSetPosition);
+            return HasGottenSetPosition;
         }
     }
 }
