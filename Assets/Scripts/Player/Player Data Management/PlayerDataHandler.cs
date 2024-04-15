@@ -1,7 +1,5 @@
-using FishNet;
-using FishNet.Managing.Client;
 using FishNet.Object;
-using System.Collections;
+using Examen.Utils;
 using UnityEngine;
 
 namespace Examen.Player.PlayerDataManagement
@@ -12,28 +10,32 @@ namespace Examen.Player.PlayerDataManagement
         {
             base.OnStartClient();
 
-            Debug.LogError("Start Player, connecting..");
-
-            StartCoroutine(WaitForConnection());
+            Connect();
         }
 
-        private IEnumerator WaitForConnection()
+        public bool a;
+
+        private void Update()
         {
-            if (IsServer)
-                yield return null;
-
-            yield return new WaitUntil(() => IsClient);
-
-            Debug.LogError($"Waited for connection, got {LocalConnection}");
-            Connect();
+            if(a)
+            {
+                a = false;
+                Debug.Log("add exp");
+                AddExp(1);
+            }
         }
 
         [ServerRpc]
         private void Connect()
         {
-            Debug.LogError($"Connecting as {LocalConnection}");
+            Debug.LogError($"Connecting as {PlayerGUID.Get}");
 
-            PlayerDatabase.Instance.Connect(LocalConnection);
+            PlayerDatabase.Instance.Connect(PlayerGUID.Get);
+        }
+
+        public void AddExp(int exp)
+        {
+            PlayerDatabase.Instance.AddExp(PlayerGUID.Get, exp);
         }
     }
 }

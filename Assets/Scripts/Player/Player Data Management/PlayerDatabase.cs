@@ -22,32 +22,34 @@ namespace Examen.Player.PlayerDataManagement
         }
 
         [Server]
-        public PlayerData Connect(NetworkConnection connection)
+        public PlayerData Connect(string playerGuid)
         {
-            string clientAddress = connection.GetAddress();
-
-            if (!_playerData.TryGetValue(clientAddress, out PlayerData existingPlayerData))
+            if (!_playerData.TryGetValue(playerGuid, out PlayerData existingPlayerData))
             {
                 existingPlayerData = new PlayerData(0);
-                _playerData.Add(clientAddress, existingPlayerData);
+                _playerData.Add(playerGuid, existingPlayerData);
             }
 
-            Debug.LogError($"Connected {clientAddress} with {existingPlayerData.Exp} exp");
+            Debug.LogError($"Connected {playerGuid} with {existingPlayerData.Exp} exp");
 
             Display(existingPlayerData);
             return existingPlayerData;
         }
 
-        [Server]
-        public PlayerData AddExp(NetworkConnection connection, int exp)
+        [ServerRpc]
+        public void AddExp(string playerGuid, int exp)
         {
-            string clientAddress = connection.GetAddress();
+            ProcessAddExp(playerGuid, exp);
+        }
 
-            if (!_playerData.TryGetValue(clientAddress, out PlayerData existingPlayerData))
+        [Server]
+        private PlayerData ProcessAddExp(string playerGuid, int exp)
+        {
+            if (!_playerData.TryGetValue(playerGuid, out PlayerData existingPlayerData))
             {
                 existingPlayerData = new PlayerData(0);
-                _playerData.Add(clientAddress, existingPlayerData);
-                Debug.LogError($"Unable to find {clientAddress} in playerData");
+                _playerData.Add(playerGuid, existingPlayerData);
+                Debug.LogError($"Unable to find {playerGuid} in playerData");
             }
 
             Debug.LogError($"player exp {existingPlayerData.Exp} + added exp {exp} = ");

@@ -86,7 +86,6 @@ namespace Examen.Interactables.Resource
             PlayInteractingSound();
 
             ServerInventory.Instance.AddItem(connection, p_resourceItem, p_supplyAmount);
-            PlayerDatabase.Instance.AddExp(connection, 1);
             p_healthData.TakeDamage(damageAmount);
 
             ReceiveInteract();
