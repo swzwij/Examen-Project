@@ -1,13 +1,17 @@
+using Examen.Interactables.Resource;
+using Examen.Pathfinding.Grid;
 using Examen.Spawning.ResourceSpawning.Structs;
 using MarkUlrich.Utils;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Examen.Spawning.ResourceSpawning
 {
     public class ResourceSpawner : SingletonInstance<ResourceSpawner>
     {
+        [SerializeField] private Transform _areaParent;
         [SerializeField] private List<ResourceSpawnAreas> _spawnAreas = new();
 
         private float _spawnPercentage;
@@ -18,6 +22,28 @@ namespace Examen.Spawning.ResourceSpawning
         private readonly List<GameObject> _spawnedGameobjects = new();
 
         public List<ResourceSpawnAreas> SpawnAreas => _spawnAreas;
+        public bool isDoneSpawning;
+
+        public void CreateSpawnAreas()
+        {
+            Transform[] resources = _areaParent.GetComponentsInChildren<Transform>();
+            _spawnAreas.Clear();
+
+            for (int i = 1; i < resources.Length; i++)
+                DestroyImmediate(resources[i].gameObject);
+
+            List<Cell> currentCells = GridSystem.Instance.CurrentCells;
+            for (int i = 0; i < currentCells.Count; i++)
+            {
+                GameObject spawnArea =  new GameObject(currentCells[i].name);
+
+                spawnArea.transform.parent = _areaParent;
+                spawnArea.transform.position = currentCells[i].transform.position;
+
+                _spawnAreas.Add(new() { Area = spawnArea.AddComponent<SpawnArea>() });
+            }
+          
+        }
 
         /// <summary>
         /// Spawns randomly resources
@@ -36,27 +62,25 @@ namespace Examen.Spawning.ResourceSpawning
             _spawnPercentage = MAX_PERCENTAGE;
             _currentSpawnAmount = area.ResourceAmount;
 
-            for (int j = 0; j < area.SpawnableResources.Count; j++)
+            for (int i = 0; i < area.SpawnableResources.Count; i++)
             {
                 if (_spawnPercentage <= 0 || _currentSpawnAmount <= 0)
                 {
-                    Debug.LogError($"Can't spawn {area.SpawnableResources[j].Resource.name}, " +
+                    Debug.LogError($"Can't spawn {area.SpawnableResources[i].Resource.name}, " +
                         $"because you can't spawn more then 100% Resources");
                     break;
                 }
 
-                float resourcesAmount = CalculateResrouceAmount(area, area.SpawnableResources[j]);
+                float resourcesAmount = CalculateResrouceAmount(area, area.SpawnableResources[i]);
 
-                SpawnResources(area, area.SpawnableResources[j].Resource, resourcesAmount);
+                SpawnResources(area, area.SpawnableResources[i].Resource, resourcesAmount);
             }
         }
 
         public void DestoryAllResources()
         {
             for (int i = 0; i < _spawnAreas.Count; i++)
-            {
                 DestroyAreaResources(i);
-            }
         }
 
         public void DestroyAreaResources(int spawnAreaCount)
@@ -64,7 +88,7 @@ namespace Examen.Spawning.ResourceSpawning
             GameObject spawnArea = _spawnAreas[spawnAreaCount].Area.gameObject;
 
             Transform[] resources = spawnArea.GetComponentsInChildren<Transform>();
-            _spawnAreas[spawnAreaCount].Area.SpawnedResources.Clear();
+            _spawnAreas[spawnAreaCount].Area.SpawnedResources?.Clear();
 
             for (int i = 1; i < resources.Length; i++)
                 DestroyImmediate(resources[i].gameObject);
@@ -104,17 +128,19 @@ namespace Examen.Spawning.ResourceSpawning
 
         private void SpawnResources(ResourceSpawnAreas spawnArea, GameObject gameObject, float amount)
         {
+            isDoneSpawning = false;
             _spawnedGameobjects.Clear();
 
             for (int i = 0; i < amount; i++)
-                _spawnedGameobjects.Add(Instantiate(gameObject, spawnArea.Area.transform));
+            {
+               GameObject newResource = Instantiate(gameObject, spawnArea.Area.transform);
+                Debug.Log(newResource.transform.position);
+                newResource.GetComponent<Resource>().SetRandomPosition();
+                _spawnedGameobjects.Add(newResource);
+            }
 
             spawnArea.Area.SpawnedResources = _spawnedGameobjects;
-        }
-
-        private void SetResourceLocation()
-        {
-
+            isDoneSpawning = true;
         }
     }
 }

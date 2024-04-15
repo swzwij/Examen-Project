@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 3929401574069300833}
   - component: {fileID: 6518622084307358732}
   - component: {fileID: 6240166786542947317}
-  - component: {fileID: 7160297709350721645}
   - component: {fileID: 3660064013105071527}
   m_Layer: 2
   m_Name: Cell
@@ -71,22 +70,6 @@ MonoBehaviour:
   _updateCellMask:
     serializedVersion: 2
     m_Bits: 64
---- !u!114 &7160297709350721645
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 765430954173413274}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e78c9ba54e38c9a40a6145a8bb640c39, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 0
-  _addedNetworkObject: {fileID: 3660064013105071527}
-  _networkObjectCache: {fileID: 3660064013105071527}
-  _spawnedResources: []
 --- !u!114 &3660064013105071527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,7 +86,7 @@ MonoBehaviour:
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
   _networkBehaviours:
-  - {fileID: 7160297709350721645}
+  - {fileID: 0}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:

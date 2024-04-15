@@ -1,13 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Examen.Spawning.ResourceSpawning;
 using Examen.Spawning.ResourceSpawning.Structs;
 using FishNet.Object;
+using MarkUlrich.Utils;
 using UnityEngine;
 
 namespace Examen.Pathfinding.Grid
 {
-    public class GridSystem : NetworkBehaviour
+    public class GridSystem : NetworkedSingletonInstance<GridSystem>
     {
         [SerializeField] private bool _showGrid = true;
         [SerializeField] private float _maxWorldHeight = 30f;
@@ -21,6 +23,7 @@ namespace Examen.Pathfinding.Grid
         [SerializeField] private Vector2Int _gridSize;
         [SerializeField] private float _nodeDistance = 1f;
         [SerializeField] private int _maxNodeConnections = 3;
+        [SerializeField] private List<Cell> _currentCells;
         
         private Node[,] _nodes;
         private Cell[,] _cells;
@@ -30,6 +33,8 @@ namespace Examen.Pathfinding.Grid
 
         private Vector3 CellSize 
             => new(_cellSize * _nodeDistance, _cellSize * _nodeDistance, _cellSize * _nodeDistance);
+
+        public List<Cell> CurrentCells => _currentCells; 
 
         private void FixedUpdate()
         {
@@ -107,9 +112,7 @@ namespace Examen.Pathfinding.Grid
             ConfigureCell(newCell, x, y);
             PopulateCellWithNodes(newCell, x, y);
 
-            OnCellCreated?.Invoke(new Vector2Int(x, y));
-
-           ResourceSpawner.Instance.SpawnAreas.Add(new ResourceSpawnAreas() { Area = newCell.GetComponent<SpawnArea>()}); 
+            _currentCells.Add(newCell);
         }
 
         private void ConfigureCell(Cell cell, int x, int y)
@@ -237,6 +240,8 @@ namespace Examen.Pathfinding.Grid
         {
             for (int i = transform.childCount - 1; i >= 0; i--)
                 DestroyImmediate(transform.GetChild(i).gameObject);
+
+            _currentCells.Clear();
         }
 
         /// <summary>
@@ -307,6 +312,7 @@ namespace Examen.Pathfinding.Grid
             int y = Mathf.RoundToInt((_gridSize.y - 1) * percentY);
 
             Cell currentCell = _cells[x, y];
+            Debug.Log($"{x}:{y}");
 
             return currentCell;
         }

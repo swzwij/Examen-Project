@@ -21,6 +21,9 @@ namespace Examen.Editors.Resource
 
             ResourceSpawner spawner = (ResourceSpawner)target;
 
+            if (GUILayout.Button("Create Spawn Area"))
+                spawner.CreateSpawnAreas();
+
             if (spawner.SpawnAreas.Count <= 0)
                 return;
 

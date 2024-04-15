@@ -18,10 +18,7 @@ namespace Examen.Editors.Grid
                 grid.CreateGrid();
 
             if (GUILayout.Button("Clear Grid"))
-            {
                 grid.ClearGrid();
-                ResourceSpawner.Instance.SpawnAreas.Clear();
-            }
         }
     }
 }

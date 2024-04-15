@@ -1,11 +1,16 @@
 using Examen.Inventory;
 using Examen.Items;
 using Examen.Networking;
+using Examen.Pathfinding.Grid;
 using Examen.Poolsystem;
 using FishNet.Connection;
 using FishNet.Object;
 using MarkUlrich.Health;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Android;
 
 namespace Examen.Interactables.Resource
 {
@@ -43,7 +48,7 @@ namespace Examen.Interactables.Resource
         [Server]
         protected virtual void RespawnResource()
         {
-            SetNewPostion(transform.position);
+            SetRandomPosition();
             p_healthData.Resurrect(p_healthData.MaxHealth);
         }
 
@@ -74,6 +79,36 @@ namespace Examen.Interactables.Resource
         /// <param name="newPosition"> the postion of the server resource</param>
         [ObserversRpc]
         public virtual void SetNewPostion(Vector3 newPosition) => transform.position = newPosition;
+
+        public virtual void SetRandomPosition()
+        {
+            Cell currentCell = GridSystem.Instance.GetCellFromWorldPosition(transform.TransformPoint(transform.position));
+            Debug.Log(currentCell.ToString());
+            transform.position = RandomisePosition(currentCell.Nodes);
+
+            SetNewPostion(transform.position);
+
+            StartCoroutine(WaitToUpdateCell(currentCell));
+        }
+        
+        IEnumerator WaitToUpdateCell(Cell currentCell)
+        {
+            yield return new WaitForSeconds(0.1f);
+            GridSystem.Instance.UpdateCell(currentCell.CellX, currentCell.CellY);
+        }
+
+        public Vector3 RandomisePosition(HashSet<Node> nodes)
+        {
+            int randomNumber = Random.Range(0, nodes.Count);
+            Node randomNode = nodes.ElementAt(randomNumber);
+
+            if(!randomNode.IsWalkable)
+                return RandomisePosition(nodes);
+
+            //Debug.Log(randomNode.Position);
+
+            return randomNode.Position;
+        }
 
         /// <summary>
         /// Calls all functionalities that need to happen when you are interacting with this Resource
