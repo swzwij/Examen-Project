@@ -5,6 +5,7 @@ using MarkUlrich.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Examen.Spawning.ResourceSpawning
@@ -95,15 +96,6 @@ namespace Examen.Spawning.ResourceSpawning
         }
 
 
-        public void SetResourcePosition(Resource resource)
-        {
-             resource.SetRandomPosition(out bool HasGottenSetPosition);
-
-             if (HasGottenSetPosition)
-                SetResourcePosition(resource);
-        }
-
-
         private float CalculateResrouceAmount(ResourceSpawnAreas area, ResourceSpawnInfo resourceSpawnInfo)
         {
             float percentage = resourceSpawnInfo.Chance;
@@ -150,39 +142,18 @@ namespace Examen.Spawning.ResourceSpawning
         private void SpawnResources(ResourceSpawnAreas spawnArea, GameObject gameObject, float amount)
         {
             _spawnedGameobjects.Clear();
-            List<Resource> resourcesToSet = new();
 
             for (int i = 0; i < amount; i++)
             {
                 GameObject newResource = Instantiate(gameObject, spawnArea.Area.transform);
                 Resource resourceComponent = newResource.GetComponent<Resource>();
 
-                resourceComponent.SetRandomPosition(out bool HasGottenSetPosition);
-
-                if(!HasGottenSetPosition) 
-                    resourcesToSet.Add(resourceComponent);
+                resourceComponent.SetRandomPosition();
 
                 _spawnedGameobjects.Add(newResource);
             }
 
-            if(resourcesToSet.Count > 0)
-                SetResourcesPosition(resourcesToSet);
-
             spawnArea.Area.SpawnedResources = _spawnedGameobjects;
-        }
-
-        private void SetResourcesPosition(List<Resource> resources) => StartCoroutine(WaitToSetPosition(resources));
-
-        IEnumerator WaitToSetPosition(List<Resource> resources)
-        {
-            for (int i = 0; i < resources.Count; i++)
-                yield return new WaitUntil(() => GetPositionBool(resources[i]));
-        }
-
-        private bool GetPositionBool(Resource resource)
-        {
-            resource.SetRandomPosition(out bool HasGottenSetPosition);
-            return HasGottenSetPosition;
         }
     }
 }

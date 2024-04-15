@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Examen.Spawning.ResourceSpawning;
-using Examen.Spawning.ResourceSpawning.Structs;
-using FishNet.Object;
 using MarkUlrich.Utils;
 using UnityEngine;
 
@@ -137,7 +134,13 @@ namespace Examen.Pathfinding.Grid
             for (int nodeX = startX; nodeX < endX; nodeX++)
             {
                 for (int nodeY = startY; nodeY < endY; nodeY++)
-                    cell.AddNode(_nodes[nodeX, nodeY]);
+                {
+                    Node node = _nodes[nodeX, nodeY];
+                    cell.AddNode(node);
+
+                    if (node.IsWalkable)
+                        cell.ActiveNodes.Add(node);
+                }
             }
         }
 
@@ -176,7 +179,7 @@ namespace Examen.Pathfinding.Grid
         public void UpdateCell(int cellX, int cellY)
         {
             Cell cell = _cells[cellX, cellY];
-            foreach (Node node in cell.Nodes)
+            foreach (Node node in cell.AllNodes)
             {
                 Vector3 position = node.Position;
                 if (IsWalkableArea(position, out float elevation))
@@ -186,6 +189,7 @@ namespace Examen.Pathfinding.Grid
                     node.Position = new Vector3(position.x, elevation, position.z);
                     node.MaxConnectionDistance = _maxConnectionDistance;
                     node.MaxElevationDifference = _maxElevationDifference;
+                    cell.ActiveNodes.Add(node);
                 }
                 else
                 {

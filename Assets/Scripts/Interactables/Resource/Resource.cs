@@ -49,7 +49,6 @@ namespace Examen.Interactables.Resource
         [Server]
         protected virtual void RespawnResource()
         {
-            ResourceSpawner.Instance.SetResourcePosition(this);
             p_healthData.Resurrect(p_healthData.MaxHealth);
         }
 
@@ -81,14 +80,11 @@ namespace Examen.Interactables.Resource
         [ObserversRpc]
         public virtual void SetNewPostion(Vector3 newPosition) => transform.position = newPosition;
 
-        public virtual void SetRandomPosition(out bool HasGottenSetPosition)
+        public virtual void SetRandomPosition()
         {
             Cell currentCell = GridSystem.Instance.GetCellFromWorldPosition(transform.TransformPoint(transform.position));
             Debug.Log(currentCell.ToString());
-            transform.position = RandomisePosition(currentCell.Nodes, out HasGottenSetPosition);
-
-            if(!HasGottenSetPosition)
-                return;
+            transform.position = RandomisePosition(currentCell);
 
             SetNewPostion(transform.position);
             StartCoroutine(WaitToUpdateCell(currentCell));
@@ -100,18 +96,12 @@ namespace Examen.Interactables.Resource
             GridSystem.Instance.UpdateCell(currentCell.CellX, currentCell.CellY);
         }
 
-        public Vector3 RandomisePosition(HashSet<Node> nodes, out bool HasGottenSetPosition)
+        public Vector3 RandomisePosition(Cell cell)
         {
-            int randomNumber = Random.Range(0, nodes.Count);
-            Node randomNode = nodes.ElementAt(randomNumber);
-
-            if (!randomNode.IsWalkable)
-            {
-                HasGottenSetPosition = false;
-                return transform.position;
-            }
-
-            HasGottenSetPosition = true;
+            int randomNumber = Random.Range(0, cell.ActiveNodes.Count);
+            Node randomNode = cell.ActiveNodes.ElementAt(randomNumber);
+            
+            cell.ActiveNodes.Remove(randomNode);
             return randomNode.Position;
         }
 
