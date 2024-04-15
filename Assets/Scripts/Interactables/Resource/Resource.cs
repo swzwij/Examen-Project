@@ -1,6 +1,7 @@
 using Examen.Inventory;
 using Examen.Items;
 using Examen.Networking;
+using Examen.Player.PlayerDataManagement;
 using Examen.Poolsystem;
 using FishNet.Connection;
 using FishNet.Object;
@@ -85,6 +86,7 @@ namespace Examen.Interactables.Resource
             PlayInteractingSound();
 
             ServerInventory.Instance.AddItem(connection, p_resourceItem, p_supplyAmount);
+            PlayerDatabase.Instance.AddExp(connection, 1);
             p_healthData.TakeDamage(damageAmount);
 
             ReceiveInteract();
