@@ -49,6 +49,7 @@ namespace Examen.Interactables.Resource
         [Server]
         protected virtual void RespawnResource()
         {
+            SetRandomPosition();
             p_healthData.Resurrect(p_healthData.MaxHealth);
         }
 
@@ -83,7 +84,6 @@ namespace Examen.Interactables.Resource
         public virtual void SetRandomPosition()
         {
             Cell currentCell = GridSystem.Instance.GetCellFromWorldPosition(transform.TransformPoint(transform.position));
-            Debug.Log(currentCell.ToString());
             transform.position = RandomisePosition(currentCell);
 
             SetNewPostion(transform.position);

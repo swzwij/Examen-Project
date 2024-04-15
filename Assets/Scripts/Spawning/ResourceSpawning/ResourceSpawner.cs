@@ -42,7 +42,6 @@ namespace Examen.Spawning.ResourceSpawning
 
                 _spawnAreas.Add(new() { Area = spawnArea.AddComponent<SpawnArea>() });
             }
-          
         }
 
         /// <summary>
