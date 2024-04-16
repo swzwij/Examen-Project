@@ -3,15 +3,12 @@ using Examen.Items;
 using Examen.Networking;
 using Examen.Pathfinding.Grid;
 using Examen.Poolsystem;
-using Examen.Spawning.ResourceSpawning;
 using FishNet.Connection;
 using FishNet.Object;
 using MarkUlrich.Health;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Android;
 
 namespace Examen.Interactables.Resource
 {
@@ -49,7 +46,7 @@ namespace Examen.Interactables.Resource
         [Server]
         protected virtual void RespawnResource()
         {
-            SetRandomPosition();
+            //SetRandomPosition();
             p_healthData.Resurrect(p_healthData.MaxHealth);
         }
 
@@ -81,13 +78,12 @@ namespace Examen.Interactables.Resource
         [ObserversRpc]
         public virtual void SetNewPostion(Vector3 newPosition) => transform.position = newPosition;
 
-        public virtual void SetRandomPosition()
+        public virtual void SetRandomPosition(Cell randomCell)
         {
-            Cell currentCell = GridSystem.Instance.GetCellFromWorldPosition(transform.TransformPoint(transform.position));
-            transform.position = RandomisePosition(currentCell);
+            transform.position = RandomisePosition(randomCell);
 
             SetNewPostion(transform.position);
-            StartCoroutine(WaitToUpdateCell(currentCell));
+            StartCoroutine(WaitToUpdateCell(randomCell));
         }
         
         IEnumerator WaitToUpdateCell(Cell currentCell)
