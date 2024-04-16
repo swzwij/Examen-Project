@@ -52,6 +52,8 @@ namespace Examen.Pathfinding
 
             if (TryGetComponent(out p_animator))
                 OnStartMoving += SetIsMoving;
+
+            OnPathCompleted += RequestDIstanceToTarget;
         }
 
         protected virtual void FixedUpdate()
@@ -59,7 +61,7 @@ namespace Examen.Pathfinding
             if (!IsOwner)
                 return;
 
-            RequestDIstanceToTarget();
+            //RequestDIstanceToTarget();
             if (p_hasInteracted)
                 return;
 
@@ -76,6 +78,7 @@ namespace Examen.Pathfinding
             p_animator.SetFloat("MoveMultiplier", p_speed);
         }
 
+        [ServerRpc]
         protected void ProcessPointerPosition(Interactable targetInteractable)
         {
             p_hasInteracted = false;
@@ -183,10 +186,14 @@ namespace Examen.Pathfinding
             if (p_targetInteractable == null)
                 return;
 
+            Debug.LogError("Requesting distance to target");
+
             if (DistanceToTarget(p_targetInteractable.transform.position) >= p_obstacleCheckDistance)
                 return;
-            
-            BroadcastInteractableReached();
+
+            Debug.LogError("Distance to target is less than obstacle check distance");
+
+            BroadcastInteractableReached(p_targetInteractable, p_hasInteracted);
         }
 
         private float DistanceToTarget(Vector3 target)
@@ -198,16 +205,19 @@ namespace Examen.Pathfinding
             return distance;
         }
 
-        private void BroadcastInteractableReached()
+        [ObserversRpc]
+        private void BroadcastInteractableReached(Interactable interactable, bool hasInteracted)
         {
-            Vector3 targetPosition = p_targetInteractable.transform.position;
+            Debug.LogError("Broadcasting interactable reached");
+            Vector3 targetPosition = interactable.transform.position;
             targetPosition.y = transform.position.y;
             transform.LookAt(targetPosition);
 
-            if (!p_hasInteracted)
+            if (!hasInteracted)
             {
-                p_hasInteracted = true;
-                OnInteractableReached?.Invoke(p_targetInteractable);
+                hasInteracted = true;
+                OnInteractableReached?.Invoke(interactable);
+                Debug.LogError("Interactable reached");
             }
         }
         
