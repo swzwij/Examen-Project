@@ -1,5 +1,4 @@
 using FishNet.Object;
-using Examen.Utils;
 using UnityEngine;
 
 namespace Examen.Player.PlayerDataManagement
@@ -9,33 +8,15 @@ namespace Examen.Player.PlayerDataManagement
         public override void OnStartClient()
         {
             base.OnStartClient();
-
-            Connect();
+            Debug.LogError($"Started client {LocalConnection.ClientId}");
+            FindObjectOfType<PlayerDatabase>().ConnectClient(LocalConnection.ClientId, this);
         }
 
-        public bool a;
-
-        private void Update()
+        public override void OnStopClient()
         {
-            if(a)
-            {
-                a = false;
-                Debug.Log("add exp");
-                AddExp(1);
-            }
-        }
-
-        [ServerRpc]
-        private void Connect()
-        {
-            Debug.LogError($"Connecting as {PlayerGUID.Get}");
-
-            PlayerDatabase.Instance.Connect(PlayerGUID.Get);
-        }
-
-        public void AddExp(int exp)
-        {
-            PlayerDatabase.Instance.AddExp(PlayerGUID.Get, exp);
+            base.OnStopClient();
+            Debug.LogError($"Stopped client {LocalConnection.ClientId}");
+            FindObjectOfType<PlayerDatabase>().DisconnectClient(LocalConnection.ClientId);
         }
     }
 }

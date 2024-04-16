@@ -1,4 +1,3 @@
-using FishNet.Connection;
 using FishNet.Object;
 using MarkUlrich.Utils;
 using System.Collections.Generic;
@@ -12,64 +11,60 @@ namespace Examen.Player.PlayerDataManagement
         [SerializeField] private Slider _expBar;
         [SerializeField] private Text _expText;
 
-        private readonly Dictionary<string, PlayerData> _playerData = new();
+        private Dictionary<int, PlayerDataHandler> _playerData = new();
 
-        private void Awake()
+        public void ConnectClient(int clientId, PlayerDataHandler handler)
         {
-            _expBar.value = 0;
-            _expBar.maxValue = 100;
-            _expText.text = "0/100";
+            Debug.LogError($"Connecting client {clientId}");
+            SendClientConnection(clientId, handler);
         }
 
-        [Server]
-        public PlayerData Connect(string playerGuid)
+        public void DisconnectClient(int clientId)
         {
-            if (!_playerData.TryGetValue(playerGuid, out PlayerData existingPlayerData))
-            {
-                existingPlayerData = new PlayerData(0);
-                _playerData.Add(playerGuid, existingPlayerData);
-            }
-
-            Debug.LogError($"Connected {playerGuid} with {existingPlayerData.Exp} exp");
-
-            Display(existingPlayerData);
-            return existingPlayerData;
+            Debug.LogError($"Disconnecting cleint {clientId}");
+            SendClientDisconnection(clientId);
         }
 
         [ServerRpc]
-        public void AddExp(string playerGuid, int exp)
+        private void SendClientConnection(int clientId, PlayerDataHandler handler)
         {
-            ProcessAddExp(playerGuid, exp);
+            Debug.LogError($"Send Connecting client {clientId}");
+
+            ProcessClientConnection(clientId, handler);
+        }
+
+        [ServerRpc]
+        private void SendClientDisconnection(int clientId)
+        {
+            Debug.LogError($"Send Disconnecting cleint {clientId}");
+
+            ProcessClienDisconnection(clientId);
         }
 
         [Server]
-        private PlayerData ProcessAddExp(string playerGuid, int exp)
+        private void ProcessClientConnection(int clientId, PlayerDataHandler handler)
         {
-            if (!_playerData.TryGetValue(playerGuid, out PlayerData existingPlayerData))
-            {
-                existingPlayerData = new PlayerData(0);
-                _playerData.Add(playerGuid, existingPlayerData);
-                Debug.LogError($"Unable to find {playerGuid} in playerData");
-            }
+            Debug.LogError($"Processing {clientId} connection");
 
-            Debug.LogError($"player exp {existingPlayerData.Exp} + added exp {exp} = ");
+            if (!_playerData.ContainsKey(clientId))
+                _playerData.Add(clientId, handler);
 
-            existingPlayerData.AddExp(exp);
+            _playerData[clientId] = handler;
 
-            Debug.LogError($"{existingPlayerData.Exp}");
-
-            Display(existingPlayerData);
-
-            return existingPlayerData;
+            Debug.LogError($"Conncted {clientId}");
         }
 
-        [ObserversRpc]
-        private void Display(PlayerData playerData)
+        [Server]
+        private void ProcessClienDisconnection(int clientId)
         {
-            Debug.LogError($"updated {playerData.Exp}");
+            Debug.LogError($"Processing {clientId} disconnection");
 
-            _expBar.value = playerData.Exp;
-            _expText.text = $"{playerData.Exp}/100";
+            if (!_playerData.ContainsKey(clientId))
+                return;
+
+            _playerData.Remove(clientId);
+
+            Debug.LogError($"Disconnected {clientId}");
         }
     }
 }
