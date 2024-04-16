@@ -5,10 +5,11 @@ using Examen.Pathfinding;
 using Examen.Networking;
 using FishNet.Managing;
 using FishNet.Connection;
+using System.Collections;
 
 namespace Examen.Player
 {
-    [RequireComponent(typeof(Pointer), typeof(PathFollower))]
+    [RequireComponent(typeof(Pointer), typeof(PathFollower), typeof(Animator))]
     public class Interactor : NetworkBehaviour
     {
         [SerializeField] private float damageAmount = 1;
@@ -17,6 +18,7 @@ namespace Examen.Player
         private Pointer _pointer;
         private PathFollower _pathFollower;
         private bool _hasInteracted;
+        private Animator _animator;
 
         public Action<Interactable> OnInteractableFound;
 
@@ -24,6 +26,7 @@ namespace Examen.Player
         {
             _pointer = GetComponent<Pointer>();
             _pathFollower = GetComponent<PathFollower>();
+            _animator = GetComponent<Animator>();
 
             _pointer.OnPointedAtInteractable += ProcessPointerGameObject;
             _pathFollower.OnInteractableReached += Interact;
@@ -46,7 +49,6 @@ namespace Examen.Player
 
         private void CheckForInteractable(Interactable currentInteractable)
         {
-            _hasInteracted = false;
             OnInteractableFound?.Invoke(currentInteractable);
         }
 
@@ -55,8 +57,18 @@ namespace Examen.Player
             if (_hasInteracted)
                 return;
 
-            SentInteract(interactable, _networkManager.ClientManager.Connection);
+            _animator.SetTrigger("Mine");
+            
             _hasInteracted = true;
+            StartCoroutine(InteractCooldown(interactable, _animator.GetCurrentAnimatorStateInfo(0).length));
+        }
+
+        private IEnumerator InteractCooldown(Interactable interactable, float cooldownTime)
+        {
+            yield return new WaitForSeconds(cooldownTime);
+            SentInteract(interactable, _networkManager.ClientManager.Connection);
+            _hasInteracted = false;
+            print("Interacted");
         }
 
         [ServerRpc]
