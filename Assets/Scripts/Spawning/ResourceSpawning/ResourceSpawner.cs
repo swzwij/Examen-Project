@@ -3,13 +3,17 @@ using Examen.Pathfinding.Grid;
 using Examen.Spawning.ResourceSpawning.Structs;
 using MarkUlrich.Utils;
 using System;
-using System.Collections.Generic;
+using System.Collections.Generic;  
 using UnityEngine;
 
 namespace Examen.Spawning.ResourceSpawning
 {
     public class ResourceSpawner : SingletonInstance<ResourceSpawner>
     {
+        //dont destroy objects when they are need
+        // fix cell issue
+        //make it work in game (aka fix cell issue)
+
         [SerializeField] private Transform _areaParent;
         [SerializeField] private List<ResourceSpawnAreas> _spawnAreas = new();
 
