@@ -14,9 +14,13 @@ namespace Examen.Player
         private InputAction _clickAction;
 
         public Action<Vector3> OnPointedAtPosition;
+        public Action<Vector3> OnPointedUIInteraction;
         public Action<GameObject> OnPointedGameobject;
         public Action<RaycastHit> OnPointedHitInfo;
         public Action<Interactable> OnPointedAtInteractable;
+
+        public bool HasClickedUI {  get; set; } // Todo: Rename and maybe check accessibility
+        public UnityEngine.Camera Camera { get; private set; }
 
         private void Start()
         {
@@ -54,9 +58,23 @@ namespace Examen.Player
             if (Physics.Raycast(pointerRay, out RaycastHit hit, _pointerDistance))
             {
                 _pointerWorldPosition = hit.point;
+
+                if (HasClickedUI)
+                {
+                    OnPointedHitInfo?.Invoke(hit);
+                    OnPointedUIInteraction?.Invoke(_pointerWorldPosition);
+                    return;
+                }
+
+                if (hit.collider.gameObject.layer == 5)
+                {
+                    HasClickedUI = true;
+                    return;
+                }
+
+                OnPointedHitInfo?.Invoke(hit);
                 OnPointedAtPosition?.Invoke(_pointerWorldPosition);
                 OnPointedGameobject?.Invoke(hit.transform.gameObject);
-                OnPointedHitInfo?.Invoke(hit);
 
                 if (hit.transform.TryGetComponent(out Interactable interactable))
                     OnPointedAtInteractable?.Invoke(interactable);

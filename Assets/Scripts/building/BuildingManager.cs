@@ -1,17 +1,18 @@
 using UnityEngine;
 using Minoord.Input;
-using MarkUlrich.Utils;
 using UnityEngine.InputSystem;
+using Examen.Pathfinding;
 
 namespace Examen.Building
 {
     [RequireComponent(typeof(Player.Pointer))]
-    public class BuildingManager : SingletonInstance<BuildingManager>
+    public class BuildingManager : MonoBehaviour
     {
         [SerializeField] private Material _placeAllowed;
         [SerializeField] private Material _placeDisallowed;
 
         private GameObject _placePrefab;
+        private UnityEngine.Camera _camera;
 
         private GameObject _currentPreview;
         private MeshRenderer _meshRenderer;
@@ -31,14 +32,22 @@ namespace Examen.Building
         private Vector3 _pointerLocation;
         private RaycastHit _pointerHitInfo;
 
+        private PathFollower _pathFollower;
+
+        public UnityEngine.Camera Camera => _camera;
+
         private void Start()
         {
             InputManager.SubscribeToAction("HoldDown", OnHoldPressed, out _clickAction);
             _clickAction.canceled += OnReleasePressed;
 
             _pointer = GetComponent<Player.Pointer>();
-            _pointer.OnPointedAtPosition += SetPointerVector;
+            _camera = _pointer.Camera;
+            _pointer.OnPointedUIInteraction += SetPointerVector;
+
             _pointer.OnPointedHitInfo += SetPointerHitInfo;
+
+            _pathFollower = GetComponent<PathFollower>();
         }
 
         void Update()
@@ -86,12 +95,15 @@ namespace Examen.Building
         /// <param name="structure">The structure GameObject to place.</param>
         public void SpawnStructurePreview(GameObject structurePreview, GameObject structure)
         {
+            _pathFollower.ManualBlock = true;
+
             if (_currentPreview != null)
                 Destroy(_currentPreview);
 
             _placePrefab = structure;
 
             _currentPreview = Instantiate(structurePreview);
+            _currentPreview.GetComponent<StructurepreviewButtons>().OwnedBuildingManager = this;
 
             rotationButtons = _currentPreview.transform.Find("RotationButtons").gameObject;
             rotationButtons.SetActive(false);
@@ -110,6 +122,8 @@ namespace Examen.Building
 
             GameObject placedStructure = Instantiate(structurePrefab, spawnLocation, Quaternion.Euler(spawnRotation));
             StructureList.AddStructure(placedStructure);
+
+            _pathFollower.ManualBlock = false;
         }
 
         private void SetStructurePosition()
@@ -162,6 +176,7 @@ namespace Examen.Building
 
         private void OnReleasePressed(InputAction.CallbackContext context)
         {
+            _pointer.HasClickedUI = false;
             if (_pointerHitInfo.collider?.gameObject.layer == 5) return;
 
             _isHolding = false;
