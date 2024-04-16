@@ -4,7 +4,6 @@ using Examen.Spawning.ResourceSpawning.Structs;
 using MarkUlrich.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Examen.Spawning.ResourceSpawning
@@ -140,17 +139,6 @@ namespace Examen.Spawning.ResourceSpawning
 
             return resourcesAmount;
         }
-
-        /*        public void SpawnResourcesInQueue(List<Resource> resources)
-                {
-                    StartCoroutine(resources);
-                }
-
-                private IEnumerator SpawnQueue(List<Resource> resources)
-                {
-                    // wait for seconds or smth
-                    // spawn resource
-                }*/
 
         private void SpawnResources(ResourceSpawnAreas spawnArea, GameObject gameObject, float amount)
         {
