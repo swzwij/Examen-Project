@@ -16,6 +16,7 @@ namespace Examen.Pathfinding
         [SerializeField] protected LayerMask p_obstaclesLayerMask;
         [SerializeField] protected float p_waitTime = 1f;
 
+        protected Animator p_animator;
         protected Interactable p_targetInteractable;
         protected bool p_hasInteracted;
         protected Vector3 p_currentTarget;
@@ -36,6 +37,8 @@ namespace Examen.Pathfinding
         public event Action OnPathCompleted;
         public event Action<Interactable> OnInteractableReached;
 
+        public event Action<bool> OnStartMoving;
+
         protected virtual void Start() 
         {
             p_pathfinder = GetComponent<Pathfinder>();
@@ -46,6 +49,9 @@ namespace Examen.Pathfinding
 
             if (TryGetComponent(out p_interactor))
                 p_interactor.OnInteractableFound += ProcessPointerPosition;
+
+            if (TryGetComponent(out p_animator))
+                OnStartMoving += SetIsMoving;
         }
 
         protected virtual void FixedUpdate()
@@ -62,6 +68,12 @@ namespace Examen.Pathfinding
 
             p_hasFoundBlockage = true;
             StartPath(p_currentTarget);
+        }
+
+        protected void SetIsMoving(bool isMoving)
+        {
+            p_animator.SetBool("IsMoving", isMoving);
+            p_animator.SetFloat("MoveMultiplier", p_speed);
         }
 
         protected void ProcessPointerPosition(Interactable targetInteractable)
@@ -119,6 +131,8 @@ namespace Examen.Pathfinding
                 adjustedNode.y = transform.localScale.y/2 + 
                 p_currentPath[p_currentNodeIndex].NodeHeightOffset + 
                 p_currentPath[p_currentNodeIndex].Position.y;
+                OnStartMoving?.Invoke(true);
+                BroadcastStartMoving(true);
 
                 while (Vector3.Distance(transform.position, adjustedNode) > 0.1f)
                 {
@@ -127,6 +141,7 @@ namespace Examen.Pathfinding
                     transform.LookAt(adjustedNode);
 
                     BroadcastPosition(transform.position);
+                    BroadcastLookDirection(adjustedNode);
                     BroadcastPath(P_CurrentPathPositions);
                     Debug.DrawRay(transform.position, transform.forward * p_obstacleCheckDistance, Color.blue);
                     yield return null;
@@ -137,11 +152,19 @@ namespace Examen.Pathfinding
             }
             
             p_hasFoundBlockage = false;
+            OnStartMoving?.Invoke(false);
+            BroadcastStartMoving(false);
             OnPathCompleted?.Invoke();
         }
 
         [ObserversRpc]
+        protected void BroadcastStartMoving(bool isMoving) => OnStartMoving?.Invoke(isMoving);
+
+        [ObserversRpc]
         protected void BroadcastPosition(Vector3 position) => transform.position = position;
+
+        [ObserversRpc]
+        protected void BroadcastLookDirection(Vector3 direction) => transform.LookAt(direction);
 
         [ObserversRpc]
         protected void BroadcastPath(List<Vector3> path)
