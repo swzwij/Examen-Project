@@ -92,15 +92,6 @@ namespace Examen.Interactables.Resource
             GridSystem.Instance.UpdateCell(currentCell.CellX, currentCell.CellY);
         }
 
-        public Vector3 RandomisePosition(Cell cell)
-        {
-            int randomNumber = Random.Range(0, cell.ActiveNodes.Count);
-            Node randomNode = cell.ActiveNodes.ElementAt(randomNumber);
-            
-            cell.ActiveNodes.Remove(randomNode);
-            return randomNode.Position;
-        }
-
         /// <summary>
         /// Calls all functionalities that need to happen when you are interacting with this Resource
         /// and sends that to the server.
@@ -134,5 +125,14 @@ namespace Examen.Interactables.Resource
         }
 
         private void OnDestroy() => ServerInstance.Instance.OnServerStarted -= InitResource;
+
+        private Vector3 RandomisePosition(Cell cell)
+        {
+            int randomNumber = Random.Range(0, cell.ActiveNodes.Count);
+            Node randomNode = cell.ActiveNodes.ElementAt(randomNumber);
+
+            cell.ActiveNodes.Remove(randomNode);
+            return randomNode.Position;
+        }
     }
 }

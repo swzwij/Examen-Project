@@ -161,10 +161,15 @@ namespace Examen.Spawning.ResourceSpawning
             for (int i = 0; i < amount; i++)
             {
                 int randomNumber = UnityEngine.Random.Range(0, _cells.Count);
-                Debug.Log(randomNumber);
 
                 GameObject newResource = Instantiate(gameObject, spawnArea.Area.transform);
                 Resource resourceComponent = newResource.GetComponent<Resource>();
+
+                if (_cells[randomNumber].ActiveNodes.Count <= 0)
+                {
+                    _cells.Remove(_cells[randomNumber]);
+                     randomNumber = UnityEngine.Random.Range(0, _cells.Count);
+                }
 
                 resourceComponent.SetRandomPosition(_cells[randomNumber]);
                 _spawnedGameobjects.Add(newResource);
