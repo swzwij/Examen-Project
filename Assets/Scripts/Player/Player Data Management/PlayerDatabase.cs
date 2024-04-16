@@ -18,21 +18,23 @@ namespace Examen.Player.PlayerDataManagement
 
         public void ConnectClient(int clientId, PlayerDataHandler handler)
         {
-            Debug.LogError($"Connecting client {clientId}");
             SendClientConnection(clientId, handler);
         }
 
         public void DisconnectClient(int clientId)
         {
-            Debug.LogError($"Disconnecting cleint {clientId}");
             SendClientDisconnection(clientId);
+        }
+
+        public void UpdateDisplay(int exp)
+        {
+            _expBar.value = exp;
+            _expText.text = $"{exp}/100";
         }
 
         [Server]
         public void AddExp(NetworkConnection connection, int exp)
         {
-            Debug.LogError($"Try add {exp} exp to {connection.ClientId}");
-
             if (!_playerData.ContainsKey(connection.ClientId))
                 return;
 
@@ -46,8 +48,6 @@ namespace Examen.Player.PlayerDataManagement
                 return;
 
             handler.AddExp(exp);
-
-            Debug.LogError($"Added {exp} exp to {handler}");
         }
 
         [Server]
@@ -62,24 +62,18 @@ namespace Examen.Player.PlayerDataManagement
         [ServerRpc(RequireOwnership = false)]
         private void SendClientConnection(int clientId, PlayerDataHandler handler)
         {
-            Debug.LogError($"Send Connecting client {clientId}");
-
             ProcessClientConnection(clientId, handler);
         }
 
         [ServerRpc(RequireOwnership = false)]
         private void SendClientDisconnection(int clientId)
         {
-            Debug.LogError($"Send Disconnecting cleint {clientId}");
-
             ProcessClienDisconnection(clientId);
         }
 
         [Server]
         private void ProcessClientConnection(int clientId, PlayerDataHandler handler)
         {
-            Debug.LogError($"Processing {clientId} connection");
-
             if (!_playerData.ContainsKey(clientId))
                 _playerData.Add(clientId, handler);
 
@@ -91,14 +85,10 @@ namespace Examen.Player.PlayerDataManagement
         [Server]
         private void ProcessClienDisconnection(int clientId)
         {
-            Debug.LogError($"Processing {clientId} disconnection");
-
             if (!_playerData.ContainsKey(clientId))
                 return;
 
             _playerData.Remove(clientId);
-
-            Debug.LogError($"Disconnected {clientId}");
         }
     }
 }
