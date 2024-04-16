@@ -1,3 +1,6 @@
+using FishNet;
+using FishNet.Connection;
+using FishNet.Managing;
 using FishNet.Object;
 using MarkUlrich.Utils;
 using System.Collections.Generic;
@@ -25,7 +28,38 @@ namespace Examen.Player.PlayerDataManagement
             SendClientDisconnection(clientId);
         }
 
-        [ServerRpc]
+        [Server]
+        public void AddExp(NetworkConnection connection, int exp)
+        {
+            Debug.LogError($"Try add {exp} exp to {connection.ClientId}");
+
+            if (!_playerData.ContainsKey(connection.ClientId))
+                return;
+
+            AddedExp(connection.ClientId, _playerData[connection.ClientId], exp);
+        }
+
+        [ObserversRpc]
+        private void AddedExp(int clientId, PlayerDataHandler handler, int exp)
+        {
+            if (InstanceFinder.NetworkManager.ClientManager.Connection.ClientId != clientId)
+                return;
+
+            handler.AddExp(exp);
+
+            Debug.LogError($"Added {exp} exp to {handler}");
+        }
+
+        [Server]
+        public int GetExp(NetworkConnection connection)
+        {
+            if (!_playerData.ContainsKey(connection.ClientId))
+                return -1;
+
+            return _playerData[connection.ClientId].Exp;
+        }
+
+        [ServerRpc(RequireOwnership = false)]
         private void SendClientConnection(int clientId, PlayerDataHandler handler)
         {
             Debug.LogError($"Send Connecting client {clientId}");
@@ -33,7 +67,7 @@ namespace Examen.Player.PlayerDataManagement
             ProcessClientConnection(clientId, handler);
         }
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         private void SendClientDisconnection(int clientId)
         {
             Debug.LogError($"Send Disconnecting cleint {clientId}");
