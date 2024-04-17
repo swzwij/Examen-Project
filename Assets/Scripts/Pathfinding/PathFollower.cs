@@ -61,7 +61,6 @@ namespace Examen.Pathfinding
             if (!IsOwner)
                 return;
 
-            //RequestDIstanceToTarget();
             if (p_hasInteracted)
                 return;
 
@@ -119,8 +118,7 @@ namespace Examen.Pathfinding
             p_currentPath = p_pathfinder.FindPath(transform.position, target);
             p_currentNodeIndex = 0;
 
-            if (p_currentPath.Count > 0)
-                p_followPathCoroutine = StartCoroutine(FollowPath());
+            p_followPathCoroutine = StartCoroutine(FollowPath());
         }
 
         [Server]
@@ -137,14 +135,17 @@ namespace Examen.Pathfinding
                 OnStartMoving?.Invoke(true);
                 BroadcastStartMoving(true);
 
+                Vector3 lookAtVector = adjustedNode;
+                lookAtVector.y = transform.position.y;
+                transform.LookAt(lookAtVector);
+                BroadcastLookDirection(lookAtVector);
+
                 while (Vector3.Distance(transform.position, adjustedNode) > 0.1f)
                 {
                     transform.position = 
                         Vector3.MoveTowards(transform.position, adjustedNode, p_speed * Time.deltaTime);
-                    transform.LookAt(adjustedNode);
-
                     BroadcastPosition(transform.position);
-                    BroadcastLookDirection(adjustedNode);
+                    
                     BroadcastPath(P_CurrentPathPositions);
                     Debug.DrawRay(transform.position, transform.forward * p_obstacleCheckDistance, Color.blue);
                     yield return null;
@@ -186,12 +187,8 @@ namespace Examen.Pathfinding
             if (p_targetInteractable == null)
                 return;
 
-            Debug.LogError("Requesting distance to target");
-
             if (DistanceToTarget(p_targetInteractable.transform.position) >= p_obstacleCheckDistance)
                 return;
-
-            Debug.LogError("Distance to target is less than obstacle check distance");
 
             BroadcastInteractableReached(p_targetInteractable, p_hasInteracted);
         }
@@ -208,7 +205,6 @@ namespace Examen.Pathfinding
         [ObserversRpc]
         private void BroadcastInteractableReached(Interactable interactable, bool hasInteracted)
         {
-            Debug.LogError("Broadcasting interactable reached");
             Vector3 targetPosition = interactable.transform.position;
             targetPosition.y = transform.position.y;
             transform.LookAt(targetPosition);
@@ -217,7 +213,6 @@ namespace Examen.Pathfinding
             {
                 hasInteracted = true;
                 OnInteractableReached?.Invoke(interactable);
-                Debug.LogError("Interactable reached");
             }
         }
         

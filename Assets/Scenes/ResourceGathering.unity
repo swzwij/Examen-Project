@@ -1747,6 +1747,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 422061478}
   _networkObjectCache: {fileID: 422061478}
+  p_interactableType: 2
   p_resourceItem: {fileID: 11400000, guid: 52d8885bbe883b2428e8e821aaa5c5b7, type: 2}
   p_supplyAmount: 1
   p_respawnTime: 5
@@ -5783,6 +5784,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 1407221101}
   _networkObjectCache: {fileID: 1407221101}
+  p_interactableType: 1
   p_resourceItem: {fileID: 11400000, guid: 25d262743dcf76145860ce1e70a7afff, type: 2}
   p_supplyAmount: 1
   p_respawnTime: 5
@@ -6814,6 +6816,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 1551961594}
   _networkObjectCache: {fileID: 1551961594}
+  p_interactableType: 1
   p_resourceItem: {fileID: 11400000, guid: 25d262743dcf76145860ce1e70a7afff, type: 2}
   p_supplyAmount: 1
   p_respawnTime: 5
@@ -8189,6 +8192,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 1839426731}
   _networkObjectCache: {fileID: 1839426731}
+  p_interactableType: 1
   p_resourceItem: {fileID: 11400000, guid: 25d262743dcf76145860ce1e70a7afff, type: 2}
   p_supplyAmount: 1
   p_respawnTime: 5

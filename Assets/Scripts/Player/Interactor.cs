@@ -6,6 +6,8 @@ using Examen.Networking;
 using FishNet.Managing;
 using FishNet.Connection;
 using System.Collections;
+using System.Collections.Generic;
+using Examen.Interactables;
 
 namespace Examen.Player
 {
@@ -19,6 +21,16 @@ namespace Examen.Player
         private PathFollower _pathFollower;
         private bool _hasInteracted;
         private Animator _animator;
+
+        private Dictionary<InteractableTypes, string> _interactableTypeToAnimation = new()
+        {
+            {InteractableTypes.ResourceUnknown, "Interact"},
+            {InteractableTypes.ResourceWood, "Chop"},
+            {InteractableTypes.ResourceStone, "Mine"},
+            {InteractableTypes.ResourceSpecial, "Special"},
+            {InteractableTypes.StructureBallistae, "UseBallistae"},
+            {InteractableTypes.InteractRepair, "Repair"}
+        };
 
         public Action<Interactable> OnInteractableFound;
 
@@ -57,7 +69,10 @@ namespace Examen.Player
             if (_hasInteracted)
                 return;
 
-            _animator.SetTrigger("Mine");
+            _animator.SetTrigger(_interactableTypeToAnimation[interactable.Type]);
+
+            if (!IsOwner)
+                return; 
             
             _hasInteracted = true;
             StartCoroutine(InteractCooldown(interactable, _animator.GetCurrentAnimatorStateInfo(0).length));
@@ -68,7 +83,7 @@ namespace Examen.Player
             yield return new WaitForSeconds(cooldownTime);
             SentInteract(interactable, _networkManager.ClientManager.Connection);
             _hasInteracted = false;
-            print("Interacted");
+            Debug.LogError("Interacting with " + interactable.name + " of type " + interactable.Type);
         }
 
         [ServerRpc]

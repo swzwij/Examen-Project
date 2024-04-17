@@ -1,8 +1,11 @@
+using Examen.Interactables;
 using FishNet.Connection;
 using FishNet.Object;
 
 public abstract class Interactable : NetworkBehaviour
 {
+    public abstract InteractableTypes Type { get; }
+
     /// <summary>
     /// Calls all functionalities that need to happen when you are interacting with this object
     /// </summary>
