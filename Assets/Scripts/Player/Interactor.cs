@@ -83,7 +83,6 @@ namespace Examen.Player
             yield return new WaitForSeconds(cooldownTime);
             SentInteract(interactable, _networkManager.ClientManager.Connection);
             _hasInteracted = false;
-            Debug.LogError("Interacting with " + interactable.name + " of type " + interactable.Type);
         }
 
         [ServerRpc]
