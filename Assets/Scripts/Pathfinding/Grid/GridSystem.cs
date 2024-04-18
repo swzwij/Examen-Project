@@ -31,6 +31,8 @@ namespace Examen.Pathfinding.Grid
         private Vector3 CellSize 
             => new(_cellSize * _nodeDistance, _cellSize * _nodeDistance, _cellSize * _nodeDistance);
 
+        public Cell[,] Cells => _cells;
+
         public List<Cell> CurrentCells => _currentCells; 
 
         private void FixedUpdate()
@@ -312,8 +314,8 @@ namespace Examen.Pathfinding.Grid
             float percentX = Mathf.Clamp01((worldPosition.x - transform.position.x) / (_gridSize.x * _nodeDistance));
             float percentY = Mathf.Clamp01((worldPosition.z - transform.position.z) / (_gridSize.y * _nodeDistance));
 
-            int x = Mathf.RoundToInt((_gridSize.x - 1) * percentX);
-            int y = Mathf.RoundToInt((_gridSize.y - 1) * percentY);
+            int x = Mathf.RoundToInt((_gridSize.x / _cellSize) * percentX);
+            int y = Mathf.RoundToInt((_gridSize.y / _cellSize) * percentY);
 
             Cell currentCell = _cells[x, y];
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Examen.Pathfinding.Grid;
 using Examen.Spawning.ResourceSpawning;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -17,6 +18,8 @@ public class SpawnAreaCreator : MonoBehaviour
         LineRenderer newSpawnAreaRenderer = Instantiate(_lineRenderer, _spawnAreaParent);
         SpawnArea newSpawnArea = newSpawnAreaRenderer.AddComponent<SpawnArea>();
         newSpawnArea.LineRenderer = newSpawnAreaRenderer;
+        newSpawnArea.UpdateArea();
+
         _createdAreas.Add(newSpawnAreaRenderer);
         
         RemoveComponents(newSpawnAreaRenderer);
