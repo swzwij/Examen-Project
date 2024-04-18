@@ -15,6 +15,7 @@ namespace Examen.Spawning.ResourceSpawning
         //make it work in game (aka fix cell issue)
 
         [SerializeField] private Transform _areaParent;
+        [SerializeField] private bool _hasSpawnedBorder;
         [SerializeField] private List<ResourceSpawnAreas> _spawnAreas = new();
 
         private float _spawnPercentage;
@@ -24,6 +25,7 @@ namespace Examen.Spawning.ResourceSpawning
 
         private readonly List<GameObject> _spawnedGameobjects = new();
         private List<Cell> _cells;
+        private ZoneID[] _enumNames = (ZoneID[])Enum.GetValues(typeof(ZoneID));
 
         public List<ResourceSpawnAreas> SpawnAreas => _spawnAreas;
 
@@ -35,13 +37,12 @@ namespace Examen.Spawning.ResourceSpawning
             for (int i = 1; i < resources.Length; i++)
                 DestroyImmediate(resources[i].gameObject);
 
-            ZoneID[] enumNames = (ZoneID[])Enum.GetValues(typeof(ZoneID));
 
-            for (int i = 0; i < enumNames.Length; i++)
+            for (int i = 0; i < _enumNames.Length; i++)
             {
-                GameObject spawnArea = new(enumNames[i].ToString());
+                GameObject spawnArea = new(_enumNames[i].ToString());
 
-                _spawnAreas.Add(new() { Zone = enumNames[i], Area = spawnArea.AddComponent<SpawnArea>() });
+                _spawnAreas.Add(new() { Zone = _enumNames[i], Area = spawnArea.AddComponent<SpawnArea>() });
 
                 spawnArea.transform.parent = _areaParent;
             }
@@ -62,10 +63,16 @@ namespace Examen.Spawning.ResourceSpawning
             _spawnPercentage = MAX_PERCENTAGE;
             int currentActiveNodes = 0;
 
-            DestroyAreaResources(spawnAreaCount);
-
             if (area.Zone == ZoneID.Border)
+            {
+                if (_hasSpawnedBorder)
+                    return;
+
                 area.ResourceAmount = area.Cells[0].AllNodes.Count * area.Cells.Count;
+                _hasSpawnedBorder = true;
+            }
+            else
+                DestroyAreaResources(spawnAreaCount);
 
             _currentSpawnAmount = area.ResourceAmount;
 
@@ -99,18 +106,21 @@ namespace Examen.Spawning.ResourceSpawning
 
         public void DestroyAreaResources(int spawnAreaCount)
         {
-            GameObject spawnArea = _spawnAreas[spawnAreaCount].Area.gameObject;
+            SpawnArea spawnArea = _spawnAreas[spawnAreaCount].Area;
 
-            Transform[] resources = spawnArea.GetComponentsInChildren<Transform>();
-            _spawnAreas[spawnAreaCount].Area.SpawnedResources?.Clear();
+            if (_spawnAreas[spawnAreaCount].Zone == ZoneID.Border)
+                _hasSpawnedBorder = false;
 
-            for (int i = 1; i < resources.Length; i++)
+            List<GameObject> resources = spawnArea.SpawnedResources;
+
+            for (int i = 1; i < resources.Count; i++)
                 DestroyImmediate(resources[i].gameObject);
 
             for (int i = 0; i < _spawnAreas[spawnAreaCount].Cells.Count; i++)
                 GridSystem.Instance.UpdateCell(_spawnAreas[spawnAreaCount].Cells[i].CellX, _spawnAreas[spawnAreaCount].Cells[i].CellY);
-        }
 
+            spawnArea.SpawnedResources?.Clear();
+        }
 
         private float CalculateResrouceAmount(ResourceSpawnAreas area, ResourceSpawnInfo resourceSpawnInfo)
         {

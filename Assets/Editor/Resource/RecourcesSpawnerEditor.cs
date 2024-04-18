@@ -10,7 +10,7 @@ namespace Examen.Editors.Resource
     [CustomEditor(typeof(ResourceSpawner))]
     public class RecourcesSpawnerEditor : Editor
     {
-        private int _selectNumber;
+        private static int _selectNumber;
 
         /// <summary>
         /// Draws Default inspector and adds a button, that spawns resources when clicked
