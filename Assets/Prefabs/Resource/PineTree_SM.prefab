@@ -65,6 +65,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bc8d5a54d15385c448ef25f365f4cdbc, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5810516965573894441}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bc8d5a54d15385c448ef25f365f4cdbc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4073697003314562854}
   m_SourcePrefab: {fileID: 100100000, guid: bc8d5a54d15385c448ef25f365f4cdbc, type: 3}
 --- !u!1 &922296712732340818 stripped
 GameObject:
@@ -85,7 +88,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 6641125373626805370, guid: facc699f674331745ae3c4ab69a10566, type: 3}
-  _networkObjectCache: {fileID: 6641125373626805370, guid: facc699f674331745ae3c4ab69a10566, type: 3}
+  _networkObjectCache: {fileID: 5810516965573894441}
   p_resourceItem: {fileID: 11400000, guid: 25d262743dcf76145860ce1e70a7afff, type: 2}
   p_supplyAmount: 1
   p_respawnTime: 5
@@ -151,3 +154,26 @@ MonoBehaviour:
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 5679005326969656956
+--- !u!136 &4073697003314562854
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 922296712732340818}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.395086
+  m_Height: 16.83988
+  m_Direction: 1
+  m_Center: {x: 0, y: 8, z: 0.2}

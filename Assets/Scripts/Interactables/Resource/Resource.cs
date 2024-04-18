@@ -77,20 +77,7 @@ namespace Examen.Interactables.Resource
         /// <param name="newPosition"> the postion of the server resource</param>
         [ObserversRpc]
         public virtual void SetNewPostion(Vector3 newPosition) => transform.position = newPosition;
-
-        public virtual void SetRandomPosition(Cell randomCell)
-        {
-            transform.position = RandomisePosition(randomCell);
-
-            SetNewPostion(transform.position);
-            StartCoroutine(WaitToUpdateCell(randomCell));
-        }
-        
-        IEnumerator WaitToUpdateCell(Cell currentCell)
-        {
-            yield return new WaitForSeconds(0.1f);
-            GridSystem.Instance.UpdateCell(currentCell.CellX, currentCell.CellY);
-        }
+       
 
         /// <summary>
         /// Calls all functionalities that need to happen when you are interacting with this Resource
@@ -126,13 +113,5 @@ namespace Examen.Interactables.Resource
 
         private void OnDestroy() => ServerInstance.Instance.OnServerStarted -= InitResource;
 
-        private Vector3 RandomisePosition(Cell cell)
-        {
-            int randomNumber = Random.Range(0, cell.ActiveNodes.Count);
-            Node randomNode = cell.ActiveNodes.ElementAt(randomNumber);
-
-            cell.ActiveNodes.Remove(randomNode);
-            return randomNode.Position;
-        }
     }
 }

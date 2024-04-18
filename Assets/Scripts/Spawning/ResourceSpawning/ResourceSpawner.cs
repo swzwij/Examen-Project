@@ -1,9 +1,10 @@
-using Examen.Interactables.Resource;
 using Examen.Pathfinding.Grid;
 using Examen.Spawning.ResourceSpawning.Structs;
 using MarkUlrich.Utils;
 using System;
-using System.Collections.Generic;  
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Examen.Spawning.ResourceSpawning
@@ -24,7 +25,7 @@ namespace Examen.Spawning.ResourceSpawning
         private const float MAX_PERCENTAGE = 100;
 
         private readonly List<GameObject> _spawnedGameobjects = new();
-        private List<Cell> _cells;
+        private List<Cell> _cells = new();
         private ZoneID[] _enumNames = (ZoneID[])Enum.GetValues(typeof(ZoneID));
 
         public List<ResourceSpawnAreas> SpawnAreas => _spawnAreas;
@@ -113,7 +114,7 @@ namespace Examen.Spawning.ResourceSpawning
 
             List<GameObject> resources = spawnArea.SpawnedResources;
 
-            for (int i = 1; i < resources.Count; i++)
+            for (int i = 0; i < resources.Count; i++)
                 DestroyImmediate(resources[i].gameObject);
 
             for (int i = 0; i < _spawnAreas[spawnAreaCount].Cells.Count; i++)
@@ -157,7 +158,7 @@ namespace Examen.Spawning.ResourceSpawning
         private void SpawnResources(ResourceSpawnAreas spawnArea, GameObject gameObject, float amount)
         {
             _spawnedGameobjects.Clear();
-            _cells.Clear();
+            _cells?.Clear();
             _cells.AddRange(spawnArea.Cells);
 
             for (int i = 0; i < amount; i++)
@@ -165,7 +166,6 @@ namespace Examen.Spawning.ResourceSpawning
                 int randomNumber = UnityEngine.Random.Range(0, _cells.Count);
 
                 GameObject newResource = Instantiate(gameObject, spawnArea.Area.transform);
-                Resource resourceComponent = newResource.GetComponent<Resource>();
 
                 if (_cells[randomNumber].ActiveNodes.Count <= 0)
                 {
@@ -173,7 +173,8 @@ namespace Examen.Spawning.ResourceSpawning
                      randomNumber = UnityEngine.Random.Range(0, _cells.Count);
                 }
 
-                resourceComponent.SetRandomPosition(_cells[randomNumber]);
+                newResource.transform.position = RandomisePosition(_cells[randomNumber]);
+
                 _spawnedGameobjects.Add(newResource);
 
                 if (_cells[randomNumber].ActiveNodes.Count <= 0)
@@ -182,5 +183,22 @@ namespace Examen.Spawning.ResourceSpawning
 
             spawnArea.Area.SpawnedResources = _spawnedGameobjects;
         }
+
+        private Vector3 RandomisePosition(Cell cell)
+        {
+            StartCoroutine(WaitToUpdateCell(cell));
+
+            int randomNumber = UnityEngine.Random.Range(0, cell.ActiveNodes.Count);
+            Node randomNode = cell.ActiveNodes.ElementAt(randomNumber);
+
+            cell.ActiveNodes.Remove(randomNode);
+            return randomNode.Position;
+        }
+        private IEnumerator WaitToUpdateCell(Cell currentCell)
+        {
+            yield return new WaitForSeconds(0.1f);
+            GridSystem.Instance.UpdateCell(currentCell.CellX, currentCell.CellY);
+        }
+
     }
 }
