@@ -1,6 +1,5 @@
 using FishNet;
 using FishNet.Connection;
-using FishNet.Managing;
 using FishNet.Object;
 using MarkUlrich.Utils;
 using System.Collections.Generic;
@@ -11,25 +10,27 @@ namespace Examen.Player.PlayerDataManagement
 {
     public class PlayerDatabase : NetworkedSingletonInstance<PlayerDatabase>
     {
+        [SerializeField] private float _requiredExp = 100f;
+        [SerializeField] private float _expIncreaseFactor = 1.2f;
+
         [SerializeField] private Slider _expBar;
         [SerializeField] private Text _expText;
 
-        private Dictionary<int, PlayerDataHandler> _playerData = new();
+        private readonly Dictionary<int, PlayerDataHandler> _playerData = new();
 
-        public void ConnectClient(int clientId, PlayerDataHandler handler)
-        {
-            SendClientConnection(clientId, handler);
-        }
+        public void ConnectClient(int clientId, PlayerDataHandler handler) => SendClientConnection(clientId, handler);
 
-        public void DisconnectClient(int clientId)
-        {
-            SendClientDisconnection(clientId);
-        }
+        public void DisconnectClient(int clientId) => SendClientDisconnection(clientId);
 
         public void UpdateDisplay(int exp)
         {
-            _expBar.value = exp;
-            _expText.text = $"{exp}/100";
+            (int level, int remainingExp, int neededExp) = CalculateLevel(exp);
+
+            int maxNeededExp = remainingExp + neededExp;
+
+            _expBar.maxValue = maxNeededExp;
+            _expBar.value = remainingExp;
+            _expText.text = $"Level: {level} {remainingExp}/{maxNeededExp}";
         }
 
         [Server]
@@ -60,16 +61,11 @@ namespace Examen.Player.PlayerDataManagement
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void SendClientConnection(int clientId, PlayerDataHandler handler)
-        {
-            ProcessClientConnection(clientId, handler);
-        }
+        private void SendClientConnection(int clientId, PlayerDataHandler handler) 
+            => ProcessClientConnection(clientId, handler);
 
         [ServerRpc(RequireOwnership = false)]
-        private void SendClientDisconnection(int clientId)
-        {
-            ProcessClienDisconnection(clientId);
-        }
+        private void SendClientDisconnection(int clientId) => ProcessClienDisconnection(clientId);
 
         [Server]
         private void ProcessClientConnection(int clientId, PlayerDataHandler handler)
@@ -89,6 +85,23 @@ namespace Examen.Player.PlayerDataManagement
                 return;
 
             _playerData.Remove(clientId);
+        }
+
+        private (int level, int remainingExp, int neededExp) CalculateLevel(int exp)
+        {
+            int level = 1;
+            int remainingExp = exp;
+            float requiredExp = _requiredExp;
+
+            while (remainingExp >= requiredExp)
+            {
+                remainingExp -= (int)requiredExp;
+                level++;
+                requiredExp *= _expIncreaseFactor;
+            }
+
+            int neededExp = Mathf.CeilToInt(requiredExp - remainingExp);
+            return (level, remainingExp, neededExp);
         }
     }
 }
