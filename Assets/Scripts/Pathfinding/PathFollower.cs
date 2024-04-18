@@ -32,7 +32,6 @@ namespace Examen.Pathfinding
         
         public bool IsPathBlocked 
             => Physics.Raycast(transform.position, transform.forward, p_obstacleCheckDistance, p_obstaclesLayerMask);
-        public bool ManualBlock;
 
         public event Action OnPathCompleted;
         public event Action<Interactable> OnInteractableReached;
@@ -123,9 +122,6 @@ namespace Examen.Pathfinding
 
                 while (Vector3.Distance(transform.position, adjustedNode) > 0.1f)
                 {
-                    /*if (ManualBlock)
-                        yield break;*/
-
                     transform.position = 
                         Vector3.MoveTowards(transform.position, adjustedNode, p_speed * Time.deltaTime);
                     transform.LookAt(adjustedNode);

@@ -20,7 +20,7 @@ namespace Examen.Player
         public Action<Interactable> OnPointedAtInteractable;
 
         public bool HasClickedUI {  get; set; } // Todo: Rename and maybe check accessibility
-        public UnityEngine.Camera Camera { get; private set; }
+        public UnityEngine.Camera Camera => _myCamera;
 
         private void Start()
         {
@@ -59,20 +59,19 @@ namespace Examen.Player
             {
                 _pointerWorldPosition = hit.point;
 
-                if (HasClickedUI)
-                {
-                    OnPointedHitInfo?.Invoke(hit);
-                    OnPointedUIInteraction?.Invoke(_pointerWorldPosition);
-                    return;
-                }
+                OnPointedHitInfo?.Invoke(hit);
 
-                if (hit.collider.gameObject.layer == 5)
+                if (hit.collider.gameObject.layer == 5) // UI layer
                 {
                     HasClickedUI = true;
                     return;
                 }
+                if (HasClickedUI)
+                {
+                    OnPointedUIInteraction?.Invoke(_pointerWorldPosition);
+                    return;
+                }
 
-                OnPointedHitInfo?.Invoke(hit);
                 OnPointedAtPosition?.Invoke(_pointerWorldPosition);
                 OnPointedGameobject?.Invoke(hit.transform.gameObject);
 

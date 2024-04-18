@@ -1,30 +1,30 @@
 using UnityEngine;
 using Minoord.Input;
 using UnityEngine.InputSystem;
-using Examen.Pathfinding;
+using FishNet.Object;
+using FishNet;
+using FishNet.Managing.Server;
 
 namespace Examen.Building
 {
     [RequireComponent(typeof(Player.Pointer))]
-    public class BuildingManager : MonoBehaviour
+    public class BuildingManager : NetworkBehaviour
     {
+        public UnityEngine.Camera Camera => _camera;
+
         [SerializeField] private Material _placeAllowed;
         [SerializeField] private Material _placeDisallowed;
 
-        private GameObject _placePrefab;
+        private NetworkObject _placePrefab;
         private UnityEngine.Camera _camera;
 
         private GameObject _currentPreview;
         private MeshRenderer _meshRenderer;
+        private StructurepreviewButtons rotationButtons;
 
         private Vector3 _currentPosition;
         private Vector3 _currentRotation;
         private Vector3 _currentNormal;
-
-        private bool _canPlace = false;
-        private bool _isHolding;
-
-        private GameObject rotationButtons;
 
         private InputAction _clickAction;
 
@@ -32,9 +32,8 @@ namespace Examen.Building
         private Vector3 _pointerLocation;
         private RaycastHit _pointerHitInfo;
 
-        private PathFollower _pathFollower;
-
-        public UnityEngine.Camera Camera => _camera;
+        private bool _canPlace = false;
+        private bool _isHolding;
 
         private void Start()
         {
@@ -46,16 +45,16 @@ namespace Examen.Building
             _pointer.OnPointedUIInteraction += SetPointerVector;
 
             _pointer.OnPointedHitInfo += SetPointerHitInfo;
-
-            _pathFollower = GetComponent<PathFollower>();
         }
 
-        void Update()
+        private void Update()
         {
             if (!_isHolding || _currentPreview == null)
                 return;
 
-            _pointer.PointAtPosition();
+            if (_pointer.HasClickedUI)
+                _pointer.PointAtPosition();
+
             if (_pointerHitInfo.collider?.gameObject.layer != 7) //Ground layer
                 return;
 
@@ -93,37 +92,45 @@ namespace Examen.Building
         /// </summary>
         /// <param name="structurePreview">The structure preview GameObject to spawn.</param>
         /// <param name="structure">The structure GameObject to place.</param>
-        public void SpawnStructurePreview(GameObject structurePreview, GameObject structure)
+        public void SpawnStructurePreview(GameObject structurePreview, NetworkObject structure)
         {
-            _pathFollower.ManualBlock = true;
-
             if (_currentPreview != null)
                 Destroy(_currentPreview);
 
             _placePrefab = structure;
 
             _currentPreview = Instantiate(structurePreview);
-            _currentPreview.GetComponent<StructurepreviewButtons>().OwnedBuildingManager = this;
+            _currentPreview.gameObject.SetActive(true);
 
-            rotationButtons = _currentPreview.transform.Find("RotationButtons").gameObject;
-            rotationButtons.SetActive(false);
+            rotationButtons = _currentPreview.GetComponentInChildren<StructurepreviewButtons>();
+            rotationButtons.OwnedBuildingManager = this;
+            rotationButtons.Camera = Camera;
+            rotationButtons.SetButtonsActive(false);
 
             _meshRenderer = _currentPreview.GetComponentInChildren<MeshRenderer>();
 
             _isHolding = true;
         }
 
-        private void PlaceStructure(GameObject structurePrefab, Vector3 spawnLocation, Vector3 spawnRotation)
+        private void PlaceStructure(NetworkObject structurePrefab, Vector3 spawnLocation, Vector3 spawnRotation)
         {
             if (!_canPlace)
                 return;
 
             Destroy(_currentPreview);
+            UpdateStructrePlacement(structurePrefab, spawnLocation, spawnRotation);
+        }
 
-            GameObject placedStructure = Instantiate(structurePrefab, spawnLocation, Quaternion.Euler(spawnRotation));
-            StructureList.AddStructure(placedStructure);
+        [ServerRpc]
+        private void UpdateStructrePlacement(NetworkObject structurePrefab, Vector3 spawnLocation, Vector3 spawnRotation)
+        {
+            NetworkObject structure = InstanceFinder.NetworkManager.GetPooledInstantiated(structurePrefab, spawnLocation, Quaternion.Euler(spawnRotation), true);
 
-            _pathFollower.ManualBlock = false;
+            ServerManager serverManager = InstanceFinder.ServerManager;
+            serverManager.Spawn(structure);
+            InstanceFinder.NetworkManager.SceneManager.AddOwnerToDefaultScene(structure);
+
+            StructureList.AddStructure(structure.GetComponent<BaseStructure>());
         }
 
         private void SetStructurePosition()
@@ -166,23 +173,19 @@ namespace Examen.Building
 
         private void OnHoldPressed(InputAction.CallbackContext context)
         {
-            if (_pointerHitInfo.collider?.gameObject.layer == 5) return;
-
             _isHolding = true;
 
-            if (rotationButtons != null)
-                rotationButtons.SetActive(false);
+            if (rotationButtons != null && !_isHolding)
+                _currentPreview.GetComponentInChildren<StructurepreviewButtons>().SetButtonsActive(false);
         }
 
         private void OnReleasePressed(InputAction.CallbackContext context)
         {
             _pointer.HasClickedUI = false;
-            if (_pointerHitInfo.collider?.gameObject.layer == 5) return;
-
             _isHolding = false;
 
             if (rotationButtons != null)
-                rotationButtons.SetActive(true);
+                _currentPreview.GetComponentInChildren<StructurepreviewButtons>().SetButtonsActive(true);
         }
 
         private void SetPointerVector(Vector3 pointerLocation) => _pointerLocation = pointerLocation;

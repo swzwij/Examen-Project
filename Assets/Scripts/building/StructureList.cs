@@ -8,15 +8,15 @@ namespace Examen.Building
 {
     static class StructureList
     {
-        private static HashSet<GameObject> _allStructures = new();
+        private static readonly HashSet<BaseStructure> _allStructures = new();
 
-        public static HashSet<GameObject> GetList() => _allStructures;
+        public static HashSet<BaseStructure> GetList() => _allStructures;
 
-        public static void AddStructure(GameObject structure) => _allStructures.Add(structure);
+        public static void AddStructure(BaseStructure structure) => _allStructures.Add(structure);
 
-        public static void RemoveStructure(GameObject structure) => _allStructures.Remove(structure);
+        public static void RemoveStructure(BaseStructure structure) => _allStructures.Remove(structure);
 
-        public static bool CheckHasStructure(GameObject structure) => _allStructures.Contains(structure);
+        public static bool CheckHasStructure(BaseStructure structure) => _allStructures.Contains(structure);
     }
 }
 
