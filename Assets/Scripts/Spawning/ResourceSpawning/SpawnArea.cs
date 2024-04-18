@@ -8,9 +8,12 @@ namespace Examen.Spawning.ResourceSpawning
 {
     public class SpawnArea : NetworkBehaviour
     {
+        
         [SerializeField] private List<GameObject> _spawnedResources;
 
         public List<GameObject> SpawnedResources { set => _spawnedResources.AddRange(value); get => _spawnedResources; }
+
+        public LineRenderer LineRenderer { get; set; }
 
         private void OnEnable()
         {

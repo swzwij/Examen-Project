@@ -316,7 +316,6 @@ namespace Examen.Pathfinding.Grid
             int y = Mathf.RoundToInt((_gridSize.y - 1) * percentY);
 
             Cell currentCell = _cells[x, y];
-            Debug.Log($"{x}:{y}");
 
             return currentCell;
         }
