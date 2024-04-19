@@ -2,20 +2,23 @@ using FishNet.Object;
 using System.Collections;
 using UnityEngine;
 
-public class BaseStructure : NetworkBehaviour
+namespace Examen.Structure
 {
-    public void Initialze()
+    public class BaseStructure : NetworkBehaviour
     {
-        StartCoroutine(WaitBeforeActivate());
-        this.gameObject.SetActive(true);
-    }
+        public void Initialze()
+        {
+            StartCoroutine(WaitBeforeActivate());
+            gameObject.SetActive(true);
+        }
 
-    private IEnumerator WaitBeforeActivate()
-    {
-        yield return new WaitForSeconds(2);
-        ActivateStructure();
-    }
+        private IEnumerator WaitBeforeActivate()
+        {
+            yield return new WaitForSeconds(2);
+            ActivateStructure();
+        }
 
-    [ObserversRpc]
-    private void ActivateStructure() => this.gameObject.SetActive(true);
+        [ObserversRpc]
+        private void ActivateStructure() => gameObject.SetActive(true);
+    }
 }
