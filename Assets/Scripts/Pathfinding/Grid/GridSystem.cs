@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq;
 using FishNet.Object;
 using UnityEngine;
@@ -172,8 +173,13 @@ namespace Examen.Pathfinding.Grid
         /// <param name="cellX">The x-coordinate of the cell.</param>
         /// <param name="cellY">The y-coordinate of the cell.</param>
         [Server]
-        public void UpdateCell(int cellX, int cellY)
+        public void UpdateCell(int cellX, int cellY) => StartCoroutine(UpdateCellDelayed(cellX, cellY));
+
+        [Server]
+        private IEnumerator UpdateCellDelayed(int cellX, int cellY)
         {
+            yield return new WaitForEndOfFrame();
+
             Debug.Log("UPDATING CELL: " + cellX + " " + cellY);
             Cell cell = _cells[cellX, cellY];
             foreach (Node node in cell.Nodes)
