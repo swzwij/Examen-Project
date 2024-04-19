@@ -50,12 +50,13 @@ namespace Examen.Interactables.Resource
             p_healthData = GetComponent<HealthData>();
 
             p_healthData.onDie.AddListener(StartRespawnTimer);
-            p_healthData.onDie.AddListener(GetOldCell);
+            p_healthData.onDie.AddListener(GetCell);
             p_healthData.onDie.AddListener(DisableObject);
-            p_healthData.onDie.AddListener(UpdateOldCell);
+            p_healthData.onDie.AddListener(UpdateCell);
 
             p_healthData.onResurrected.AddListener(EnableObject);
-            p_healthData.onResurrected.AddListener(UpdateNewCell);
+            p_healthData.onResurrected.AddListener(GetCell);
+            p_healthData.onResurrected.AddListener(UpdateCell);
         }
 
         [Server]
@@ -67,17 +68,10 @@ namespace Examen.Interactables.Resource
         }
 
         [Server]
-        protected void GetOldCell() => Cell = GridSystem.Instance.GetCellFromWorldPosition(transform.position);
+        protected void GetCell() => Cell = GridSystem.Instance.GetCellFromWorldPosition(transform.position);
 
         [Server]
-        protected void UpdateOldCell() => SpawnArea.DelayCellUpdate(Cell);
-
-        [Server]
-        protected void UpdateNewCell()
-        {
-            Cell = GridSystem.Instance.GetCellFromWorldPosition(transform.position);
-            SpawnArea.DelayCellUpdate(Cell);
-        }
+        protected void UpdateCell() => SpawnArea.DelayCellUpdate(Cell);
 
         /// <summary>
         /// Starts the deathTimer and despawns this object.
