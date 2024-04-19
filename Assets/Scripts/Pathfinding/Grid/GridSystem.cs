@@ -180,7 +180,6 @@ namespace Examen.Pathfinding.Grid
         {
             yield return new WaitForEndOfFrame();
 
-            Debug.Log("UPDATING CELL: " + cellX + " " + cellY);
             Cell cell = _cells[cellX, cellY];
             foreach (Node node in cell.Nodes)
             {

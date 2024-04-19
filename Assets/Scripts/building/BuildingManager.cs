@@ -120,13 +120,11 @@ namespace Examen.Building
         private void PlaceStructure(NetworkObject structurePrefab, Vector3 spawnLocation, Vector3 spawnRotation)
         {
             if (!_canPlace)
-                return;
+                return; 
 
             Destroy(_currentPreview);
             UpdateStructrePlacement(structurePrefab, spawnLocation, spawnRotation);
-            Debug.Log("TESTING" + _gridSystem);
-
-            UpdateCells(structurePrefab.gameObject.transform.position);
+            UpdateCells(spawnLocation);
         }
 
         [ServerRpc]
@@ -144,8 +142,6 @@ namespace Examen.Building
         [ServerRpc]
         private void UpdateCells(Vector3 placedPosition)
         {
-            Debug.Log("AAAAH");
-            //_gridSystem = FindAnyObjectByType<GridSystem>();
             Cell currentCell = _gridSystem.GetCellFromWorldPosition(placedPosition);
             currentCell.UpdateCell();
         }
