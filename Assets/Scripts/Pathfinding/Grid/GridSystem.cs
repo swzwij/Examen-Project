@@ -27,6 +27,7 @@ namespace Examen.Pathfinding.Grid
         private bool _isInitialized;
 
         public Action<Vector2Int> OnCellCreated;
+        public Action OnGridCreated;
 
         private Vector3 CellSize 
             => new(_cellSize * _nodeDistance, _cellSize * _nodeDistance, _cellSize * _nodeDistance);
@@ -53,6 +54,7 @@ namespace Examen.Pathfinding.Grid
             InitializeGrid(_gridSize, InitializeNode);
             ConnectNodes();
             InitializeCells();
+            OnGridCreated?.Invoke();
         }
 
         private void InitializeGrid(Vector2Int gridSize, System.Action<int, int> initializeElement)

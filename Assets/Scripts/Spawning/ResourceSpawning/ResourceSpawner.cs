@@ -25,29 +25,9 @@ namespace Examen.Spawning.ResourceSpawning
         private const float MAX_PERCENTAGE = 100;
 
         private readonly List<GameObject> _spawnedGameobjects = new();
-        private List<Cell> _cells = new();
-        private ZoneID[] _enumNames = (ZoneID[])Enum.GetValues(typeof(ZoneID));
+        private readonly List<Cell> _cells = new();
 
         public List<ResourceSpawnAreas> SpawnAreas => _spawnAreas;
-
-        public void CreateSpawnAreas()
-        {
-            Transform[] resources = _areaParent.GetComponentsInChildren<Transform>();
-            _spawnAreas.Clear();
-
-            for (int i = 1; i < resources.Length; i++)
-                DestroyImmediate(resources[i].gameObject);
-
-
-            for (int i = 0; i < _enumNames.Length; i++)
-            {
-                GameObject spawnArea = new(_enumNames[i].ToString());
-
-                _spawnAreas.Add(new() { Zone = _enumNames[i], Area = spawnArea.AddComponent<SpawnArea>() });
-
-                spawnArea.transform.parent = _areaParent;
-            }
-        }
 
         /// <summary>
         /// Spawns randomly resources
@@ -69,7 +49,7 @@ namespace Examen.Spawning.ResourceSpawning
                 if (_hasSpawnedBorder)
                     return;
 
-                area.ResourceAmount = area.Cells[0].AllNodes.Count * area.Cells.Count;
+                area.ResourceAmount = area.Area.AreaCells[0].AllNodes.Count * area.Area.AreaCells.Count;
                 _hasSpawnedBorder = true;
             }
             else
@@ -78,8 +58,8 @@ namespace Examen.Spawning.ResourceSpawning
             _currentSpawnAmount = area.ResourceAmount;
 
 
-            for (int i = 0; i < area.Cells.Count; i++)
-                currentActiveNodes += area.Cells[i].ActiveNodes.Count;
+            for (int i = 0; i < area.Area.AreaCells.Count; i++)
+                currentActiveNodes += area.Area.AreaCells[i].ActiveNodes.Count;
 
             if (_currentSpawnAmount > currentActiveNodes)
                 _currentSpawnAmount = currentActiveNodes;
@@ -117,8 +97,8 @@ namespace Examen.Spawning.ResourceSpawning
             for (int i = 0; i < resources.Count; i++)
                 DestroyImmediate(resources[i].gameObject);
 
-            for (int i = 0; i < _spawnAreas[spawnAreaCount].Cells.Count; i++)
-                GridSystem.Instance.UpdateCell(_spawnAreas[spawnAreaCount].Cells[i].CellX, _spawnAreas[spawnAreaCount].Cells[i].CellY);
+            for (int i = 0; i < _spawnAreas[spawnAreaCount].Area.AreaCells.Count; i++)
+                GridSystem.Instance.UpdateCell(_spawnAreas[spawnAreaCount].Area.AreaCells[i].CellX, _spawnAreas[spawnAreaCount].Area.AreaCells[i].CellY);
 
             spawnArea.SpawnedResources?.Clear();
         }
@@ -159,7 +139,7 @@ namespace Examen.Spawning.ResourceSpawning
         {
             _spawnedGameobjects.Clear();
             _cells?.Clear();
-            _cells.AddRange(spawnArea.Cells);
+            _cells.AddRange(spawnArea.Area.AreaCells);
 
             for (int i = 0; i < amount; i++)
             {

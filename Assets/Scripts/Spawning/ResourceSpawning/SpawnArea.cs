@@ -9,11 +9,13 @@ namespace Examen.Spawning.ResourceSpawning
 {
     public class SpawnArea : NetworkBehaviour
     {
-        [SerializeField] private List<GameObject> _spawnedResources;
+        [SerializeField] private List<GameObject> _spawnedResources = new();
         [SerializeField] private List<Cell> _areaCells = new();
 
         public List<GameObject> SpawnedResources { set => _spawnedResources.AddRange(value); get => _spawnedResources; }
         public LineRenderer LineRenderer { get; set; }
+
+        public List<Cell> AreaCells => _areaCells;
 
         private void OnEnable()
         {
@@ -28,8 +30,12 @@ namespace Examen.Spawning.ResourceSpawning
             }
         }
 
+        public void AddAction() => GridSystem.Instance.OnGridCreated += UpdateArea; 
+
         public void UpdateArea()
         {
+            _areaCells.Clear();
+
             for (int i = 0; i < LineRenderer.positionCount; i++)
             {
                 Vector3 position = LineRenderer.GetPosition(i);
