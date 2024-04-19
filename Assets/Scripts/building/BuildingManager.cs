@@ -136,7 +136,7 @@ namespace Examen.Building
             serverManager.Spawn(structure);
             InstanceFinder.NetworkManager.SceneManager.AddOwnerToDefaultScene(structure);
 
-            StructureList.AddStructure(structure.GetComponent<BaseStructure>());
+            StructureList.AddStructure(structure.GetComponent<Examen.Structure.BaseStructure>());
         }
 
         [ServerRpc]
