@@ -1,7 +1,6 @@
+using UnityEngine;
 using FishNet;
 using FishNet.Object;
-using System.Collections;
-using UnityEngine;
 
 namespace TrustFall.Structures
 {

@@ -1,7 +1,5 @@
-using FishNet.Object;
-using MarkUlrich.Health;
-using Swzwij.Extensions;
 using UnityEngine;
+using FishNet.Object;
 
 public class Projectile : NetworkBehaviour
 {
