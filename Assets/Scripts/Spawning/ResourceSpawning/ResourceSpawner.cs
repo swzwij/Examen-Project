@@ -1,4 +1,3 @@
-using Examen.Interactables.Resource;
 using Examen.Pathfinding.Grid;
 using Examen.Spawning.ResourceSpawning.Structs;
 using MarkUlrich.Utils;
@@ -12,10 +11,6 @@ namespace Examen.Spawning.ResourceSpawning
 {
     public class ResourceSpawner : SingletonInstance<ResourceSpawner>
     {
-        //dont destroy objects when they are need
-        // fix cell issue
-        //make it work in game (aka fix cell issue)
-
         [SerializeField] private Transform _areaParent;
         [SerializeField] private bool _hasSpawnedBorder;
         [SerializeField] private List<ResourceSpawnAreas> _spawnAreas = new();
@@ -36,10 +31,14 @@ namespace Examen.Spawning.ResourceSpawning
         public void SpawnAllResources()
         {
             for (int i = 0; i < _spawnAreas.Count; i++)
-                SpawnAreaResource(i);
+                SpawnResourcesInArea(i);
         }
 
-        public void SpawnAreaResource(int spawnAreaCount)
+        /// <summary>
+        /// Destroys old resources, checks if and how many resources can spawn in the area and spawns them.
+        /// </summary>
+        /// <param name="spawnAreaCount">The position index of the area you want the resource to spawn in.</param>
+        public void SpawnResourcesInArea(int spawnAreaCount)
         {
             if (GridSystem.Instance.Cells == null)
                 GridSystem.Instance.CreateGrid();
@@ -48,7 +47,7 @@ namespace Examen.Spawning.ResourceSpawning
             _spawnPercentage = MAX_PERCENTAGE;
             int currentActiveNodes = 0;
 
-            if (area.Zone == ZoneID.Border)
+            if (area.Zone == NodePlacements.Full)
             {
                 if (_hasSpawnedBorder)
                     return;
@@ -79,21 +78,28 @@ namespace Examen.Spawning.ResourceSpawning
 
                 float resourcesAmount = CalculateResrouceAmount(area, area.SpawnableResources[i]);
 
-                SpawnResources(area, area.SpawnableResources[i].Resource, resourcesAmount);
+                CreateResources(area, area.SpawnableResources[i].Resource, resourcesAmount);
             }
         }
 
+        /// <summary>
+        /// Destroys all resources in the scene.
+        /// </summary>
         public void DestoryAllResources()
         {
             for (int i = 0; i < _spawnAreas.Count; i++)
                 DestroyAreaResources(i);
         }
 
+        /// <summary>
+        /// Destroys Resource under the given spawnArea.
+        /// </summary>
+        /// <param name="spawnAreaCount">The position index of the area you want the resource to be destroyed.</param>
         public void DestroyAreaResources(int spawnAreaCount)
         {
             SpawnArea spawnArea = _spawnAreas[spawnAreaCount].Area;
 
-            if (_spawnAreas[spawnAreaCount].Zone == ZoneID.Border)
+            if (_spawnAreas[spawnAreaCount].Zone == NodePlacements.Full)
                 _hasSpawnedBorder = false;
 
             List<GameObject> resources = spawnArea.SpawnedResources;
@@ -105,6 +111,28 @@ namespace Examen.Spawning.ResourceSpawning
                 GridSystem.Instance.UpdateCell(_spawnAreas[spawnAreaCount].Area.AreaCells[i].CellX, _spawnAreas[spawnAreaCount].Area.AreaCells[i].CellY);
 
             spawnArea.SpawnedResources?.Clear();
+        }
+
+        /// <summary>
+        /// Gets a random cell and a random node from the cell to set the position
+        /// </summary>
+        /// <param name="newResource"></param>
+        public void SetResourceSpawnPostion(GameObject newResource)
+        {
+            int randomNumber = UnityEngine.Random.Range(0, _cells.Count);
+
+            if (_cells[randomNumber].ActiveNodes.Count <= 0)
+            {
+                _cells.Remove(_cells[randomNumber]);
+                randomNumber = UnityEngine.Random.Range(0, _cells.Count);
+            }
+
+            newResource.transform.position = RandomisePosition(_cells[randomNumber]);
+
+            _spawnedGameobjects.Add(newResource);
+
+            if (_cells[randomNumber].ActiveNodes.Count <= 0)
+                _cells.Remove(_cells[randomNumber]);
         }
 
         private float CalculateResrouceAmount(ResourceSpawnAreas area, ResourceSpawnInfo resourceSpawnInfo)
@@ -139,7 +167,7 @@ namespace Examen.Spawning.ResourceSpawning
             return resourcesAmount;
         }
 
-        private void SpawnResources(ResourceSpawnAreas spawnArea, GameObject gameObject, float amount)
+        private void CreateResources(ResourceSpawnAreas spawnArea, GameObject gameObject, float amount)
         {
             _spawnedGameobjects.Clear();
             _cells?.Clear();
@@ -148,28 +176,10 @@ namespace Examen.Spawning.ResourceSpawning
             for (int i = 0; i < amount; i++)
             {
                 GameObject newResource = Instantiate(gameObject, spawnArea.Area.transform);
-                SpawnResource(newResource);
+                SetResourceSpawnPostion(newResource);
             }
 
             spawnArea.Area.SpawnedResources = _spawnedGameobjects;
-        }
-
-        public void SpawnResource(GameObject newResource)
-        {
-            int randomNumber = UnityEngine.Random.Range(0, _cells.Count);
-
-            if (_cells[randomNumber].ActiveNodes.Count <= 0)
-            {
-                _cells.Remove(_cells[randomNumber]);
-                randomNumber = UnityEngine.Random.Range(0, _cells.Count);
-            }
-
-            newResource.transform.position = RandomisePosition(_cells[randomNumber]);
-
-            _spawnedGameobjects.Add(newResource);
-
-            if (_cells[randomNumber].ActiveNodes.Count <= 0)
-                _cells.Remove(_cells[randomNumber]);
         }
 
         private Vector3 RandomisePosition(Cell cell)
@@ -187,6 +197,5 @@ namespace Examen.Spawning.ResourceSpawning
             yield return new WaitForSeconds(0.1f);
             GridSystem.Instance.UpdateCell(currentCell.CellX, currentCell.CellY);
         }
-
     }
 }

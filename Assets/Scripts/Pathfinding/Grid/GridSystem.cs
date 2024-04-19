@@ -10,17 +10,22 @@ namespace Examen.Pathfinding.Grid
     public class GridSystem : NetworkedSingletonInstance<GridSystem>
     {
         [SerializeField] private bool _showGrid = true;
+
         [SerializeField] private float _maxWorldHeight = 30f;
         [SerializeField] private float _maxElevationDifference = 0.6f;
         [SerializeField] private float _maxConnectionDistance = 1f;
         [SerializeField] private float _nodeHeightOffset = 0.2f;
+
         [SerializeField] private LayerMask _walkableLayerMask;
         [SerializeField] private LayerMask _obstacleLayerMask;
+
         [SerializeField] private Cell _cellPrefab;
         [SerializeField] private int _cellSize = 10;
         [SerializeField] private Vector2Int _gridSize;
+
         [SerializeField] private float _nodeDistance = 1f;
         [SerializeField] private int _maxNodeConnections = 3;
+
         [SerializeField] private List<Cell> _currentCells;
         
         private Node[,] _nodes;

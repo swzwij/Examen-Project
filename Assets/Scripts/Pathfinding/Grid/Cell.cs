@@ -1,4 +1,3 @@
-using Examen.Spawning.ResourceSpawning;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +12,7 @@ namespace Examen.Pathfinding.Grid
 
         private HashSet<Node> _allNodes = new();
         private HashSet<Node> _activeNodes = new();
+
         public GridSystem GridSystem { private get; set; }
         public int CellX { get; set; }
         public int CellY { get; set; }
@@ -40,6 +40,5 @@ namespace Examen.Pathfinding.Grid
         /// </summary>
         /// <param name="node">The node to add.</param>
         public void AddNode(Node node) => _allNodes.Add(node);
-
     }
 }

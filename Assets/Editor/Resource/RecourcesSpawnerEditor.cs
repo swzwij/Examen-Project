@@ -38,7 +38,7 @@ namespace Examen.Editors.Resource
             EditorGUILayout.BeginHorizontal();
 
             if (GUILayout.Button($"(Re)Spawn resources in {spawner.SpawnAreas[_selectNumber].Area.gameObject.name}"))
-                spawner.SpawnAreaResource(_selectNumber);
+                spawner.SpawnResourcesInArea(_selectNumber);
 
             if (GUILayout.Button($"Remove resources in {spawner.SpawnAreas[_selectNumber].Area.gameObject.name}"))
                 spawner.DestroyAreaResources(_selectNumber);
