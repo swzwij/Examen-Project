@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using FishNet.Object;
 using FishNet;
 using FishNet.Managing.Server;
+using Examen.Pathfinding.Grid;
 
 namespace Examen.Building
 {
@@ -28,6 +29,8 @@ namespace Examen.Building
 
         private InputAction _clickAction;
 
+        private GridSystem _gridSystem;
+
         private Player.Pointer _pointer;
         private Vector3 _pointerLocation;
         private RaycastHit _pointerHitInfo;
@@ -39,6 +42,8 @@ namespace Examen.Building
         {
             InputManager.SubscribeToAction("HoldDown", OnHoldPressed, out _clickAction);
             _clickAction.canceled += OnReleasePressed;
+
+            SetGridSystem();
 
             _pointer = GetComponent<Player.Pointer>();
             _camera = _pointer.Camera;
@@ -119,6 +124,9 @@ namespace Examen.Building
 
             Destroy(_currentPreview);
             UpdateStructrePlacement(structurePrefab, spawnLocation, spawnRotation);
+            Debug.Log("TESTING" + _gridSystem);
+
+            UpdateCells(structurePrefab.gameObject.transform.position);
         }
 
         [ServerRpc]
@@ -131,6 +139,15 @@ namespace Examen.Building
             InstanceFinder.NetworkManager.SceneManager.AddOwnerToDefaultScene(structure);
 
             StructureList.AddStructure(structure.GetComponent<BaseStructure>());
+        }
+
+        [ServerRpc]
+        private void UpdateCells(Vector3 placedPosition)
+        {
+            Debug.Log("AAAAH");
+            //_gridSystem = FindAnyObjectByType<GridSystem>();
+            Cell currentCell = _gridSystem.GetCellFromWorldPosition(placedPosition);
+            currentCell.UpdateCell();
         }
 
         private void SetStructurePosition()
@@ -187,6 +204,9 @@ namespace Examen.Building
             if (rotationButtons != null)
                 _currentPreview.GetComponentInChildren<StructurepreviewButtons>().SetButtonsActive(true);
         }
+
+        [Server]
+        private void SetGridSystem() => _gridSystem = FindAnyObjectByType<GridSystem>();
 
         private void SetPointerVector(Vector3 pointerLocation) => _pointerLocation = pointerLocation;
 
