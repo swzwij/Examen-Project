@@ -3811,7 +3811,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: -0.1318372, y: -0.86658573, z: 0.31114736, w: -0.36719957}
-  m_LocalPosition: {x: -8.23613, y: 14.318222, z: -1.0385895}
+  m_LocalPosition: {x: -50.73613, y: 14.318222, z: 20.71141}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10360,71 +10360,6 @@ MonoBehaviour:
   _scenePathHash: 2955642393
   <SceneId>k__BackingField: 12694387418524559094
   <AssetPathHash>k__BackingField: 0
---- !u!1001 &1727848129225757399
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 383376843492830689, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
-      propertyPath: m_Name
-      value: Projectile Tower
-      objectReference: {fileID: 0}
-    - target: {fileID: 2556768225675572015, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
-      propertyPath: <SceneId>k__BackingField
-      value: 12694387417054050929
-      objectReference: {fileID: 0}
-    - target: {fileID: 4661868421625354277, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
-      propertyPath: _shootInterval
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8709109993503295747, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8709109993503295747, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8709109993503295747, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8709109993503295747, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8709109993503295747, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8709109993503295747, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8709109993503295747, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8709109993503295747, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8709109993503295747, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8709109993503295747, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
 --- !u!4 &1823634975853929821 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1834133555745107547, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
@@ -10529,10 +10464,6 @@ PrefabInstance:
       propertyPath: _networkObjectCache
       value: 
       objectReference: {fileID: 1823634975853929828}
-    - target: {fileID: 7071424768019710682, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
-      propertyPath: m_Parameters.colorGradient.m_ColorSpace
-      value: -1
-      objectReference: {fileID: 0}
     - target: {fileID: 9181585673909579258, guid: 5ffb690ca7253364a809ab580454a285, type: 3}
       propertyPath: _scenePathHash
       value: 2955642393
@@ -10584,4 +10515,3 @@ SceneRoots:
   - {fileID: 459536156}
   - {fileID: 1665627107}
   - {fileID: 1701474445}
-  - {fileID: 1727848129225757399}
