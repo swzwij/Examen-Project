@@ -1,4 +1,3 @@
-using Examen.Inventory;
 using Examen.Items;
 using Examen.Networking;
 using Examen.Pathfinding.Grid;
@@ -7,8 +6,6 @@ using Examen.Spawning.ResourceSpawning;
 using FishNet.Connection;
 using FishNet.Object;
 using MarkUlrich.Health;
-using System.Collections;
-using System.Linq;
 using UnityEngine;
 
 namespace Examen.Interactables.Resource
@@ -23,9 +20,8 @@ namespace Examen.Interactables.Resource
         protected HealthData p_healthData;
         protected bool hasStartedServer;
 
-        public SpawnArea SpawnArea { get; set; }
         public Item ResourceItem => p_resourceItem;
-
+        public SpawnArea SpawnArea { get; set; }
         public Cell Cell { get; set; }
 
         private void OnEnable()
@@ -59,20 +55,6 @@ namespace Examen.Interactables.Resource
             p_healthData.onResurrected.AddListener(UpdateCell);
         }
 
-        [Server]
-        protected virtual void RespawnResource()
-        {
-            transform.position = SpawnArea.GetRandomPosition();
-            SetNewPostion(transform.position);
-            p_healthData.Resurrect(p_healthData.MaxHealth);
-        }
-
-        [Server]
-        protected void GetCell() => Cell = GridSystem.Instance.GetCellFromWorldPosition(transform.position);
-
-        [Server]
-        protected void UpdateCell() => SpawnArea.DelayCellUpdate(Cell);
-
         /// <summary>
         /// Starts the deathTimer and despawns this object.
         /// </summary>
@@ -93,14 +75,14 @@ namespace Examen.Interactables.Resource
         /// </summary>
         [ObserversRpc]
         public void DisableObject() => gameObject.SetActive(false);
-  
+
         /// <summary>
         /// Sets client resource position to server resource postion.
         /// </summary>
         /// <param name="newPosition"> the postion of the server resource</param>
         [ObserversRpc]
         public virtual void SetNewPostion(Vector3 newPosition) => transform.position = newPosition;
-       
+
 
         /// <summary>
         /// Calls all functionalities that need to happen when you are interacting with this Resource
@@ -134,7 +116,20 @@ namespace Examen.Interactables.Resource
             // Todo: Play given animation
         }
 
-        private void OnDestroy() => ServerInstance.Instance.OnServerStarted -= InitResource;
+        [Server]
+        protected void GetCell() => Cell = GridSystem.Instance.GetCellFromWorldPosition(transform.position);
 
+        [Server]
+        protected void UpdateCell() => SpawnArea.DelayCellUpdate(Cell);
+
+        [Server]
+        protected virtual void RespawnResource()
+        {
+            transform.position = SpawnArea.GetRandomPosition();
+            SetNewPostion(transform.position);
+            p_healthData.Resurrect(p_healthData.MaxHealth);
+        }
+
+        private void OnDestroy() => ServerInstance.Instance.OnServerStarted -= InitResource;
     }
 }

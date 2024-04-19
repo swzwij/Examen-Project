@@ -2,14 +2,17 @@ using Examen.Spawning.ResourceSpawning;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(SpawnArea))]
-public class SpawnAreaEditor : Editor
+namespace Examen.Editors.Resource
 {
-    public override void OnInspectorGUI() 
+    [CustomEditor(typeof(SpawnArea))]
+    public class SpawnAreaEditor : Editor
     {
-        DrawDefaultInspector();
-        
-        if(GUILayout.Button("Update Spawn Area"))
-            ((SpawnArea)target).UpdateArea();
+        public override void OnInspectorGUI()
+        {
+            DrawDefaultInspector();
+
+            if (GUILayout.Button("Update Spawn Area"))
+                ((SpawnArea)target).UpdateArea();
+        }
     }
 }
