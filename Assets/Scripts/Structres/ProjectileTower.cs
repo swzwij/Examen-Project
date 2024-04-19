@@ -10,15 +10,12 @@ namespace TrustFall.Structures
         [SerializeField] private Transform _barrel;
         [SerializeField] private Transform _firePoint;
         [SerializeField] private NetworkObject projectilePrefab;
-        [SerializeField] private float shootForce;
+        [SerializeField] private float _shootInterval;
 
         private Transform _boss;
+        private float _timer = 0f;
 
-        private void Awake()
-        {
-            _boss = GameObject.Find("Boss").transform;
-
-        }
+        private void Awake() => _boss = GameObject.Find("Boss").transform; // TODO: Replace with a more reliable way to find the boss
 
         private void FixedUpdate()
         {
@@ -26,48 +23,39 @@ namespace TrustFall.Structures
                 return;
 
             LookAtBoss();
+
+            _timer += Time.fixedDeltaTime;
+            if (_timer >= _shootInterval)
+            {
+                _timer = 0f;
+                ShootProjectile();
+            }
         }
 
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
-            StartCoroutine(Shoot());
-
-        }
-
+        [Server]
         private void LookAtBoss()
         {
-            if (_boss == null)
-            {
+            if (!IsServer)
                 return;
-            }
+
+            if (_boss == null)
+                return;
 
             Vector3 direction = _boss.position - _barrel.transform.position;
             direction.y = 0;
             _barrel.transform.rotation = Quaternion.LookRotation(direction);
         }
 
-        private IEnumerator Shoot()
+        [Server]
+        private void ShootProjectile()
         {
-            yield return new WaitForSeconds(1);
-
-            Debug.Log("Shoot");
-
-            ShootProjectile();
-            StartCoroutine(Shoot());
-        }
-
-        void ShootProjectile()
-        {
-            Debug.Log("Shoot proj");
-
             FishNet.Managing.NetworkManager _networkManager = InstanceFinder.NetworkManager;
-            
+
             NetworkObject projectile = _networkManager.GetPooledInstantiated
             (
-                projectilePrefab, 
-                _firePoint.position, 
-                Quaternion.identity, 
+                projectilePrefab,
+                _firePoint.position,
+                Quaternion.identity,
                 true
             );
 
@@ -75,9 +63,7 @@ namespace TrustFall.Structures
             _networkManager.SceneManager.AddOwnerToDefaultScene(projectile);
 
             if (projectile.TryGetComponent(out Projectile projectileMotion))
-            {
                 projectileMotion.Target = _boss;
-            }
         }
     }
 }

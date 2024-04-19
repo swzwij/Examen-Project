@@ -1,43 +1,76 @@
+using FishNet.Object;
+using MarkUlrich.Health;
+using Swzwij.Extensions;
 using UnityEngine;
 
-public class Projectile : MonoBehaviour
+public class Projectile : NetworkBehaviour
 {
-    [SerializeField] private float speed = 1f;
+    [SerializeField] private float _speed = 1f;
+    [SerializeField] private float _damage;
 
     private Transform _target;
 
-    private bool _shouldMove = true;
-    private bool _hasCollided;
+    public Transform Target { set => _target = value; }
 
-    public Transform Target
-    {
-        set => _target = value;
-    }
+    private void Awake() => Destroy(gameObject, 10f);
 
     private void FixedUpdate()
     {
-        if (!_shouldMove)
+        Debug.LogError("FixedUpdate");
+
+        if (!IsServer)
             return;
 
-        transform.position = Vector3.MoveTowards(transform.position, _target.position, speed);
-        Vector3 direction = _target.position - transform.position;
-        transform.rotation = Quaternion.LookRotation(direction);
+        Debug.LogError("TryMove");
+
+        Move();
     }
+
+    [Server]
+    private void OnDestroy() => DestroyProjectile();
+
+    [Server]
+    private void Move()
+    {
+        Debug.LogError("Move");
+
+        transform.position = Vector3.MoveTowards(transform.position, _target.position, _speed);
+        Vector3 direction = _target.position - transform.position;
+
+        if (direction == Vector3.zero)
+            return;
+
+        transform.rotation = Quaternion.LookRotation(direction);
+
+        UpdatePosition(transform.position);
+        UpdateRotation(transform.rotation);
+    }
+
+    [ObserversRpc]
+    private void UpdatePosition(Vector3 position) => transform.position = position;
+
+    [ObserversRpc]
+    private void UpdateRotation(Quaternion rotation) => transform.rotation = rotation;
+
+    [ObserversRpc]
+    private void DestroyProjectile() => Destroy(gameObject);
+
+    [ObserversRpc]
+    private void UpdateParent(Transform parent) => transform.parent = parent;
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (_hasCollided)
+        if (!IsServer)
             return;
 
-        Vector3 position = transform.position;
-        Quaternion rotation = transform.rotation;
-
         transform.parent = collision.transform;
+        UpdateParent(collision.transform);
 
-        transform.position = position;
-        transform.rotation = rotation;
-        
-        _shouldMove = false;
-        _hasCollided = true;
+        HealthData health = collision.gameObject.TryGetCachedComponent<HealthData>();
+
+        if (health != null)
+            health.TakeDamage(_damage);
+
+        DestroyProjectile();
     }
 }
