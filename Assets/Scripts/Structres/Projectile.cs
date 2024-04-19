@@ -16,24 +16,18 @@ public class Projectile : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        Debug.LogError("FixedUpdate");
-
         if (!IsServer)
             return;
 
-        Debug.LogError("TryMove");
-
         Move();
-    }
 
-    [Server]
-    private void OnDestroy() => DestroyProjectile();
+        if (Vector3.Distance(transform.position, _target.position) < 0.1f)
+            Destroy(gameObject);
+    }
 
     [Server]
     private void Move()
     {
-        Debug.LogError("Move");
-
         transform.position = Vector3.MoveTowards(transform.position, _target.position, _speed);
         Vector3 direction = _target.position - transform.position;
 
@@ -51,26 +45,4 @@ public class Projectile : NetworkBehaviour
 
     [ObserversRpc]
     private void UpdateRotation(Quaternion rotation) => transform.rotation = rotation;
-
-    [ObserversRpc]
-    private void DestroyProjectile() => Destroy(gameObject);
-
-    [ObserversRpc]
-    private void UpdateParent(Transform parent) => transform.parent = parent;
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (!IsServer)
-            return;
-
-        transform.parent = collision.transform;
-        UpdateParent(collision.transform);
-
-        HealthData health = collision.gameObject.TryGetCachedComponent<HealthData>();
-
-        if (health != null)
-            health.TakeDamage(_damage);
-
-        DestroyProjectile();
-    }
 }
