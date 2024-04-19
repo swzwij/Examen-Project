@@ -48,9 +48,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8156304668514724721, guid: bc8d5a54d15385c448ef25f365f4cdbc, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -7097706727564948227, guid: bc8d5a54d15385c448ef25f365f4cdbc, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -6584164742178706046, guid: bc8d5a54d15385c448ef25f365f4cdbc, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: bc8d5a54d15385c448ef25f365f4cdbc, type: 3}
       propertyPath: m_Name
       value: Unbreakable tree
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: bc8d5a54d15385c448ef25f365f4cdbc, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5099599083882243555, guid: bc8d5a54d15385c448ef25f365f4cdbc, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7645858757209305780, guid: bc8d5a54d15385c448ef25f365f4cdbc, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

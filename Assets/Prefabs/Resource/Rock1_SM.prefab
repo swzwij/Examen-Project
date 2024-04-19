@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rock1_SM
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 68320cae96248f8419e04d3a6f5355de, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -109,8 +113,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _componentIndexCache: 0
-  _addedNetworkObject: {fileID: 7647144858044333622, guid: fbbeef3e739587a4aa83823b9cb897f3, type: 3}
-  _networkObjectCache: {fileID: 7647144858044333622, guid: fbbeef3e739587a4aa83823b9cb897f3, type: 3}
+  _addedNetworkObject: {fileID: 2290485277239033450}
+  _networkObjectCache: {fileID: 2290485277239033450}
   p_resourceItem: {fileID: 11400000, guid: 52d8885bbe883b2428e8e821aaa5c5b7, type: 2}
   p_supplyAmount: 1
   p_respawnTime: 5

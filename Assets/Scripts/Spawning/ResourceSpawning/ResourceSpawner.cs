@@ -1,3 +1,4 @@
+using Examen.Interactables.Resource;
 using Examen.Pathfinding.Grid;
 using Examen.Spawning.ResourceSpawning.Structs;
 using MarkUlrich.Utils;
@@ -40,6 +41,9 @@ namespace Examen.Spawning.ResourceSpawning
 
         public void SpawnAreaResource(int spawnAreaCount)
         {
+            if (GridSystem.Instance.Cells == null)
+                GridSystem.Instance.CreateGrid();
+
             ResourceSpawnAreas area = _spawnAreas[spawnAreaCount];
             _spawnPercentage = MAX_PERCENTAGE;
             int currentActiveNodes = 0;
@@ -143,25 +147,29 @@ namespace Examen.Spawning.ResourceSpawning
 
             for (int i = 0; i < amount; i++)
             {
-                int randomNumber = UnityEngine.Random.Range(0, _cells.Count);
-
                 GameObject newResource = Instantiate(gameObject, spawnArea.Area.transform);
-
-                if (_cells[randomNumber].ActiveNodes.Count <= 0)
-                {
-                    _cells.Remove(_cells[randomNumber]);
-                     randomNumber = UnityEngine.Random.Range(0, _cells.Count);
-                }
-
-                newResource.transform.position = RandomisePosition(_cells[randomNumber]);
-
-                _spawnedGameobjects.Add(newResource);
-
-                if (_cells[randomNumber].ActiveNodes.Count <= 0)
-                    _cells.Remove(_cells[randomNumber]);
+                SpawnResource(newResource);
             }
 
             spawnArea.Area.SpawnedResources = _spawnedGameobjects;
+        }
+
+        public void SpawnResource(GameObject newResource)
+        {
+            int randomNumber = UnityEngine.Random.Range(0, _cells.Count);
+
+            if (_cells[randomNumber].ActiveNodes.Count <= 0)
+            {
+                _cells.Remove(_cells[randomNumber]);
+                randomNumber = UnityEngine.Random.Range(0, _cells.Count);
+            }
+
+            newResource.transform.position = RandomisePosition(_cells[randomNumber]);
+
+            _spawnedGameobjects.Add(newResource);
+
+            if (_cells[randomNumber].ActiveNodes.Count <= 0)
+                _cells.Remove(_cells[randomNumber]);
         }
 
         private Vector3 RandomisePosition(Cell cell)

@@ -3,6 +3,7 @@ using Examen.Items;
 using Examen.Networking;
 using Examen.Pathfinding.Grid;
 using Examen.Poolsystem;
+using Examen.Spawning.ResourceSpawning;
 using FishNet.Connection;
 using FishNet.Object;
 using MarkUlrich.Health;
@@ -20,10 +21,20 @@ namespace Examen.Interactables.Resource
         [SerializeField] protected int p_respawnTime;
 
         protected HealthData p_healthData;
+        protected bool hasStartedServer;
 
+        public SpawnArea SpawnArea { get; set; }
         public Item ResourceItem => p_resourceItem;
 
-        private void OnEnable() => RespawnResource();
+        public Cell Cell { get; set; }
+
+        private void OnEnable()
+        {
+            if (!hasStartedServer || !IsServer)
+                return;
+
+            RespawnResource();
+        }
 
         private void Start() => ServerInstance.Instance.OnServerStarted += InitResource; 
 
@@ -35,19 +46,37 @@ namespace Examen.Interactables.Resource
             if (!IsServer)
                 return;
 
+            hasStartedServer = true;   
             p_healthData = GetComponent<HealthData>();
 
             p_healthData.onDie.AddListener(StartRespawnTimer);
+            p_healthData.onDie.AddListener(GetOldCell);
             p_healthData.onDie.AddListener(DisableObject);
+            p_healthData.onDie.AddListener(UpdateOldCell);
 
             p_healthData.onResurrected.AddListener(EnableObject);
+            p_healthData.onResurrected.AddListener(UpdateNewCell);
         }
 
         [Server]
         protected virtual void RespawnResource()
         {
-            //SetRandomPosition();
+            transform.position = SpawnArea.GetRandomPosition();
+            SetNewPostion(transform.position);
             p_healthData.Resurrect(p_healthData.MaxHealth);
+        }
+
+        [Server]
+        protected void GetOldCell() => Cell = GridSystem.Instance.GetCellFromWorldPosition(transform.position);
+
+        [Server]
+        protected void UpdateOldCell() => SpawnArea.DelayCellUpdate(Cell);
+
+        [Server]
+        protected void UpdateNewCell()
+        {
+            Cell = GridSystem.Instance.GetCellFromWorldPosition(transform.position);
+            SpawnArea.DelayCellUpdate(Cell);
         }
 
         /// <summary>
@@ -70,7 +99,7 @@ namespace Examen.Interactables.Resource
         /// </summary>
         [ObserversRpc]
         public void DisableObject() => gameObject.SetActive(false);
-
+  
         /// <summary>
         /// Sets client resource position to server resource postion.
         /// </summary>

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MarkUlrich.Utils;
@@ -180,8 +181,11 @@ namespace Examen.Pathfinding.Grid
         /// </summary>
         /// <param name="cellX">The x-coordinate of the cell.</param>
         /// <param name="cellY">The y-coordinate of the cell.</param>
-        public void UpdateCell(int cellX, int cellY)
+        public void UpdateCell(int cellX, int cellY) => StartCoroutine(UpdateCellDelayed(cellX, cellY));
+
+        private IEnumerator UpdateCellDelayed(int cellX, int cellY)
         {
+            yield return new WaitForEndOfFrame();
             Cell cell = _cells[cellX, cellY];
             foreach (Node node in cell.AllNodes)
             {
