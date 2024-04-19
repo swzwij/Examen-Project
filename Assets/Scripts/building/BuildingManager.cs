@@ -5,6 +5,8 @@ using FishNet.Object;
 using FishNet;
 using FishNet.Managing.Server;
 using Examen.Pathfinding.Grid;
+using Examen.Building.BuildingUI;
+using Examen.Structure;
 
 namespace Examen.Building
 {
@@ -21,7 +23,7 @@ namespace Examen.Building
 
         private GameObject _currentPreview;
         private MeshRenderer _meshRenderer;
-        private StructurepreviewButtons rotationButtons;
+        private StructurePreviewButtons rotationButtons;
 
         private Vector3 _currentPosition;
         private Vector3 _currentRotation;
@@ -107,7 +109,7 @@ namespace Examen.Building
             _currentPreview = Instantiate(structurePreview);
             _currentPreview.gameObject.SetActive(true);
 
-            rotationButtons = _currentPreview.GetComponentInChildren<StructurepreviewButtons>();
+            rotationButtons = _currentPreview.GetComponentInChildren<StructurePreviewButtons>();
             rotationButtons.OwnedBuildingManager = this;
             rotationButtons.Camera = Camera;
             rotationButtons.SetButtonsActive(false);
@@ -123,20 +125,21 @@ namespace Examen.Building
                 return; 
 
             Destroy(_currentPreview);
-            UpdateStructrePlacement(structurePrefab, spawnLocation, spawnRotation);
+            UpdateStructurePlacement(structurePrefab, spawnLocation, spawnRotation);
             UpdateCells(spawnLocation);
         }
 
         [ServerRpc]
-        private void UpdateStructrePlacement(NetworkObject structurePrefab, Vector3 spawnLocation, Vector3 spawnRotation)
+        private void UpdateStructurePlacement(NetworkObject structurePrefab, Vector3 spawnLocation, Vector3 spawnRotation)
         {
-            NetworkObject structure = InstanceFinder.NetworkManager.GetPooledInstantiated(structurePrefab, spawnLocation, Quaternion.Euler(spawnRotation), true);
+            NetworkObject structure = InstanceFinder.NetworkManager.
+                GetPooledInstantiated(structurePrefab, spawnLocation, Quaternion.Euler(spawnRotation), true);
 
             ServerManager serverManager = InstanceFinder.ServerManager;
             serverManager.Spawn(structure);
             InstanceFinder.NetworkManager.SceneManager.AddOwnerToDefaultScene(structure);
 
-            StructureList.AddStructure(structure.GetComponent<Examen.Structure.BaseStructure>());
+            StructureList.AddStructure(structure.GetComponent<Examen.Structure.BaseStructure>());   
         }
 
         [ServerRpc]
@@ -165,7 +168,7 @@ namespace Examen.Building
         {
             _canPlace = true;
 
-            foreach (var structure in StructureList.GetList())
+            foreach (BaseStructure structure in StructureList.GetList())
             {
                 float distanceX = Mathf.Abs(_currentPreview.transform.position.x - structure.transform.position.x);
                 float distanceZ = Mathf.Abs(_currentPreview.transform.position.z - structure.transform.position.z);
@@ -189,7 +192,7 @@ namespace Examen.Building
             _isHolding = true;
 
             if (rotationButtons != null && !_isHolding)
-                _currentPreview.GetComponentInChildren<StructurepreviewButtons>().SetButtonsActive(false);
+                _currentPreview.GetComponentInChildren<StructurePreviewButtons>().SetButtonsActive(false);
         }
 
         private void OnReleasePressed(InputAction.CallbackContext context)
@@ -198,7 +201,7 @@ namespace Examen.Building
             _isHolding = false;
 
             if (rotationButtons != null)
-                _currentPreview.GetComponentInChildren<StructurepreviewButtons>().SetButtonsActive(true);
+                _currentPreview.GetComponentInChildren<StructurePreviewButtons>().SetButtonsActive(true);
         }
 
         [Server]

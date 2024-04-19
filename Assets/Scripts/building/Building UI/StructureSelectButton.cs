@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Examen.Building
+namespace Examen.Building.BuildingUI
 {
     [RequireComponent(typeof(Button))]
     public class StructureSelectButton : MonoBehaviour, IPointerDownHandler

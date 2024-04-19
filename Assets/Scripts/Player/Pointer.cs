@@ -19,7 +19,7 @@ namespace Examen.Player
         public Action<RaycastHit> OnPointedHitInfo;
         public Action<Interactable> OnPointedAtInteractable;
 
-        public bool HasClickedUI {  get; set; } // Todo: Rename and maybe check accessibility
+        public bool HasClickedUI { get; set; }
         public UnityEngine.Camera Camera => _myCamera;
 
         private void Start()

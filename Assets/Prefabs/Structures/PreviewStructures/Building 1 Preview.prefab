@@ -121,8 +121,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6336665170919883610}
-        m_TargetAssemblyTypeName: StructurepreviewButtons, Assembly-CSharp
+      - m_Target: {fileID: 123840549021003432}
+        m_TargetAssemblyTypeName: Examen.Building.BuildingUI.StructurePreviewButtons,
+          Assembly-CSharp
         m_MethodName: RotateStructure
         m_Mode: 6
         m_Arguments:
@@ -166,8 +167,9 @@ GameObject:
   - component: {fileID: 5855082261393538315}
   - component: {fileID: 1678666465929499951}
   - component: {fileID: 7277684578064550689}
-  - component: {fileID: 6336665170919883610}
   - component: {fileID: 4980642973579161252}
+  - component: {fileID: 2997809943103228571}
+  - component: {fileID: 123840549021003432}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -260,18 +262,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &6336665170919883610
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4148135461575421293}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c791cfb52ce0e549a67d39489e2560e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &4980642973579161252
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -293,6 +283,62 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 100, y: 35, z: 0.9999999}
   m_Center: {x: 0, y: 0, z: 4}
+--- !u!114 &2997809943103228571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4148135461575421293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 0}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &123840549021003432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4148135461575421293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c791cfb52ce0e549a67d39489e2560e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4632213081571742792
 GameObject:
   m_ObjectHideFlags: 0
@@ -414,8 +460,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6336665170919883610}
-        m_TargetAssemblyTypeName: StructurepreviewButtons, Assembly-CSharp
+      - m_Target: {fileID: 123840549021003432}
+        m_TargetAssemblyTypeName: Examen.Building.BuildingUI.StructurePreviewButtons,
+          Assembly-CSharp
         m_MethodName: PlaceStructure
         m_Mode: 1
         m_Arguments:
@@ -568,8 +615,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6336665170919883610}
-        m_TargetAssemblyTypeName: StructurepreviewButtons, Assembly-CSharp
+      - m_Target: {fileID: 123840549021003432}
+        m_TargetAssemblyTypeName: Examen.Building.BuildingUI.StructurePreviewButtons,
+          Assembly-CSharp
         m_MethodName: RotateStructure
         m_Mode: 6
         m_Arguments:
