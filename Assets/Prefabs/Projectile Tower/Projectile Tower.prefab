@@ -75,6 +75,7 @@ MonoBehaviour:
   _barrel: {fileID: 8476218564486833161}
   _firePoint: {fileID: 2811078705022661301}
   projectilePrefab: {fileID: 2976294549131294637, guid: 96764ff0a03d2bd42be9de5e1d843a55, type: 3}
+  _shootInterval: 1
 --- !u!114 &2556768225675572015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,7 +104,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 0
+  <PrefabId>k__BackingField: 3
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 2955642393
   <SceneId>k__BackingField: 0
