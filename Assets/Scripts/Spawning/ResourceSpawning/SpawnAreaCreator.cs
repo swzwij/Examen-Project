@@ -25,7 +25,7 @@ public class SpawnAreaCreator : MonoBehaviour
         newSpawnAreaRenderer.name = _areaName;
         SpawnArea newSpawnArea = newSpawnAreaRenderer.AddComponent<SpawnArea>();
         newSpawnArea.LineRenderer = newSpawnAreaRenderer;
-        newSpawnArea.AddAction();
+        newSpawnArea.AddUpdateAreaToGridCreated();
         newSpawnArea.UpdateArea();
 
         _createdAreas.Add(newSpawnAreaRenderer);

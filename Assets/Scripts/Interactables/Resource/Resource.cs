@@ -18,15 +18,16 @@ namespace Examen.Interactables.Resource
         [SerializeField] protected int p_respawnTime;
 
         protected HealthData p_healthData;
-        protected bool hasStartedServer;
+        protected bool p_hasStartedServer;
+        protected Cell p_cell;
 
         public Item ResourceItem => p_resourceItem;
         public SpawnArea SpawnArea { get; set; }
-        public Cell Cell { get; set; }
+        public Cell Cell { get => p_cell; set => p_cell = value; }
 
         private void OnEnable()
         {
-            if (!hasStartedServer || !IsServer)
+            if (!p_hasStartedServer || !IsServer)
                 return;
 
             RespawnResource();
@@ -42,7 +43,7 @@ namespace Examen.Interactables.Resource
             if (!IsServer)
                 return;
 
-            hasStartedServer = true;   
+            p_hasStartedServer = true;   
             p_healthData = GetComponent<HealthData>();
 
             p_healthData.onDie.AddListener(StartRespawnTimer);
@@ -51,7 +52,6 @@ namespace Examen.Interactables.Resource
             p_healthData.onDie.AddListener(UpdateCell);
 
             p_healthData.onResurrected.AddListener(EnableObject);
-            p_healthData.onResurrected.AddListener(GetCell);
             p_healthData.onResurrected.AddListener(UpdateCell);
         }
 
@@ -125,7 +125,7 @@ namespace Examen.Interactables.Resource
         [Server]
         protected virtual void RespawnResource()
         {
-            transform.position = SpawnArea.GetRandomPosition();
+            transform.position = SpawnArea.GetRandomPosition(out p_cell);
             SetNewPostion(transform.position);
             p_healthData.Resurrect(p_healthData.MaxHealth);
         }

@@ -26,7 +26,7 @@ namespace Examen.Spawning.ResourceSpawning
         public List<ResourceSpawnAreas> SpawnAreas => _spawnAreas;
 
         /// <summary>
-        /// Spawns randomly resources
+        /// Spawns randomly resources.
         /// </summary>
         public void SpawnAllResources()
         {
@@ -114,25 +114,16 @@ namespace Examen.Spawning.ResourceSpawning
         }
 
         /// <summary>
-        /// Gets a random cell and a random node from the cell to set the position
+        /// Sets the resource to a random spawn point.
         /// </summary>
-        /// <param name="newResource"></param>
-        public void SetResourceSpawnPostion(GameObject newResource)
+        /// <param name="newResource"> the resource you want the position to be set.</param>
+        /// <param name="area">The are the resource is in.</param>
+        public void SetResourceSpawnPostion(GameObject newResource, SpawnArea area)
         {
-            int randomNumber = UnityEngine.Random.Range(0, _cells.Count);
+            newResource.transform.position = area.GetRandomPosition(out Cell currentCell);
 
-            if (_cells[randomNumber].ActiveNodes.Count <= 0)
-            {
-                _cells.Remove(_cells[randomNumber]);
-                randomNumber = UnityEngine.Random.Range(0, _cells.Count);
-            }
-
-            newResource.transform.position = RandomisePosition(_cells[randomNumber]);
-
+            area.DelayCellUpdate(currentCell);
             _spawnedGameobjects.Add(newResource);
-
-            if (_cells[randomNumber].ActiveNodes.Count <= 0)
-                _cells.Remove(_cells[randomNumber]);
         }
 
         private float CalculateResrouceAmount(ResourceSpawnAreas area, ResourceSpawnInfo resourceSpawnInfo)
@@ -176,26 +167,10 @@ namespace Examen.Spawning.ResourceSpawning
             for (int i = 0; i < amount; i++)
             {
                 GameObject newResource = Instantiate(gameObject, spawnArea.Area.transform);
-                SetResourceSpawnPostion(newResource);
+                SetResourceSpawnPostion(newResource, spawnArea.Area);
             }
 
             spawnArea.Area.SpawnedResources = _spawnedGameobjects;
-        }
-
-        private Vector3 RandomisePosition(Cell cell)
-        {
-            StartCoroutine(WaitToUpdateCell(cell));
-
-            int randomNumber = UnityEngine.Random.Range(0, cell.ActiveNodes.Count);
-            Node randomNode = cell.ActiveNodes.ElementAt(randomNumber);
-
-            cell.ActiveNodes.Remove(randomNode);
-            return randomNode.Position;
-        }
-        private IEnumerator WaitToUpdateCell(Cell currentCell)
-        {
-            yield return new WaitForSeconds(0.1f);
-            GridSystem.Instance.UpdateCell(currentCell.CellX, currentCell.CellY);
         }
     }
 }

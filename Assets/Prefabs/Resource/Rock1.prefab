@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 68320cae96248f8419e04d3a6f5355de, type: 3}
       propertyPath: m_Name
-      value: Rock1_SM
+      value: Rock1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 68320cae96248f8419e04d3a6f5355de, type: 3}
       propertyPath: m_Layer
@@ -179,4 +179,4 @@ MonoBehaviour:
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 16575556521841552862
+  <AssetPathHash>k__BackingField: 14340871877791964572

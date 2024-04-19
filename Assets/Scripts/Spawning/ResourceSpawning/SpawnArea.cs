@@ -25,25 +25,16 @@ namespace Examen.Spawning.ResourceSpawning
             ServerInstance.Instance.OnServerStarted += InitSpawnedResources;
         }
 
-        private void Start() => AddAction();
+        private void Start() => AddUpdateAreaToGridCreated();
 
-        private void InitSpawnedResources()
-        {
-            if (!IsServer)
-                return;
+        /// <summary>
+        /// Adds the function UpdateArea to the action invoke of OnGridCreated.
+        /// </summary>
+        public void AddUpdateAreaToGridCreated() => GridSystem.Instance.OnGridCreated += UpdateArea; 
 
-            for (int i = 0; i < _spawnedResources.Count; i++)
-            {
-                Resource resource = _spawnedResources[i].GetComponent<Resource>();
-               string resourceName = resource.ResourceItem.Name;
-               resource.SpawnArea = this;
-
-                PoolSystem.Instance.AddActiveObject(resourceName, _spawnedResources[i]);
-            }
-        }
-
-        public void AddAction() => GridSystem.Instance.OnGridCreated += UpdateArea; 
-
+        /// <summary>
+        /// Checks the linerenderer points for cells and updates which cells it touches.
+        /// </summary>
         public void UpdateArea()
         {
             _areaCells.Clear();
@@ -66,15 +57,35 @@ namespace Examen.Spawning.ResourceSpawning
             }
         }
 
-        public Vector3 GetRandomPosition()
+        /// <summary>
+        /// Gets a random node postion from a random cell.
+        /// </summary>
+        /// <param name="currentCell"> the cell that the position is going to be in.</param>
+        /// <returns>random position.</returns>
+        public Vector3 GetRandomPosition(out Cell currentCell)
         {
-            Cell cell = _areaCells[Random.Range(0, _areaCells.Count)];
-            Node randomNode = cell.ActiveNodes.ElementAt(Random.Range(0, cell.ActiveNodes.Count));
+            currentCell = _areaCells[Random.Range(0, _areaCells.Count)];
+            Node randomNode = currentCell.ActiveNodes.ElementAt(Random.Range(0, currentCell.ActiveNodes.Count));
 
             return randomNode.Position;
         }
 
         public void DelayCellUpdate(Cell cell) => StartCoroutine(DelayedCellUpdate(cell));
+
+        private void InitSpawnedResources()
+        {
+            if (!IsServer)
+                return;
+
+            for (int i = 0; i < _spawnedResources.Count; i++)
+            {
+                Resource resource = _spawnedResources[i].GetComponent<Resource>();
+                string resourceName = resource.ResourceItem.Name;
+                resource.SpawnArea = this;
+
+                PoolSystem.Instance.AddActiveObject(resourceName, _spawnedResources[i]);
+            }
+        }
 
         private IEnumerator DelayedCellUpdate(Cell cell)
         {
