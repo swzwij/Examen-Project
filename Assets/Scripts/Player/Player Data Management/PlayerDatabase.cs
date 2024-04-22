@@ -65,7 +65,7 @@ namespace Examen.Player.PlayerDataManagement
             => ProcessClientConnection(clientId, handler);
 
         [ServerRpc(RequireOwnership = false)]
-        private void SendClientDisconnection(int clientId) => ProcessClienDisconnection(clientId);
+        private void SendClientDisconnection(int clientId) => ProcessClientDisconnection(clientId);
 
         [Server]
         private void ProcessClientConnection(int clientId, PlayerDataHandler handler)
@@ -74,12 +74,10 @@ namespace Examen.Player.PlayerDataManagement
                 _playerData.Add(clientId, handler);
 
             _playerData[clientId] = handler;
-
-            Debug.LogError($"Conncted {clientId}");
         }
 
         [Server]
-        private void ProcessClienDisconnection(int clientId)
+        private void ProcessClientDisconnection(int clientId)
         {
             if (!_playerData.ContainsKey(clientId))
                 return;
