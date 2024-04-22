@@ -179,6 +179,7 @@ namespace Examen.Pathfinding.Grid
         private IEnumerator UpdateCellDelayed(int cellX, int cellY)
         {
             yield return new WaitForEndOfFrame();
+
             Cell cell = _cells[cellX, cellY];
             foreach (Node node in cell.Nodes)
             {
@@ -267,6 +268,25 @@ namespace Examen.Pathfinding.Grid
             Node currentNode = _nodes[x, y];
 
             return currentNode;
+        }
+
+        /// <summary>
+        /// Returns the cell at the specified world position.
+        /// </summary>
+        /// <param name="worldPosition">The world position to check.</param>
+        /// <returns>The cell at the specified world position.</returns>
+        [Server]
+        public Cell GetCellFromWorldPosition(Vector3 worldPosition)
+        {
+            float percentX = Mathf.Clamp01((worldPosition.x - transform.position.x) / (_gridSize.x * _nodeDistance));
+            float percentY = Mathf.Clamp01((worldPosition.z - transform.position.z) / (_gridSize.y * _nodeDistance));
+
+            int x = Mathf.RoundToInt((_gridSize.x / _cellSize) * percentX);
+            int y = Mathf.RoundToInt((_gridSize.y / _cellSize) * percentY);
+
+            Cell currentCell = _cells[x, y];
+
+            return currentCell;
         }
 
         /// <summary>

@@ -1,3 +1,4 @@
+using FishNet.Object;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -33,5 +34,7 @@ namespace Examen.Pathfinding.Grid
         /// </summary>
         /// <param name="node">The node to add.</param>
         public void AddNode(Node node) => _nodes.Add(node);
+
+        public void UpdateCell() => GridSystem.UpdateCell(CellX, CellY);
     }
 }
