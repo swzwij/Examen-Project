@@ -31,6 +31,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "HoldDown",
+                    "type": "Value",
+                    "id": "1a345e5f-a24a-4a72-8e40-7aa9222b2111",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -86,6 +95,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c063a56f-0c32-414d-b6de-0caaca10d8d3",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "Hold(duration=0.001,pressPoint=1)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "HoldDown",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
