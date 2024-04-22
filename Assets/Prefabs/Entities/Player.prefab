@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6352420988358970581}
   - component: {fileID: 7296310588199703723}
   - component: {fileID: 3713117069067843006}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -170,7 +170,7 @@ GameObject:
   - component: {fileID: 7692977816705919355}
   - component: {fileID: 3694398312710353908}
   - component: {fileID: 5753440854157603489}
-  m_Layer: 2
+  m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -512,6 +512,10 @@ PrefabInstance:
       propertyPath: _structurePreview
       value: 
       objectReference: {fileID: 704015051636409652, guid: b94daff7b50dc264abea2584ca7c94cb, type: 3}
+    - target: {fileID: 232771912448828081, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2233940312034122922, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
       propertyPath: m_Camera
       value: 
@@ -605,8 +609,16 @@ PrefabInstance:
       value: Canvas
       objectReference: {fileID: 0}
     - target: {fileID: 7750422447112456242, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7750422447112456242, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8986027151493813033, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 9200732519476939561, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
       propertyPath: m_PresetInfoIsWorld
