@@ -12,12 +12,13 @@ namespace Examen.Editors.Resource
             DrawDefaultInspector();
 
             EditorGUILayout.BeginHorizontal();
+            {
+                if (GUILayout.Button("Create Spawn Area"))
+                    ((SpawnAreaCreator)target).CreateSpawnArea();
 
-            if (GUILayout.Button("Create Spawn Area"))
-                ((SpawnAreaCreator)target).CreateSpawnArea();
-
-            if (GUILayout.Button("Clear Spawn Areas"))
-                ((SpawnAreaCreator)target).ClearSpawnAreas();
+                if (GUILayout.Button("Clear Spawn Areas"))
+                    ((SpawnAreaCreator)target).ClearSpawnAreas();
+            }
 
             EditorGUILayout.EndHorizontal();
 

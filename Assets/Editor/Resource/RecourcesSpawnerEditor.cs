@@ -24,30 +24,32 @@ namespace Examen.Editors.Resource
                 return;
 
             EditorGUILayout.BeginHorizontal();
+            {
 
-            if (GUILayout.Button("All (Re)Spawn Resources"))
-                spawner.SpawnAllResources();
+                if (GUILayout.Button("All (Re)Spawn Resources"))
+                    spawner.SpawnAllResources();
 
-            if (GUILayout.Button("All Remove Resources"))
-                spawner.DestoryAllResources();
+                if (GUILayout.Button("All Remove Resources"))
+                    spawner.DestoryAllResources();
+            }
 
             EditorGUILayout.EndHorizontal();
 
-            _selectNumber = EditorGUILayout.Popup("Select an option:", _selectNumber, SetToStringList(spawner.SpawnAreas));
+            _selectNumber = EditorGUILayout.Popup("Select an option:", _selectNumber, SetToStringArray(spawner.SpawnAreas));
 
             EditorGUILayout.BeginHorizontal();
+            {
+                if (GUILayout.Button($"(Re)Spawn resources in {spawner.SpawnAreas[_selectNumber].Area.gameObject.name}"))
+                    spawner.SpawnResourcesInArea(_selectNumber);
 
-            if (GUILayout.Button($"(Re)Spawn resources in {spawner.SpawnAreas[_selectNumber].Area.gameObject.name}"))
-                spawner.SpawnResourcesInArea(_selectNumber);
-
-            if (GUILayout.Button($"Remove resources in {spawner.SpawnAreas[_selectNumber].Area.gameObject.name}"))
-                spawner.DestroyAreaResources(_selectNumber);
+                if (GUILayout.Button($"Remove resources in {spawner.SpawnAreas[_selectNumber].Area.gameObject.name}"))
+                    spawner.DestroyAreaResources(_selectNumber);
+            }
 
             EditorGUILayout.EndHorizontal();
-
         }
 
-        private string[] SetToStringList(List<ResourceSpawnAreas> spawnAreas)
+        private string[] SetToStringArray(List<ResourceSpawnAreas> spawnAreas)
         {
             string[] newStringArray = new string[spawnAreas.Count];
 
