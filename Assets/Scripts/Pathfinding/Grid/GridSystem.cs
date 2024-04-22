@@ -191,6 +191,7 @@ namespace Examen.Pathfinding.Grid
         private IEnumerator UpdateCellDelayed(int cellX, int cellY)
         {
             yield return new WaitForEndOfFrame();
+
             Cell cell = _cells[cellX, cellY];
             foreach (Node node in cell.AllNodes)
             {

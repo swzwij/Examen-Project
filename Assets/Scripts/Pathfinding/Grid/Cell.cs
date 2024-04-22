@@ -40,5 +40,10 @@ namespace Examen.Pathfinding.Grid
         /// </summary>
         /// <param name="node">The node to add.</param>
         public void AddNode(Node node) => _allNodes.Add(node);
+        
+        /// <summary>
+        /// Updates this cell.
+        /// </summary>
+        public void UpdateCell() => GridSystem.UpdateCell(CellX, CellY);
     }
 }
