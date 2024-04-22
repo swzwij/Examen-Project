@@ -393,13 +393,13 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 2976294549131294637}
   _networkObjectCache: {fileID: 2976294549131294637}
-  _speed: 2
+  _speed: 50
   _damage: 10
-  _maxTravelDistance: 50
+  _maxTravelDistance: 5000
   _castLength: 1
   _layerMask:
     serializedVersion: 2
-    m_Bits: 449
+    m_Bits: 193
 --- !u!114 &2976294549131294637
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -428,11 +428,11 @@ MonoBehaviour:
   _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 7
+  <PrefabId>k__BackingField: 10
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 16607843576509063080
+  <AssetPathHash>k__BackingField: 837576953657858498
 --- !u!114 &-999374924231953903
 MonoBehaviour:
   m_ObjectHideFlags: 0
