@@ -30,12 +30,10 @@ public class Projectile : NetworkBehaviour
             if (healthData != null)
                 healthData.TakeDamage(_damage);
 
-            Debug.Log(hit.collider.gameObject);
-
             Destroy(gameObject);
         }
 
-        if (_distanceTraveled >= _maxTravelDistance)
+        if ((_distanceTraveled * _distanceTraveled) >= _maxTravelDistance)
             Destroy(gameObject);
     }
 
@@ -44,7 +42,7 @@ public class Projectile : NetworkBehaviour
     {
         Vector3 previousPosition = transform.position;
         transform.position = Vector3.MoveTowards(transform.position, _target.position, _speed * Time.fixedDeltaTime);
-        _distanceTraveled += Vector3.Distance(previousPosition, transform.position);
+        _distanceTraveled += (previousPosition - transform.position).sqrMagnitude;
 
         Vector3 direction = _target.position - transform.position;
 
@@ -53,13 +51,13 @@ public class Projectile : NetworkBehaviour
 
         transform.rotation = Quaternion.LookRotation(direction);
 
-        UpdatePosition(transform.position);
-        UpdateRotation(transform.rotation);
+        BroadcastPosition(transform.position);
+        BroadcastRotation(transform.rotation);
     }
 
     [ObserversRpc]
-    private void UpdatePosition(Vector3 position) => transform.position = position;
+    private void BroadcastPosition(Vector3 position) => transform.position = position;
 
     [ObserversRpc]
-    private void UpdateRotation(Quaternion rotation) => transform.rotation = rotation;
+    private void BroadcastRotation(Quaternion rotation) => transform.rotation = rotation;
 }
