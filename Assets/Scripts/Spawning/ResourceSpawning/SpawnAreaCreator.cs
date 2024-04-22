@@ -56,7 +56,8 @@ namespace Examen.Spawning.ResourceSpawning
                     continue;
                 }
 
-                line.enabled = _drawLines;
+                line.startWidth = _drawLines ? 1 : 0;
+                line.endWidth = _drawLines ? 1 : 0;
             }
         }
 
