@@ -20,10 +20,7 @@ namespace Examen.Spawning.ResourceSpawning
 
         public List<Cell> AreaCells => _areaCells;
 
-        private void OnEnable()
-        {
-            ServerInstance.Instance.OnServerStarted += InitSpawnedResources;
-        }
+        private void OnEnable() => ServerInstance.Instance.OnServerStarted += InitSpawnedResources;
 
         private void Start() => AddUpdateAreaToGridCreated();
 
@@ -98,9 +95,6 @@ namespace Examen.Spawning.ResourceSpawning
             GridSystem.Instance.UpdateCell(cell.CellX, cell.CellY);
         }
 
-        private void OnDestroy()
-        {
-            GridSystem.Instance.OnGridCreated -= UpdateArea;
-        }
+        private void OnDestroy() => GridSystem.Instance.OnGridCreated -= UpdateArea;
     }
 }

@@ -1,10 +1,9 @@
 using Examen.Pathfinding.Grid;
+using Examen.Spawning.ResourceSpawning.Enum;
 using Examen.Spawning.ResourceSpawning.Structs;
 using MarkUlrich.Utils;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Examen.Spawning.ResourceSpawning
@@ -47,12 +46,12 @@ namespace Examen.Spawning.ResourceSpawning
             _spawnPercentage = MAX_PERCENTAGE;
             int currentActiveNodes = 0;
 
-            if (area.Zone == NodePlacements.Full)
+            if (area.Zone == NodePlacements.FULL)
             {
                 if (_hasSpawnedBorder)
                     return;
 
-                area.ResourceAmount = area.Area.AreaCells[0].AllNodes.Count * area.Area.AreaCells.Count;
+                area.ResourceAmount = area.Area.AreaCells[0].Nodes.Count * area.Area.AreaCells.Count;
                 _hasSpawnedBorder = true;
             }
             else
@@ -99,7 +98,7 @@ namespace Examen.Spawning.ResourceSpawning
         {
             SpawnArea spawnArea = _spawnAreas[spawnAreaCount].Area;
 
-            if (_spawnAreas[spawnAreaCount].Zone == NodePlacements.Full)
+            if (_spawnAreas[spawnAreaCount].Zone == NodePlacements.FULL)
                 _hasSpawnedBorder = false;
 
             List<GameObject> resources = spawnArea.SpawnedResources;

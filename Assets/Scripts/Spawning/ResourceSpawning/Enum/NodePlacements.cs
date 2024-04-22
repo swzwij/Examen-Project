@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public enum NodePlacements 
+namespace Examen.Spawning.ResourceSpawning.Enum
 {
-    Random,
-    Full
+    public enum NodePlacements
+    {
+        RANDOM,
+        FULL
+    }
 }

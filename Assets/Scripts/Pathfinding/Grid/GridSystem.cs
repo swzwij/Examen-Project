@@ -193,7 +193,7 @@ namespace Examen.Pathfinding.Grid
             yield return new WaitForEndOfFrame();
 
             Cell cell = _cells[cellX, cellY];
-            foreach (Node node in cell.AllNodes)
+            foreach (Node node in cell.Nodes)
             {
                 Vector3 position = node.Position;
                 if (IsWalkableArea(position, out float elevation))

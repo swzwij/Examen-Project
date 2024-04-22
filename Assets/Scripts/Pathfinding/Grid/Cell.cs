@@ -10,14 +10,14 @@ namespace Examen.Pathfinding.Grid
 
         private BoxCollider _collider;
 
-        private HashSet<Node> _allNodes = new();
+        private HashSet<Node> _nodes = new();
         private HashSet<Node> _activeNodes = new();
 
         public GridSystem GridSystem { private get; set; }
         public int CellX { get; set; }
         public int CellY { get; set; }
         public HashSet<Node> ActiveNodes { get => _activeNodes; set => _activeNodes = value; }
-        public HashSet<Node> AllNodes => _allNodes;
+        public HashSet<Node> Nodes => _nodes;
         public BoxCollider Collider => GetComponent<BoxCollider>();
 
         private void OnEnable()
@@ -28,18 +28,13 @@ namespace Examen.Pathfinding.Grid
             _collider.excludeLayers = ~_updateCellMask;
         }
 
-        private void OnTriggerEnter(Collider other)
-        {
-            if(GridSystem != null)
-                GridSystem.UpdateCell(CellX, CellY);
-        }
         private void OnTriggerExit(Collider other) => GridSystem.UpdateCell(CellX, CellY);
 
         /// <summary>
         /// Adds a node to the cell.
         /// </summary>
         /// <param name="node">The node to add.</param>
-        public void AddNode(Node node) => _allNodes.Add(node);
+        public void AddNode(Node node) => _nodes.Add(node);
         
         /// <summary>
         /// Updates this cell.

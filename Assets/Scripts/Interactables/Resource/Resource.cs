@@ -18,7 +18,7 @@ namespace Examen.Interactables.Resource
         [SerializeField] protected int p_respawnTime;
 
         protected HealthData p_healthData;
-        protected bool p_hasStartedServer;
+        protected bool p_hasServerStarted;
         protected Cell p_cell;
 
         public Item ResourceItem => p_resourceItem;
@@ -27,7 +27,7 @@ namespace Examen.Interactables.Resource
 
         private void OnEnable()
         {
-            if (!p_hasStartedServer || !IsServer)
+            if (!p_hasServerStarted || !IsServer)
                 return;
 
             RespawnResource();
@@ -43,7 +43,7 @@ namespace Examen.Interactables.Resource
             if (!IsServer)
                 return;
 
-            p_hasStartedServer = true;   
+            p_hasServerStarted = true;   
             p_healthData = GetComponent<HealthData>();
 
             p_healthData.onDie.AddListener(StartRespawnTimer);

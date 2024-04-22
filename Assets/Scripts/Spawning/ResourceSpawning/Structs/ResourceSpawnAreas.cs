@@ -1,4 +1,4 @@
-using Examen.Pathfinding.Grid;
+using Examen.Spawning.ResourceSpawning.Enum;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
