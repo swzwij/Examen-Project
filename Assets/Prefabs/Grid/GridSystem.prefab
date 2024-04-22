@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5192036811111712545}
   - component: {fileID: 7198666531720544297}
+  - component: {fileID: 5339269168325016233}
   m_Layer: 0
   m_Name: GridSystem
   m_TagString: Untagged
@@ -45,8 +46,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _componentIndexCache: 0
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
+  _addedNetworkObject: {fileID: 5339269168325016233}
+  _networkObjectCache: {fileID: 5339269168325016233}
   _showGrid: 0
   _maxWorldHeight: 30
   _maxElevationDifference: 1.4
@@ -66,3 +67,36 @@ MonoBehaviour:
   _gridSize: {x: 54, y: 126}
   _nodeDistance: 2
   _maxNodeConnections: 3
+--- !u!114 &5339269168325016233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9056923320497934694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <IsNested>k__BackingField: 0
+  <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
+  _networkBehaviours:
+  - {fileID: 7198666531720544297}
+  <ParentNetworkObject>k__BackingField: {fileID: 0}
+  <ChildNetworkObjects>k__BackingField: []
+  SerializedTransformProperties:
+    Position: {x: -30.3, y: 0, z: -30.2}
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    LocalScale: {x: 1, y: 1, z: 1}
+  _isNetworked: 1
+  _isGlobal: 0
+  _initializeOrder: 0
+  _defaultDespawnType: 0
+  NetworkObserver: {fileID: 0}
+  <PrefabId>k__BackingField: 0
+  <SpawnableCollectionId>k__BackingField: 0
+  _scenePathHash: 0
+  <SceneId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 13166327773201220790
