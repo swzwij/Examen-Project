@@ -399,7 +399,7 @@ MonoBehaviour:
   _castLength: 1
   _layerMask:
     serializedVersion: 2
-    m_Bits: 65
+    m_Bits: 449
 --- !u!114 &2976294549131294637
 MonoBehaviour:
   m_ObjectHideFlags: 0

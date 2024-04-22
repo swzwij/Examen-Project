@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7309134988278666722}
   - component: {fileID: 4661868421625354277}
   - component: {fileID: 2556768225675572015}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Projectile Tower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
