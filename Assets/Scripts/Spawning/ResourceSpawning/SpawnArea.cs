@@ -70,6 +70,10 @@ namespace Examen.Spawning.ResourceSpawning
             return randomNode.Position;
         }
 
+        /// <summary>
+        /// Starts coroutine to delay the cell update
+        /// </summary>
+        /// <param name="cell">The cell you want to update</param>
         public void DelayCellUpdate(Cell cell) => StartCoroutine(DelayedCellUpdate(cell));
 
         private void InitSpawnedResources()
@@ -87,10 +91,16 @@ namespace Examen.Spawning.ResourceSpawning
             }
         }
 
+
         private IEnumerator DelayedCellUpdate(Cell cell)
         {
             yield return new WaitForSeconds(0.1f);
             GridSystem.Instance.UpdateCell(cell.CellX, cell.CellY);
+        }
+
+        private void OnDestroy()
+        {
+            GridSystem.Instance.OnGridCreated -= UpdateArea;
         }
     }
 }
