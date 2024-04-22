@@ -42,9 +42,9 @@ public class Projectile : NetworkBehaviour
     [Server]
     private void Move()
     {
-        Vector3 previousPosition = transform.position; // Store previous position
+        Vector3 previousPosition = transform.position;
         transform.position = Vector3.MoveTowards(transform.position, _target.position, _speed * Time.fixedDeltaTime);
-        _distanceTraveled += Vector3.Distance(previousPosition, transform.position); // Update distance
+        _distanceTraveled += Vector3.Distance(previousPosition, transform.position);
 
         Vector3 direction = _target.position - transform.position;
 
