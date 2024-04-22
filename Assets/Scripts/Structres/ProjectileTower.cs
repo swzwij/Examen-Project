@@ -2,7 +2,7 @@ using UnityEngine;
 using FishNet;
 using FishNet.Object;
 
-namespace TrustFall.Structures
+namespace Examen.Structures
 {
     public class ProjectileTower : NetworkBehaviour
     {

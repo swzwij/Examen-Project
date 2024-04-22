@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7309134988278666722}
   - component: {fileID: 4661868421625354277}
   - component: {fileID: 2556768225675572015}
+  - component: {fileID: 2008946782905985116}
   m_Layer: 8
   m_Name: Projectile Tower
   m_TagString: Untagged
@@ -104,11 +105,26 @@ MonoBehaviour:
   _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 3
+  <PrefabId>k__BackingField: 4
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 5019179235174887942
+--- !u!114 &2008946782905985116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 383376843492830689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44a930cf7c4d3f24189fb7496cc3eaa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 2556768225675572015}
+  _networkObjectCache: {fileID: 0}
 --- !u!1 &807205776367393532
 GameObject:
   m_ObjectHideFlags: 0
