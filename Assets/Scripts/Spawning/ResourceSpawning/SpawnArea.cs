@@ -55,7 +55,7 @@ namespace Examen.Spawning.ResourceSpawning
         }
 
         /// <summary>
-        /// Gets a random node postion from a random cell.
+        /// Gets a random node position from a random cell.
         /// </summary>
         /// <param name="currentCell"> the cell that the position is going to be in.</param>
         /// <returns>random position.</returns>

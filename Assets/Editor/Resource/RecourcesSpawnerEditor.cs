@@ -30,7 +30,7 @@ namespace Examen.Editors.Resource
                     spawner.SpawnAllResources();
 
                 if (GUILayout.Button("All Remove Resources"))
-                    spawner.DestoryAllResources();
+                    spawner.DestroyAllResources();
             }
 
             EditorGUILayout.EndHorizontal();

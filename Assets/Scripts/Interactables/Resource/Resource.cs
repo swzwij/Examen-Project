@@ -77,11 +77,11 @@ namespace Examen.Interactables.Resource
         public void DisableObject() => gameObject.SetActive(false);
 
         /// <summary>
-        /// Sets client resource position to server resource postion.
+        /// Sets client resource position to server resource position.
         /// </summary>
-        /// <param name="newPosition"> the postion of the server resource</param>
+        /// <param name="newPosition"> the position of the server resource</param>
         [ObserversRpc]
-        public virtual void SetNewPostion(Vector3 newPosition) => transform.position = newPosition;
+        public virtual void SetNewPosition(Vector3 newPosition) => transform.position = newPosition;
 
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace Examen.Interactables.Resource
         protected virtual void RespawnResource()
         {
             transform.position = SpawnArea.GetRandomPosition(out p_cell);
-            SetNewPostion(transform.position);
+            SetNewPosition(transform.position);
             p_healthData.Resurrect(p_healthData.MaxHealth);
         }
 

@@ -75,7 +75,7 @@ namespace Examen.Spawning.ResourceSpawning
                     break;
                 }
 
-                float resourcesAmount = CalculateResrouceAmount(area, area.SpawnableResources[i]);
+                float resourcesAmount = CalculateResourceAmount(area, area.SpawnableResources[i]);
 
                 CreateResources(area, area.SpawnableResources[i].Resource, resourcesAmount);
             }
@@ -84,7 +84,7 @@ namespace Examen.Spawning.ResourceSpawning
         /// <summary>
         /// Destroys all resources in the scene.
         /// </summary>
-        public void DestoryAllResources()
+        public void DestroyAllResources()
         {
             for (int i = 0; i < _spawnAreas.Count; i++)
                 DestroyAreaResources(i);
@@ -117,7 +117,7 @@ namespace Examen.Spawning.ResourceSpawning
         /// </summary>
         /// <param name="newResource"> the resource you want the position to be set.</param>
         /// <param name="area">The are the resource is in.</param>
-        public void SetResourceSpawnPostion(GameObject newResource, SpawnArea area)
+        public void SetResourceSpawnPosition(GameObject newResource, SpawnArea area)
         {
             newResource.transform.position = area.GetRandomPosition(out Cell currentCell);
 
@@ -125,7 +125,7 @@ namespace Examen.Spawning.ResourceSpawning
             _spawnedGameobjects.Add(newResource);
         }
 
-        private float CalculateResrouceAmount(ResourceSpawnAreas area, ResourceSpawnInfo resourceSpawnInfo)
+        private float CalculateResourceAmount(ResourceSpawnAreas area, ResourceSpawnInfo resourceSpawnInfo)
         {
             float percentage = resourceSpawnInfo.Chance;
 
@@ -166,7 +166,7 @@ namespace Examen.Spawning.ResourceSpawning
             for (int i = 0; i < amount; i++)
             {
                 GameObject newResource = Instantiate(gameObject, spawnArea.Area.transform);
-                SetResourceSpawnPostion(newResource, spawnArea.Area);
+                SetResourceSpawnPosition(newResource, spawnArea.Area);
             }
 
             spawnArea.Area.SpawnedResources = _spawnedGameobjects;
