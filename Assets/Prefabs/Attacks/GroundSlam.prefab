@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8923181982904406662}
   - component: {fileID: 5251914405801197472}
+  - component: {fileID: 5998508435628983183}
   m_Layer: 0
   m_Name: GroundSlam
   m_TagString: Untagged
@@ -26,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 3187483930736385314}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -44.7, y: 0, z: 15.8}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -46,8 +47,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _componentIndexCache: 0
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
+  _addedNetworkObject: {fileID: 5998508435628983183}
+  _networkObjectCache: {fileID: 5998508435628983183}
+  p_attackType: 1
   p_damage: 10
   p_cooldown: 4
   p_prepareTime: 1
@@ -59,6 +61,39 @@ MonoBehaviour:
     m_Bits: 72
   _projector: {fileID: 8641482507666070848}
   interval: 1
+--- !u!114 &5998508435628983183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3187483930736385314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <IsNested>k__BackingField: 0
+  <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
+  _networkBehaviours:
+  - {fileID: 5251914405801197472}
+  <ParentNetworkObject>k__BackingField: {fileID: 0}
+  <ChildNetworkObjects>k__BackingField: []
+  SerializedTransformProperties:
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    LocalScale: {x: 1, y: 1, z: 1}
+  _isNetworked: 1
+  _isGlobal: 0
+  _initializeOrder: 0
+  _defaultDespawnType: 0
+  NetworkObserver: {fileID: 0}
+  <PrefabId>k__BackingField: 5
+  <SpawnableCollectionId>k__BackingField: 0
+  _scenePathHash: 0
+  <SceneId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 5780547624623104649
 --- !u!1001 &2243576215992473843
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -85,7 +120,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7552112301429425587, guid: fb47f884dca688f44a48608a8ce7cfbb, type: 3}
       propertyPath: m_IgnoreLayers.m_Bits
-      value: 64
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 7943257184595032718, guid: fb47f884dca688f44a48608a8ce7cfbb, type: 3}
       propertyPath: m_Name

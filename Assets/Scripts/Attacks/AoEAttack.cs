@@ -4,6 +4,7 @@ using Examen.Networking;
 using FishNet.Object;
 using MarkUlrich.Health;
 using UnityEngine;
+using UnityEngine.VFX;
 
 namespace Exame.Attacks
 {
@@ -16,9 +17,12 @@ namespace Exame.Attacks
         [SerializeField] private float _radius = 5f;
         [SerializeField] private LayerMask _layerMask;
 
+        [Header("Visuals")]
         [SerializeField] private Projector _projector;
-        private readonly Dictionary<Collider, HealthData> _damagedTargets = new();
 
+        private Coroutine _attackCoroutine;
+        
+        private readonly Dictionary<Collider, HealthData> _damagedTargets = new();
         private float AoERadius => _radius * 1.2f;
 
         protected void Start() => ServerInstance.Instance.OnServerStarted += InitAoEAttack;
@@ -27,13 +31,16 @@ namespace Exame.Attacks
         {
             _projector = GetComponentInChildren<Projector>();
             _projector.orthographicSize = 0;
-            BroadCastProjectorSize(0);
+            ProcessProjectSize(_projector.orthographicSize);
         }
 
         protected override void Attack()
         {
-            Debug.LogError("Preparing AoE Attack");
-            StartCoroutine(PrepareAoEAttack());
+            //StartCoroutine(PrepareAoEAttack());
+            if (_attackCoroutine != null)
+                return;
+            
+            _attackCoroutine = StartCoroutine(Attacking());
         }
 
         private void ActivateAoEAttack()
@@ -62,8 +69,9 @@ namespace Exame.Attacks
 
         private IEnumerator PrepareAoEAttack()
         {
+            Debug.LogError("Preparing AoE Attack");
             StartCoroutine(PrepareProjector());
-            yield return new WaitForSeconds(p_prepareTime);
+            yield return new WaitForSeconds(p_prepareTime + p_attackActiveDuration);
             ActivateAoEAttack();
         }
 
@@ -73,7 +81,8 @@ namespace Exame.Attacks
             while (prepareTime > 0)
             {
                 prepareTime -= Time.deltaTime;
-                _projector.orthographicSize = Mathf.Lerp(0, AoERadius, 1 - prepareTime / (p_prepareTime / 2));
+                _projector.orthographicSize = Mathf.Lerp(0, AoERadius, 1 - prepareTime / p_prepareTime); 
+                // -> p_prepareTime Was (p_prepareTime / 2)
                 BroadCastProjectorSize(_projector.orthographicSize);
                 yield return null;
             }
@@ -81,7 +90,7 @@ namespace Exame.Attacks
 
         private IEnumerator ResetProjector()
         {
-            yield return new WaitForSeconds(p_attackActiveDuration);
+            //yield return new WaitForSeconds(p_attackActiveDuration);
 
             float resetTime = _resetTime;
             while (resetTime > 0)
@@ -93,48 +102,27 @@ namespace Exame.Attacks
             }
         }
 
+        [Server]
+        private void ProcessProjectSize(float size) => BroadCastProjectorSize(size);
+
         [ObserversRpc]
-        private void BroadCastProjectorSize(float size)
-        {
-            _projector.orthographicSize = size;
-        }
+        private void BroadCastProjectorSize(float size) => _projector.orthographicSize = size;
 
 #region Testing
         [Header("Testing")]
         [SerializeField] private float interval = 1f;
 
-        private Coroutine _attackIntervalCoroutine;
-
-        private void FixedUpdate() 
-        {
-            if (!IsServer)
-                return;
-
-            _attackIntervalCoroutine ??= StartCoroutine(AttackInterval());
-        }
-
-        protected IEnumerator AttackInterval()
+        protected IEnumerator Attacking()
         {
             float totalinterval = interval + p_attackActiveDuration + p_cooldown + _resetTime;
 
-            while (true)
+            while (true) // TODO replace with a condition (such as the path no longer being blocked)
             {
                 if (!CanAttack)
                     yield return null;
 
                 yield return new WaitForSeconds(totalinterval);
-                ActivateAttack();
-            }
-        }
-
-        protected override void OnDisable()
-        {
-            base.OnDisable();
-
-            if (_attackIntervalCoroutine != null)
-            {
-                StopCoroutine(_attackIntervalCoroutine);
-                _attackIntervalCoroutine = null;
+                StartCoroutine(PrepareAoEAttack());
             }
         }
 

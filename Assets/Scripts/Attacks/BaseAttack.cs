@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Examen.Attacks;
 using FishNet.Object;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ namespace Exame.Attacks
 {
     public abstract class BaseAttack : NetworkBehaviour
     {
+        [SerializeField] protected AttackTypes p_attackType;
         [SerializeField] protected float p_damage = 10f;
         [SerializeField] protected float p_cooldown = 1f;
 
@@ -16,6 +18,7 @@ namespace Exame.Attacks
 
         protected float CurrentAnimationLength => p_animator.GetCurrentAnimatorClipInfo(0).Length;
         public bool CanAttack { get; protected set; } = true;
+        public AttackTypes AttackType => p_attackType;
 
         public event Action OnAttack;
         public event Action OnAttacked;

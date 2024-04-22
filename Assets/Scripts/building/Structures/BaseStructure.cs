@@ -1,3 +1,4 @@
+using Examen.Pathfinding.Grid;
 using FishNet.Object;
 using System.Collections;
 using UnityEngine;
@@ -6,6 +7,8 @@ namespace Examen.Structure
 {
     public class BaseStructure : NetworkBehaviour
     {
+        private GridSystem _gridSystem;
+
         public void Initialze()
         {
             StartCoroutine(WaitBeforeActivate());
@@ -20,5 +23,15 @@ namespace Examen.Structure
 
         [ObserversRpc]
         private void ActivateStructure() => gameObject.SetActive(true);
+
+        private void OnDestroy() 
+        {
+            if (!IsServer)
+                return;
+
+            _gridSystem = FindObjectOfType<GridSystem>();
+            Cell cell = _gridSystem.GetCellFromWorldPosition(transform.position);
+            _gridSystem.UpdateCell(cell);
+        }
     }
 }

@@ -30,8 +30,9 @@ namespace Examen.Pathfinding
         protected Coroutine p_waitForClearance;
         protected LineRenderer p_pathRenderer;
         
+        protected RaycastHit p_obstacleHit;
         public bool IsPathBlocked 
-            => Physics.Raycast(transform.position, transform.forward, p_obstacleCheckDistance, p_obstaclesLayerMask);
+            => Physics.Raycast(transform.position, transform.forward, out p_obstacleHit, p_obstacleCheckDistance, p_obstaclesLayerMask);
 
         public event Action OnPathCompleted;
         public event Action<Interactable> OnInteractableReached;

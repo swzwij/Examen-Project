@@ -13,8 +13,8 @@ namespace Examen.Pathfinding.Grid
 
         private HashSet<Node> _nodes = new();
         public GridSystem GridSystem { private get; set; }
-        public int CellX { private get; set; }
-        public int CellY { private get; set; }
+        public int CellX { get; set; }
+        public int CellY { get; set; }
 
         public HashSet<Node> Nodes => _nodes;
 

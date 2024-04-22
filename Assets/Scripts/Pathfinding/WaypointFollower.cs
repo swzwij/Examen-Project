@@ -1,40 +1,44 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Examen.Pathfinding.Grid;
 using FishNet.Object;
+using MarkUlrich.Health;
 using UnityEngine;
 
 namespace Examen.Pathfinding
 {
     public class WaypointFollower : PathFollower
     {
+        [SerializeField] private Transform _waypointsParent;
         [SerializeField] private List<Transform> _waypoints = new();
         private List<Node> _completePath = new();
         private int _currentWaypointIndex = 0;
-        private Transform _waypointsParent;
         private bool _hasInitialised;
+
+        public event Action<HealthData> OnStructureEncountered;
+
+        public event Action OnBossInitialised;
 
         protected override void Start() => base.Start();
 
-        private void InitBoss()
+        protected void InitFollower()
         {
-            _waypointsParent = new GameObject().transform;
             _waypointsParent.name = $"{gameObject.name} - Waypoints";
 
             _waypoints.Clear();
 
-            for (int i = transform.childCount - 1; i >= 0; i--)
-            {
-                _waypoints.Add(transform.GetChild(i));
-                transform.GetChild(i).SetParent(_waypointsParent);
-            }
+            for (int i = _waypointsParent.childCount - 1; i >= 0; i--)
+                _waypoints.Add(_waypointsParent.GetChild(i));
 
+            _waypointsParent.SetParent(null);
             _waypoints.Reverse();
 
             if (_waypoints.Count == 0)
                 return;
 
             GenerateCompletePath();
+            OnBossInitialised?.Invoke();
         }
 
         [Server]
@@ -65,14 +69,14 @@ namespace Examen.Pathfinding
             if (!_hasInitialised)
             {
                 _hasInitialised = true;
-                InitBoss();
+                InitFollower();
             }
 
-            UpdateBoss(_waypoints);
+            UpdateFollower(_waypoints);
         }
 
         [Server]
-        private void UpdateBoss(List<Transform> waypoints)
+        private void UpdateFollower(List<Transform> waypoints)
         {
             if (Vector3.Distance(transform.position, waypoints[_currentWaypointIndex].position) < 5f 
             && _currentWaypointIndex < waypoints.Count-1)
@@ -81,15 +85,25 @@ namespace Examen.Pathfinding
             if (IsPathBlocked && !p_hasFoundBlockage)
             {
                 p_hasFoundBlockage = true;
-                List<Node> newPath = p_pathfinder.FindPath(transform.position, p_currentTarget);
 
-                if (newPath.Count == 0)
-                {
-                    p_waitForClearance = StartCoroutine(WaitForPathClearance());
-                    return;
-                }
+                p_waitForClearance = StartCoroutine(WaitForPathClearance());
+
+                if (p_obstacleHit.collider.TryGetComponent(out HealthData healthData))
+                    OnStructureEncountered?.Invoke(healthData);
                 
-                GenerateCompletePath();
+                // List<Node> newPath = p_pathfinder.FindPath(transform.position, p_currentTarget);
+
+                // if (newPath.Count == 0)
+                // {
+                //     p_waitForClearance = StartCoroutine(WaitForPathClearance());
+
+                //     if (p_obstacleHit.collider.TryGetComponent(out HealthData healthData))
+                //         OnStructureEncountered?.Invoke(healthData);
+
+                //     return;
+                // }
+                
+                // GenerateCompletePath();
             }
         }
 

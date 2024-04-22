@@ -175,6 +175,13 @@ namespace Examen.Pathfinding.Grid
         [Server]
         public void UpdateCell(int cellX, int cellY) => StartCoroutine(UpdateCellDelayed(cellX, cellY));
 
+        /// <summary>
+        /// Updates the specified cell in the grid system.
+        /// </summary>
+        /// <param name="cell">The cell to update.</param>
+        [Server]
+        public void UpdateCell(Cell cell) => UpdateCell(cell.CellX, cell.CellY);
+
         [Server]
         private IEnumerator UpdateCellDelayed(int cellX, int cellY)
         {
