@@ -1,10 +1,15 @@
 using UnityEngine;
 using FishNet.Object;
+using Swzwij.Extensions;
+using MarkUlrich.Health;
 
 public class Projectile : NetworkBehaviour
 {
     [SerializeField] private float _speed = 1f;
     [SerializeField] private float _damage;
+    [SerializeField] private float _castLength = 10f;
+    [SerializeField] private LayerMask _layerMask;
+
 
     private Transform _target;
 
@@ -19,8 +24,17 @@ public class Projectile : NetworkBehaviour
 
         Move();
 
-        if (Vector3.Distance(transform.position, _target.position) < 0.1f)
+        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, _castLength, _layerMask))
+        {
+            HealthData healthData = hit.collider.gameObject.TryGetCachedComponent<HealthData>();
+            
+            if (healthData != null)
+                healthData.TakeDamage(_damage);
+
+            Debug.Log(hit.collider.gameObject);
+
             Destroy(gameObject);
+        }
     }
 
     [Server]
