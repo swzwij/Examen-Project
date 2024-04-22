@@ -18,10 +18,23 @@ namespace Examen.Player.PlayerDataManagement
 
         private readonly Dictionary<int, PlayerDataHandler> _playerData = new();
 
+        /// <summary>
+        /// Initiates a connection with a client using the specified client ID and player data handler.
+        /// </summary>
+        /// <param name="clientId">The ID of the client to connect to.</param>
+        /// <param name="handler">The player data handler to use for the connection.</param>
         public void ConnectClient(int clientId, PlayerDataHandler handler) => SendClientConnection(clientId, handler);
 
+        /// <summary>
+        /// Disconnects the client with the specified client ID.
+        /// </summary>
+        /// <param name="clientId">The ID of the client to disconnect.</param>
         public void DisconnectClient(int clientId) => SendClientDisconnection(clientId);
 
+        /// <summary>
+        /// Updates the display based on the provided experience points.
+        /// </summary>
+        /// <param name="exp">The new experience points to display.</param>
         public void UpdateDisplay(int exp)
         {
             (int level, int remainingExp, int neededExp) = CalculateLevel(exp);
@@ -33,6 +46,11 @@ namespace Examen.Player.PlayerDataManagement
             _expText.text = $"Level: {level} {remainingExp}/{maxNeededExp}";
         }
 
+        /// <summary>
+        /// Adds experience points to the player associated with the specified network connection.
+        /// </summary>
+        /// <param name="connection">The network connection of the player.</param>
+        /// <param name="exp">The amount of experience points to add.</param>
         [Server]
         public void AddExp(NetworkConnection connection, int exp)
         {
@@ -50,7 +68,12 @@ namespace Examen.Player.PlayerDataManagement
 
             handler.AddExp(exp);
         }
-
+        
+        /// <summary>
+        /// Retrieves the experience points of the player associated with the specified network connection.
+        /// </summary>
+        /// <param name="connection">The network connection of the player.</param>
+        /// <returns>The experience points of the player, or -1 if the player is not found.</returns>
         [Server]
         public int GetExp(NetworkConnection connection)
         {
