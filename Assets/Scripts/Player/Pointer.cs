@@ -8,33 +8,35 @@ namespace Examen.Player
 {
     public class Pointer : NetworkBehaviour
     {
-        [SerializeField] private LayerMask _pointerLayerMask;
-        private Camera _myCamera; // Replace with camera manager once this is implemented
+        [SerializeField] private float _pointerDistance = 10000f;
+        [SerializeField] private UnityEngine.Camera _myCamera;
         private Vector3 _pointerWorldPosition;
         private InputAction _clickAction;
 
         public Action<Vector3> OnPointedAtPosition;
+        public Action<Vector3> OnPointedUIInteraction;
         public Action<GameObject> OnPointedGameobject;
+        public Action<RaycastHit> OnPointedHitInfo;
+        public Action<Interactable> OnPointedAtInteractable;
 
-        private void OnEnable()
+        public bool HasClickedUI { get; set; }
+        public UnityEngine.Camera Camera => _myCamera;
+
+        private void Start()
         {
             InputManager.SubscribeToAction("Click", OnPointPerformed, out _clickAction);
             InputManager.TryGetAction("PointerPosition").Enable();
+
+            InitCamera();
         }
 
-        private void OnDisable()
+        private void InitCamera()
         {
-            _clickAction.Disable();
-            _clickAction.performed -= OnPointPerformed;
-            InputManager.TryGetAction("PointerPosition").Disable();
-        }
+            if (!IsOwner)
+                return;
 
-        private void Awake()
-        {
-            if (TryGetComponent(out Camera camera))
-                _myCamera = camera;
-            else
-                _myCamera = Camera.main;
+            _myCamera.gameObject.SetActive(true);
+            _myCamera.transform.SetParent(null);
         }
 
         /// <summary>
@@ -42,23 +44,54 @@ namespace Examen.Player
         /// </summary>
         public void PointAtPosition()
         {
+            if (!IsOwner)
+                return;
+
             Vector2 pointerPosition = InputManager.TryGetAction("PointerPosition").ReadValue<Vector2>();
-            
             Ray pointerRay = _myCamera.ScreenPointToRay(pointerPosition);
-            if (Physics.Raycast(pointerRay, out RaycastHit hit, _pointerLayerMask))
+
+            ProcessPointerPosition(pointerRay);
+        }
+
+        private void ProcessPointerPosition(Ray pointerRay)
+        {
+            if (Physics.Raycast(pointerRay, out RaycastHit hit, _pointerDistance))
             {
                 _pointerWorldPosition = hit.point;
+
+                OnPointedHitInfo?.Invoke(hit);
+
+                if (hit.collider.gameObject.layer == 5) // UI layer
+                {
+                    HasClickedUI = true;
+                    return;
+                }
+                if (HasClickedUI)
+                {
+                    OnPointedUIInteraction?.Invoke(_pointerWorldPosition);
+                    return;
+                }
+
                 OnPointedAtPosition?.Invoke(_pointerWorldPosition);
                 OnPointedGameobject?.Invoke(hit.transform.gameObject);
+
+                if (hit.transform.TryGetComponent(out Interactable interactable))
+                    OnPointedAtInteractable?.Invoke(interactable);
             }
         }
 
         private void OnPointPerformed(InputAction.CallbackContext context)
         {
-            if(!IsOwner) 
+            if (!IsOwner)
                 return;
 
             PointAtPosition();
+        }
+        private void OnDestroy() 
+        {
+            _clickAction.Disable();
+            _clickAction.performed -= OnPointPerformed;
+            InputManager.TryGetAction("PointerPosition").Disable();
         }
     }
 }

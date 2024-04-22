@@ -1,34 +1,66 @@
 using UnityEngine;
 using System;
 using FishNet.Object;
+using Examen.Pathfinding;
+using Examen.Networking;
+using FishNet.Managing;
+using FishNet.Connection;
 
 namespace Examen.Player
 {
-    [RequireComponent(typeof(Pointer))]
+    [RequireComponent(typeof(Pointer), typeof(PathFollower))]
     public class Interactor : NetworkBehaviour
     {
-        #region Testing
-        private void Start() => _pointer.OnPointedAtPosition += DebugPointer;
-        private void OnDisable() => _pointer.OnPointedAtPosition -= DebugPointer;
+        [SerializeField] private float damageAmount = 1;
 
-        private void DebugPointer(Vector3 position) 
-            => Debug.DrawLine(transform.position, position, Color.red, 1f);
-        #endregion
-
+        private NetworkManager _networkManager;
         private Pointer _pointer;
+        private PathFollower _pathFollower;
+        private bool _hasInteracted;
 
         public Action<Interactable> OnInteractableFound;
 
-        private void OnEnable()
+        private void Start()
         {
             _pointer = GetComponent<Pointer>();
-            _pointer.OnPointedGameobject += CheckForInteractable;
+            _pathFollower = GetComponent<PathFollower>();
+
+            _pointer.OnPointedAtInteractable += ProcessPointerGameObject;
+            _pathFollower.OnInteractableReached += Interact;
+
+            ServerInstance.Instance.TryGetComponent(out _networkManager);
+
+            if (_networkManager == null)
+                Debug.LogError("Couldn't find NetworkManager");
         }
 
-        private void CheckForInteractable(GameObject objectInQuestion)
+        private void ProcessPointerGameObject(Interactable pointedObject)
         {
-            if (objectInQuestion.TryGetComponent<Interactable>(out Interactable interactable))
-                OnInteractableFound?.Invoke(interactable);
+            if (!IsOwner)
+                return;
+
+            PreProcessPointerObject(pointedObject);
         }
+
+        private void PreProcessPointerObject(Interactable pointedObject) => CheckForInteractable(pointedObject);
+
+        private void CheckForInteractable(Interactable currentInteractable)
+        {
+            _hasInteracted = false;
+            OnInteractableFound?.Invoke(currentInteractable);
+        }
+
+        private void Interact(Interactable interactable)
+        {
+            if (_hasInteracted)
+                return;
+
+            SentInteract(interactable, _networkManager.ClientManager.Connection);
+            _hasInteracted = true;
+        }
+
+        [ServerRpc]
+        private void SentInteract(Interactable interactable, NetworkConnection connection) 
+            => interactable.Interact(connection, damageAmount);
     }
 }
