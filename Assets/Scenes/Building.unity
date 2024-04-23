@@ -9090,8 +9090,24 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8998767306234344684, guid: 8e1463d83d997ca41b114744562fd6b0, type: 3}
+      propertyPath: boxSize.x
+      value: 5.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8998767306234344684, guid: 8e1463d83d997ca41b114744562fd6b0, type: 3}
+      propertyPath: boxSize.z
+      value: 15.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8998767306234344684, guid: 8e1463d83d997ca41b114744562fd6b0, type: 3}
       propertyPath: _speedMultiplier
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8998767306234344684, guid: 8e1463d83d997ca41b114744562fd6b0, type: 3}
+      propertyPath: _layerMask.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8998767306234344684, guid: 8e1463d83d997ca41b114744562fd6b0, type: 3}
+      propertyPath: _affectedLayers.m_Bits
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
