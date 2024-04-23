@@ -1,7 +1,7 @@
 using Examen.Items;
 using MarkUlrich.Utils;
+using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Examen.Inventory
 {
@@ -10,6 +10,8 @@ namespace Examen.Inventory
         private static Dictionary<Item, int> _currentItems = new();
 
         public Dictionary<Item, int> CurrentItems => _currentItems;
+
+        public Action<Item, int> ItemAdded;
 
         /// <summary>
         /// Add given item amount to the current item count.
@@ -22,6 +24,8 @@ namespace Examen.Inventory
                 _currentItems.Add(newItem, amountOfItem);
             else
                 _currentItems[newItem] += amountOfItem;
+
+            ItemAdded?.Invoke(newItem, _currentItems[newItem]);
         }
 
         /// <summary>
