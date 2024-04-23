@@ -120,7 +120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13e3e38fcf685dc40aa88bebdeec26b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 5
+  _componentIndexCache: 6
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
 --- !u!114 &3713117069067843006
@@ -343,6 +343,7 @@ MonoBehaviour:
   - {fileID: 431041323644128263}
   - {fileID: 7692977816705919355}
   - {fileID: 3694398312710353908}
+  - {fileID: 2256975833209865345}
   - {fileID: 7296310588199703723}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
@@ -509,9 +510,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ace8c97033910ba47bdfff1c79f3f2ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 5
   _addedNetworkObject: {fileID: 3679868855582776512}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 3679868855582776512}
 --- !u!1001 &2721883193640779307
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -523,11 +524,11 @@ PrefabInstance:
     - target: {fileID: 94668475488050087, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
       propertyPath: _structure
       value: 
-      objectReference: {fileID: -2538938568926392539, guid: 2a0dbf9a5e060b64b9d34ed827308044, type: 3}
+      objectReference: {fileID: 2556768225675572015, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
     - target: {fileID: 94668475488050087, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
       propertyPath: _structurePreview
       value: 
-      objectReference: {fileID: 704015051636409652, guid: b94daff7b50dc264abea2584ca7c94cb, type: 3}
+      objectReference: {fileID: 383376843492830689, guid: 0f0a994fa67d88344bd3c70ad1812005, type: 3}
     - target: {fileID: 2233940312034122922, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
       propertyPath: m_Camera
       value: 

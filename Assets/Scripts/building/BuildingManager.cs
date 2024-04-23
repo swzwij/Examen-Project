@@ -7,6 +7,8 @@ using FishNet.Managing.Server;
 using Examen.Pathfinding.Grid;
 using Examen.Building.BuildingUI;
 using Examen.Structure;
+using System.Collections.Generic;
+using Swzwij.Extensions;
 
 namespace Examen.Building
 {
@@ -22,7 +24,6 @@ namespace Examen.Building
         private UnityEngine.Camera _camera;
 
         private GameObject _currentPreview;
-        private MeshRenderer _meshRenderer;
         private StructurePreviewButtons rotationButtons;
 
         private Vector3 _currentPosition;
@@ -114,8 +115,6 @@ namespace Examen.Building
             rotationButtons.Camera = Camera;
             rotationButtons.SetButtonsActive(false);
 
-            _meshRenderer = _currentPreview.GetComponentInChildren<MeshRenderer>();
-
             _isHolding = true;
         }
 
@@ -159,8 +158,18 @@ namespace Examen.Building
 
             float dotProduct = Vector3.Dot(_pointerHitInfo.normal, Vector3.up);
             CheckPlaceable();
+            
+            PreviewStructure previewStructure = _currentPreview.TryGetCachedComponent<PreviewStructure>();
 
-            _meshRenderer.material = dotProduct > 0.5 && _canPlace ? _placeAllowed : _placeDisallowed;
+            Debug.Log(previewStructure);
+
+            List<MeshRenderer> meshRenderers = previewStructure.MeshRenderers;
+
+            Debug.Log(meshRenderers);
+
+            foreach (MeshRenderer meshRenderer in meshRenderers)
+                meshRenderer.material = dotProduct > 0.5 && _canPlace ? _placeAllowed : _placeDisallowed;
+            
             _canPlace = dotProduct > 0.5 && _canPlace;
         }
 
