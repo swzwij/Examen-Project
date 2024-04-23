@@ -6,35 +6,32 @@ using UnityEngine.UI;
 
 public class BossHealthBar : NetworkBehaviour
 {
-    [SerializeField] private HealthData _bossHealthData;
     [SerializeField] private bool _damage;
 
     [SerializeField] private Slider _healthBar;
 
-    private void Start()
-    {
-        if(IsServer)
-            ServerInstance.Instance.OnServerStarted += ServerInitialize;
-        else
-            ClientInitialize();
-    }
+    public HealthData BossHealthData { get; set; }
+    public Slider HealthSlider => _healthBar;
+
+    private void Start() => ServerInstance.Instance.OnServerStarted += ServerInitialize;
+
 
     private void Update()
     {
-        if (_damage) _bossHealthData.TakeDamage(1);
+        if (_damage) BossHealthData.TakeDamage(1);
     }
 
     [Server]
-    private void ServerInitialize() => _bossHealthData.onDamageTaken.AddListener(CallSetHealth);
+    public void ServerInitialize() => BossHealthData.onDamageTaken.AddListener(CallSetHealth);
 
-     private void ClientInitialize()
-     {
+    private void ClientInitialize()
+    {
         _healthBar = GetComponent<Slider>();
-        _healthBar.maxValue = _bossHealthData.MaxHealth;
+        _healthBar.maxValue = BossHealthData.MaxHealth;
         _healthBar.value = _healthBar.maxValue;
-     }
+    }
 
-    private void CallSetHealth() => SetUIHealth(_bossHealthData.Health);
+    private void CallSetHealth() => SetUIHealth(BossHealthData.Health);
 
     [ObserversRpc]
     private void SetUIHealth(float bossHealth) => _healthBar.value = bossHealth;
