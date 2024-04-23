@@ -8,6 +8,7 @@ namespace Exame.Attacks
 {
     public abstract class BaseAttack : NetworkBehaviour
     {
+        [Header("Base Attack Settings")]
         [SerializeField] protected AttackTypes p_attackType;
         [SerializeField] protected float p_damage = 10f;
         [SerializeField] protected float p_cooldown = 1f;
@@ -19,6 +20,7 @@ namespace Exame.Attacks
         protected float CurrentAnimationLength => p_animator.GetCurrentAnimatorClipInfo(0).Length;
         public bool CanAttack { get; protected set; } = true;
         public AttackTypes AttackType => p_attackType;
+        public float Cooldown => p_cooldown;
 
         public event Action OnAttack;
         public event Action OnAttacked;
@@ -53,6 +55,8 @@ namespace Exame.Attacks
             CanAttack = true;
             BroadCastCanAttack(true);
         }
+
+        protected void IncreaseCooldown(float amount) => p_cooldown += amount;
 
         [ObserversRpc]
         private void BroadCastCanAttack(bool canAttack)

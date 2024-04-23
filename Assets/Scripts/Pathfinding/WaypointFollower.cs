@@ -16,9 +16,9 @@ namespace Examen.Pathfinding
         private int _currentWaypointIndex = 0;
         private bool _hasInitialised;
 
-        public event Action<HealthData> OnStructureEncountered;
-
         public event Action OnBossInitialised;
+        public event Action<HealthData> OnStructureEncountered;
+        public event Action<bool> OnPathCleared;
 
         protected override void Start() => base.Start();
 
@@ -90,20 +90,6 @@ namespace Examen.Pathfinding
 
                 if (p_obstacleHit.collider.TryGetComponent(out HealthData healthData))
                     OnStructureEncountered?.Invoke(healthData);
-                
-                // List<Node> newPath = p_pathfinder.FindPath(transform.position, p_currentTarget);
-
-                // if (newPath.Count == 0)
-                // {
-                //     p_waitForClearance = StartCoroutine(WaitForPathClearance());
-
-                //     if (p_obstacleHit.collider.TryGetComponent(out HealthData healthData))
-                //         OnStructureEncountered?.Invoke(healthData);
-
-                //     return;
-                // }
-                
-                // GenerateCompletePath();
             }
         }
 
@@ -113,10 +99,13 @@ namespace Examen.Pathfinding
             if (p_followPathCoroutine != null)
                 StopCoroutine(p_followPathCoroutine);
 
+            OnPathCleared?.Invoke(false);
+
             yield return new WaitUntil(() => !IsPathBlocked);
 
             yield return new WaitForSeconds(p_waitTime);
             ContinuePath();
+            OnPathCleared?.Invoke(true);
         }
 
         /// <summary>

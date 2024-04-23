@@ -183,7 +183,7 @@ MonoBehaviour:
   p_obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 64
-  p_waitTime: 5
+  p_waitTime: 1
   _waypointsParent: {fileID: 2759117656618676834}
   _waypoints: []
 --- !u!114 &6525617594531759237
@@ -202,7 +202,6 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 9181585673909579258}
   _networkObjectCache: {fileID: 9181585673909579258}
   _waypointFollower: {fileID: 6810126444432453413}
-  _currentAttackType: 0
   _attacks:
   - {fileID: 2909072033571877038}
   _turnSpeed: 1
@@ -226,7 +225,8 @@ MonoBehaviour:
   - {fileID: 6810126444432453413}
   - {fileID: 6525617594531759237}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
-  <ChildNetworkObjects>k__BackingField: []
+  <ChildNetworkObjects>k__BackingField:
+  - {fileID: 3711931934465838209}
   SerializedTransformProperties:
     Position: {x: -17.4, y: 1, z: -84.1}
     Rotation: {x: -0, y: -0, z: -0, w: 1}
@@ -392,6 +392,14 @@ PrefabInstance:
       propertyPath: <IsNested>k__BackingField
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5998508435628983183, guid: 28d726fdb663eff4abb97d064dd90c4a, type: 3}
+      propertyPath: <ComponentIndex>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5998508435628983183, guid: 28d726fdb663eff4abb97d064dd90c4a, type: 3}
+      propertyPath: <ParentNetworkObject>k__BackingField
+      value: 
+      objectReference: {fileID: 9181585673909579258}
     - target: {fileID: 8923181982904406662, guid: 28d726fdb663eff4abb97d064dd90c4a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -451,5 +459,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9c1ab377554594c4ea2c3c0e461b8c29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3711931934465838209 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5998508435628983183, guid: 28d726fdb663eff4abb97d064dd90c4a, type: 3}
+  m_PrefabInstance: {fileID: 6970892491035397902}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

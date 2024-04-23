@@ -13,10 +13,14 @@ namespace Examen.NPC
     public class Boss : NetworkBehaviour
     {
         [SerializeField] private WaypointFollower _waypointFollower;
-        [SerializeField] private BaseAttack[] _attacks;
         [SerializeField] private float _turnSpeed = 1f;
 
+        [Header("Attack Settings")]
+        [SerializeField] private BaseAttack[] _attacks;
+        [SerializeField] private float _repeatInterval = 1f;
+        
         private Dictionary<AttackTypes, BaseAttack> _attackTypes = new();
+        private bool _hasClearedPath;
 
         private void Awake()
         {
@@ -24,9 +28,11 @@ namespace Examen.NPC
             _waypointFollower.OnBossInitialised += InitBoss;
         }
 
+        [Server]
         private void InitBoss()
         {
             _waypointFollower.OnStructureEncountered += ProcessStructureEncounter;
+            _waypointFollower.OnPathCleared += SetHasClearedPath;
 
             foreach (BaseAttack attack in _attacks)
                 _attackTypes.Add(attack.AttackType, attack);
@@ -34,30 +40,42 @@ namespace Examen.NPC
 
         private void ProcessStructureEncounter(HealthData healthData)
         {
-            StartCoroutine(LookAtTarget(healthData.transform));
-
-            ProcessAttack(AttackTypes.AOE); // TODO: Add functionality for determining if should use AOE or SPECIAL attack.
+            StartCoroutine(RepeatingAttack(_repeatInterval, AttackTypes.AOE, !_hasClearedPath)); // TODO: Add functionality for determining if should use AOE or SPECIAL attack.
         }
 
         private void ProcessAttack(AttackTypes attackType)
         {
-            if (_attackTypes.TryGetValue(attackType, out BaseAttack attack))
+            if (GetAttack(attackType, out BaseAttack attack))
                 attack.ActivateAttack();
             else
                 Debug.LogError($"Attack type {attackType} not found in dictionary.");
         }
 
-        private IEnumerator LookAtTarget(Transform target)
+        private bool GetAttack(AttackTypes attackType, out BaseAttack attack)
         {
-            while (transform.rotation != Quaternion.LookRotation(target.position - transform.position))
+            if (_attackTypes.TryGetValue(attackType, out attack))
+                return true;
+
+            Debug.LogError($"Attack type {attackType} not found in dictionary.");
+            return false;
+        }
+
+        protected IEnumerator RepeatingAttack(float interval, AttackTypes attackType, bool routineCondition)
+        {
+            BaseAttack attack = _attackTypes[attackType];
+            float totalinterval = interval + attack.Cooldown;
+
+            while (routineCondition) // TODO replace with a condition (such as the path no longer being blocked)
             {
-                transform.rotation = Quaternion.Lerp
-                (
-                    transform.rotation, Quaternion.LookRotation(target.position - transform.position), 
-                    _turnSpeed * Time.deltaTime
-                );
-                yield return null;
+                if (!attack.CanAttack)
+                    yield return null;
+
+                yield return new WaitForSeconds(totalinterval);
+                ProcessAttack(attackType);
             }
         }
+
+        [Server]
+        private void SetHasClearedPath(bool hasClearedPath) => _hasClearedPath = hasClearedPath;
     }
 }
