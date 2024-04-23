@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 6810126444432453413}
   - component: {fileID: 9181585673909579258}
   - component: {fileID: 7071424768019710682}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -149,7 +149,6 @@ MonoBehaviour:
   p_obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 64
-  p_pathColor: {r: 1, g: 0, b: 0, a: 1}
   p_waitTime: 5
   _waypoints: []
 --- !u!114 &9181585673909579258

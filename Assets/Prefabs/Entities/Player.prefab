@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6352420988358970581}
   - component: {fileID: 7296310588199703723}
   - component: {fileID: 3713117069067843006}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13e3e38fcf685dc40aa88bebdeec26b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 5
+  _componentIndexCache: 6
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
 --- !u!114 &3713117069067843006
@@ -170,7 +170,8 @@ GameObject:
   - component: {fileID: 7692977816705919355}
   - component: {fileID: 3694398312710353908}
   - component: {fileID: 5753440854157603489}
-  m_Layer: 3
+  - component: {fileID: 2256975833209865345}
+  m_Layer: 2
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -342,6 +343,7 @@ MonoBehaviour:
   - {fileID: 431041323644128263}
   - {fileID: 7692977816705919355}
   - {fileID: 3694398312710353908}
+  - {fileID: 2256975833209865345}
   - {fileID: 7296310588199703723}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
@@ -482,7 +484,7 @@ LineRenderer:
       atime6: 0
       atime7: 0
       m_Mode: 0
-      m_ColorSpace: -1
+      m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 3
@@ -496,6 +498,21 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &2256975833209865345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6297853107807436002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ace8c97033910ba47bdfff1c79f3f2ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 5
+  _addedNetworkObject: {fileID: 3679868855582776512}
+  _networkObjectCache: {fileID: 3679868855582776512}
 --- !u!1001 &2721883193640779307
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -507,15 +524,11 @@ PrefabInstance:
     - target: {fileID: 94668475488050087, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
       propertyPath: _structure
       value: 
-      objectReference: {fileID: -2538938568926392539, guid: 2a0dbf9a5e060b64b9d34ed827308044, type: 3}
+      objectReference: {fileID: 2556768225675572015, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
     - target: {fileID: 94668475488050087, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
       propertyPath: _structurePreview
       value: 
-      objectReference: {fileID: 704015051636409652, guid: b94daff7b50dc264abea2584ca7c94cb, type: 3}
-    - target: {fileID: 232771912448828081, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
-      propertyPath: m_Layer
-      value: 3
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 383376843492830689, guid: 0f0a994fa67d88344bd3c70ad1812005, type: 3}
     - target: {fileID: 2233940312034122922, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
       propertyPath: m_Camera
       value: 
@@ -609,16 +622,8 @@ PrefabInstance:
       value: Canvas
       objectReference: {fileID: 0}
     - target: {fileID: 7750422447112456242, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
-      propertyPath: m_Layer
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7750422447112456242, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
       propertyPath: m_IsActive
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8986027151493813033, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
-      propertyPath: m_Layer
-      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 9200732519476939561, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
       propertyPath: m_PresetInfoIsWorld
