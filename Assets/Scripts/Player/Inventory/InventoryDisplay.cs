@@ -1,27 +1,25 @@
 using System.Collections.Generic;
 using Examen.Items;
-using FishNet;
-using FishNet.Managing.Server;
-using PlayFlow;
 using UnityEngine;
 
 namespace Examen.Inventory
 {
     public class InventoryDisplay : MonoBehaviour
     {
-        public Item item;
-        public Item items;
         [SerializeField] private InventoryDisplayItem _displayItem;
         [SerializeField] private Transform _content;
 
         private Dictionary<Item, InventoryDisplayItem> _inventoryItems = new();
 
-        private void OnEnable()
+        private void OnEnable() 
         {
-            InventorySystem.Instance.ItemAdded += UpdateDisplay;
+            InventorySystem.Instance.ItemAdded += UpdateDisplayItem;
+            UpdateDisplay();
         }
 
-        private void UpdateDisplay(Item item, int itemAmount)
+        private void OnDisable() => InventorySystem.Instance.ItemAdded -= UpdateDisplayItem;
+
+        private void UpdateDisplayItem(Item item, int itemAmount)
         {
             if (_inventoryItems.ContainsKey(item))
             {
@@ -34,14 +32,12 @@ namespace Examen.Inventory
             _inventoryItems.Add(item, displayItem);
         }
 
-        public void Test()
+        private void UpdateDisplay()
         {
-            ServerInventory.Instance.AddItem(InstanceFinder.ClientManager.Connection, item, 1);
-        }
+            Dictionary<Item, int> items = InventorySystem.Instance.CurrentItems;
 
-        public void Test2()
-        {
-            ServerInventory.Instance.AddItem(InstanceFinder.ClientManager.Connection, items, 1);
+            foreach(Item item in items.Keys)
+                UpdateDisplayItem(item, items[item]);
         }
     }
 }
