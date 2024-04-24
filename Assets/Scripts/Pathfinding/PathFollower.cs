@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Examen.Pathfinding.Grid;
 using Examen.Player;
+using FishNet.Component.Spawning;
+using FishNet.Managing.Client;
 using FishNet.Object;
 using UnityEngine;
 
@@ -12,6 +14,7 @@ namespace Examen.Pathfinding
     public class PathFollower : NetworkBehaviour
     {
         [SerializeField] protected float p_speed = 5f;
+        [SerializeField] protected float p_turnSpeed = 15f;
         [SerializeField] protected float p_obstacleCheckDistance = 1f;
         [SerializeField] protected LayerMask p_obstaclesLayerMask;
         [SerializeField] protected float p_waitTime = 1f;
@@ -28,6 +31,7 @@ namespace Examen.Pathfinding
         protected int p_currentNodeIndex = 0;
         protected Coroutine p_followPathCoroutine;
         protected Coroutine p_waitForClearance;
+        protected Coroutine p_turnCoroutine;
         protected LineRenderer p_pathRenderer;
         
         protected RaycastHit p_obstacleHit;
@@ -121,13 +125,21 @@ namespace Examen.Pathfinding
                 p_currentPath[p_currentNodeIndex].NodeHeightOffset + 
                 p_currentPath[p_currentNodeIndex].Position.y;
 
+                Vector3 nodeDirection = adjustedNode - transform.position;
+
+                // if (p_turnCoroutine == null)
+                //     StopCoroutine(p_turnCoroutine);
+
+                // p_turnCoroutine = StartCoroutine(TurnToTarget(adjustedNode, p_turnSpeed));
+
                 while (Vector3.Distance(transform.position, adjustedNode) > 0.1f)
                 {
-                    transform.position = 
-                        Vector3.MoveTowards(transform.position, adjustedNode, p_speed * Time.deltaTime);
-                    transform.LookAt(adjustedNode);
+                    float angleToNode = Vector3.Angle(nodeDirection, transform.forward);
+                    print($"Angle to node: {angleToNode / 100 + 1}");
+                    MoveToTarget(adjustedNode, p_speed / (angleToNode / 100 + 1));
+                    TurnToTarget(adjustedNode);
 
-                    BroadcastPosition(transform.position);
+                    //BroadcastPosition(transform.position);
                     BroadcastPath(P_CurrentPathPositions);
                     Debug.DrawRay(transform.position, transform.forward * p_obstacleCheckDistance, Color.blue);
                     yield return null;
@@ -140,6 +152,9 @@ namespace Examen.Pathfinding
             p_hasFoundBlockage = false;
             OnPathCompleted?.Invoke();
         }
+
+        [ObserversRpc]
+        protected void BroadcastRotation(Quaternion rotation) => transform.rotation = rotation;
 
         [ObserversRpc]
         protected void BroadcastPosition(Vector3 position) => transform.position = position;
@@ -186,6 +201,44 @@ namespace Examen.Pathfinding
             {
                 p_hasInteracted = true;
                 OnInteractableReached?.Invoke(p_targetInteractable);
+            }
+        }
+
+        [Server]
+        private void MoveToTarget(Vector3 target, float speed)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+            BroadcastPosition(transform.position);
+        }
+
+        [Server]
+        private void TurnToTarget(Vector3 target)
+        {
+            Vector3 targetDirection = target - transform.position;
+            float angle = Vector3.Angle(targetDirection, transform.forward);
+
+            if (angle > 0.1f)
+            {
+                transform.rotation = Quaternion.RotateTowards
+                (
+                    transform.rotation, Quaternion.LookRotation(targetDirection), p_turnSpeed * Time.deltaTime
+                );
+                BroadcastRotation(transform.rotation);
+            }
+        }
+
+        private IEnumerator TurnToTarget(Vector3 target, float turnSpeed)
+        {
+            Vector3 targetDirection = target - transform.position;
+            float angle = Vector3.Angle(targetDirection, transform.forward);
+
+            while (angle > 0.1f)
+            {
+                targetDirection.y = 0;
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(targetDirection), turnSpeed * Time.deltaTime);
+                angle = Vector3.Angle(targetDirection, transform.forward);
+                BroadcastRotation(transform.rotation);
+                yield return null;
             }
         }
         
