@@ -13,9 +13,6 @@ public class BossHealthBar : NetworkBehaviour
     public HealthData BossHealthData { get; set; }
     public Slider HealthSlider => _healthBar;
 
-    private void Start() => ServerInstance.Instance.OnServerStarted += ServerInitialize;
-
-
     private void Update()
     {
         if (_damage) BossHealthData.TakeDamage(1);
@@ -24,15 +21,20 @@ public class BossHealthBar : NetworkBehaviour
     [Server]
     public void ServerInitialize() => BossHealthData.onDamageTaken.AddListener(CallSetHealth);
 
-    private void ClientInitialize()
+    public void ClientInitialize(float bossMaxHealth)
     {
         _healthBar = GetComponent<Slider>();
-        _healthBar.maxValue = BossHealthData.MaxHealth;
+        _healthBar.maxValue = bossMaxHealth;
         _healthBar.value = _healthBar.maxValue;
     }
 
     private void CallSetHealth() => SetUIHealth(BossHealthData.Health);
 
     [ObserversRpc]
-    private void SetUIHealth(float bossHealth) => _healthBar.value = bossHealth;
+    private void SetUIHealth(float bossHealth)
+    {
+        _healthBar.value = bossHealth;
+
+        Debug.LogError($"new health:{_healthBar.value}");
+    }
 }
