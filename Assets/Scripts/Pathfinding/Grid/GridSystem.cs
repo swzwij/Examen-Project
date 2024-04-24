@@ -1,31 +1,46 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-using FishNet.Object;
+using MarkUlrich.Utils;
 using UnityEngine;
 
 namespace Examen.Pathfinding.Grid
 {
-    public class GridSystem : NetworkBehaviour
+    public class GridSystem : NetworkedSingletonInstance<GridSystem>
     {
         [SerializeField] private bool _showGrid = true;
+
         [SerializeField] private float _maxWorldHeight = 30f;
         [SerializeField] private float _maxElevationDifference = 0.6f;
         [SerializeField] private float _maxConnectionDistance = 1f;
         [SerializeField] private float _nodeHeightOffset = 0.2f;
+
         [SerializeField] private LayerMask _walkableLayerMask;
         [SerializeField] private LayerMask _obstacleLayerMask;
+
         [SerializeField] private Cell _cellPrefab;
         [SerializeField] private int _cellSize = 10;
         [SerializeField] private Vector2Int _gridSize;
+
         [SerializeField] private float _nodeDistance = 1f;
         [SerializeField] private int _maxNodeConnections = 3;
+
+        [SerializeField] private List<Cell> _currentCells;
         
         private Node[,] _nodes;
         private Cell[,] _cells;
         private bool _isInitialized;
 
+        public Action<Vector2Int> OnCellCreated;
+        public Action OnGridCreated;
+
         private Vector3 CellSize 
             => new(_cellSize * _nodeDistance, _cellSize * _nodeDistance, _cellSize * _nodeDistance);
+
+        public Cell[,] Cells => _cells;
+
+        public List<Cell> CurrentCells => _currentCells; 
 
         private void FixedUpdate()
         {
@@ -39,16 +54,15 @@ namespace Examen.Pathfinding.Grid
         /// <summary>
         /// Creates the grid by initializing nodes, connecting them, and initializing cells.
         /// </summary>
-        [Server]
         public void CreateGrid()
         {
             _nodes = new Node[_gridSize.x, _gridSize.y];
             InitializeGrid(_gridSize, InitializeNode);
             ConnectNodes();
             InitializeCells();
+            OnGridCreated?.Invoke();
         }
 
-        [Server]
         private void InitializeGrid(Vector2Int gridSize, System.Action<int, int> initializeElement)
         {
             for (int x = 0; x < gridSize.x; x++)
@@ -58,7 +72,6 @@ namespace Examen.Pathfinding.Grid
             }
         }
 
-        [Server]
         private void InitializeNode(int x, int y)
         {
             Vector3 nodePosition = CalculateNodePosition(x, y);
@@ -69,11 +82,9 @@ namespace Examen.Pathfinding.Grid
             newNode.GridPosition = new Vector2Int(x, y);
         }
 
-        [Server]
         private Vector3 CalculateNodePosition(int x, int y) 
             => transform.position + new Vector3(x * _nodeDistance, 0, y * _nodeDistance);
 
-        [Server]
         private Node ConfigureNode(Node node, Vector3 nodePosition)
         {
             if (!IsWalkableArea(nodePosition, out float elevation))
@@ -89,7 +100,6 @@ namespace Examen.Pathfinding.Grid
             return node;
         }
 
-        [Server]
         private void InitializeCells()
         {
             DestroyCells();
@@ -101,7 +111,6 @@ namespace Examen.Pathfinding.Grid
             InitializeGrid(new Vector2Int(numCellsX, numCellsY), InitializeCell);
         }
 
-        [Server]
         private void InitializeCell(int x, int y)
         {
             Cell newCell = Instantiate(_cellPrefab);
@@ -109,22 +118,22 @@ namespace Examen.Pathfinding.Grid
 
             ConfigureCell(newCell, x, y);
             PopulateCellWithNodes(newCell, x, y);
+
+            _currentCells.Add(newCell);
         }
 
-        [Server]
         private void ConfigureCell(Cell cell, int x, int y)
         {
             cell.name = $"Cell {x}-{y}";
             cell.gameObject.layer = 2; // Ignore raycast
             cell.transform.SetParent(transform);
             cell.transform.position = GetCellPosition(x, y);
-            cell.transform.localScale = CellSize;
+            cell.Collider.size = CellSize;
             cell.GridSystem = this;
             cell.CellX = x;
             cell.CellY = y;
         }
 
-        [Server]
         private void PopulateCellWithNodes(Cell cell, int x, int y)
         {
             int startX = x * _cellSize;
@@ -135,7 +144,13 @@ namespace Examen.Pathfinding.Grid
             for (int nodeX = startX; nodeX < endX; nodeX++)
             {
                 for (int nodeY = startY; nodeY < endY; nodeY++)
-                    cell.AddNode(_nodes[nodeX, nodeY]);
+                {
+                    Node node = _nodes[nodeX, nodeY];
+                    cell.AddNode(node);
+
+                    if (node.IsWalkable)
+                        cell.ActiveNodes.Add(node);
+                }
             }
         }
 
@@ -145,7 +160,6 @@ namespace Examen.Pathfinding.Grid
         /// <param name="position">The position to check.</param>
         /// <param name="elevation">The elevation of the walkable area.</param>
         /// <returns>True if the area is walkable, false otherwise.</returns>
-        [Server]
         public bool IsWalkableArea(Vector3 position, out float elevation)
         {
             Ray ray = new(position + Vector3.up * _maxWorldHeight, Vector3.down);
@@ -172,10 +186,8 @@ namespace Examen.Pathfinding.Grid
         /// </summary>
         /// <param name="cellX">The x-coordinate of the cell.</param>
         /// <param name="cellY">The y-coordinate of the cell.</param>
-        [Server]
         public void UpdateCell(int cellX, int cellY) => StartCoroutine(UpdateCellDelayed(cellX, cellY));
 
-        [Server]
         private IEnumerator UpdateCellDelayed(int cellX, int cellY)
         {
             yield return new WaitForEndOfFrame();
@@ -191,6 +203,7 @@ namespace Examen.Pathfinding.Grid
                     node.Position = new Vector3(position.x, elevation, position.z);
                     node.MaxConnectionDistance = _maxConnectionDistance;
                     node.MaxElevationDifference = _maxElevationDifference;
+                    cell.ActiveNodes.Add(node);
                 }
                 else
                 {
@@ -201,7 +214,6 @@ namespace Examen.Pathfinding.Grid
             ConnectNodes();
         }
 
-        [Server]
         private void ConnectNodes()
         {
             foreach (int x in Enumerable.Range(0, _gridSize.x))
@@ -211,7 +223,6 @@ namespace Examen.Pathfinding.Grid
             }
         }
 
-        [Server]
         private void CheckNodeConnections(int x, int y)
         {
             Node currentNode = _nodes[x, y];
@@ -236,7 +247,6 @@ namespace Examen.Pathfinding.Grid
         /// <summary>
         /// Clears the grid by resetting the nodes and cells, and destroying any existing cells.
         /// </summary>
-        [Server]
         public void ClearGrid()
         {
             _nodes = null;
@@ -244,11 +254,12 @@ namespace Examen.Pathfinding.Grid
             DestroyCells();
         }
 
-        [Server]
         private void DestroyCells()
         {
             for (int i = transform.childCount - 1; i >= 0; i--)
                 DestroyImmediate(transform.GetChild(i).gameObject);
+
+            _currentCells.Clear();
         }
 
         /// <summary>
@@ -256,7 +267,6 @@ namespace Examen.Pathfinding.Grid
         /// </summary>
         /// <param name="worldPosition">The world position to check.</param>
         /// <returns>The node at the specified world position.</returns>
-        [Server]
         public Node GetNodeFromWorldPosition(Vector3 worldPosition)
         {
             float percentX = Mathf.Clamp01((worldPosition.x - transform.position.x) / (_gridSize.x * _nodeDistance));
@@ -268,25 +278,6 @@ namespace Examen.Pathfinding.Grid
             Node currentNode = _nodes[x, y];
 
             return currentNode;
-        }
-
-        /// <summary>
-        /// Returns the cell at the specified world position.
-        /// </summary>
-        /// <param name="worldPosition">The world position to check.</param>
-        /// <returns>The cell at the specified world position.</returns>
-        [Server]
-        public Cell GetCellFromWorldPosition(Vector3 worldPosition)
-        {
-            float percentX = Mathf.Clamp01((worldPosition.x - transform.position.x) / (_gridSize.x * _nodeDistance));
-            float percentY = Mathf.Clamp01((worldPosition.z - transform.position.z) / (_gridSize.y * _nodeDistance));
-
-            int x = Mathf.RoundToInt((_gridSize.x / _cellSize) * percentX);
-            int y = Mathf.RoundToInt((_gridSize.y / _cellSize) * percentY);
-
-            Cell currentCell = _cells[x, y];
-
-            return currentCell;
         }
 
         /// <summary>
@@ -315,7 +306,6 @@ namespace Examen.Pathfinding.Grid
             return closestNode;
         }
 
-        [Server]
         private Vector3 GetCellPosition(int xIndex, int yIndex)
         {
             // Calculate the bottom left position of the cell
@@ -324,6 +314,24 @@ namespace Examen.Pathfinding.Grid
             // Calculate the center position of the cell
             Vector3 cellCenter = cellBottomLeft + new Vector3(CellSize.x / 2, 0, CellSize.z / 2);
             return cellCenter;
+        }
+
+        /// <summary>
+        /// Returns the cell at the specified world position.
+        /// </summary>
+        /// <param name="worldPosition">The world position to check.</param>
+        /// <returns>The cell at the specified world position.</returns>
+        public Cell GetCellFromWorldPosition(Vector3 worldPosition)
+        {
+            float percentX = Mathf.Clamp01((worldPosition.x - transform.position.x) / (_gridSize.x * _nodeDistance));
+            float percentY = Mathf.Clamp01((worldPosition.z - transform.position.z) / (_gridSize.y * _nodeDistance));
+
+            int x = Mathf.RoundToInt((_gridSize.x / _cellSize) * percentX);
+            int y = Mathf.RoundToInt((_gridSize.y / _cellSize) * percentY);
+
+            Cell currentCell = _cells[x, y];
+
+            return currentCell;
         }
 
         private void OnDrawGizmos()
