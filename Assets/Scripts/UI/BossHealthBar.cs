@@ -31,10 +31,6 @@ public class BossHealthBar : NetworkBehaviour
     private void CallSetHealth() => SetUIHealth(BossHealthData.Health);
 
     [ObserversRpc]
-    private void SetUIHealth(float bossHealth)
-    {
-        _healthBar.value = bossHealth;
+    private void SetUIHealth(float bossHealth) => _healthBar.value = bossHealth;
 
-        Debug.LogError($"new health:{_healthBar.value}");
-    }
 }
