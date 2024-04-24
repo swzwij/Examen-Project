@@ -12,7 +12,6 @@ namespace Examen.Structure
         [SerializeField] private float _speedMultiplier = 1.5f;
         [SerializeField] private Vector3 _colliderSize = new Vector3(5.5f, 1, 15.5f);
 
-         
         private Dictionary<Collider, PathFollower> _players = new();
 
         private Collider[] _overlappingColliders = new Collider[16];
