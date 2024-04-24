@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 6810126444432453413}
   - component: {fileID: 9181585673909579258}
   - component: {fileID: 7071424768019710682}
+  - component: {fileID: 8512776686041790956}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
@@ -289,6 +290,35 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &8512776686041790956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5760878545938402771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 665c672f2e2777c47b3254da291fff52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 1000
+  onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onHealthAdded:
+    m_PersistentCalls:
+      m_Calls: []
+  onDamageTaken:
+    m_PersistentCalls:
+      m_Calls: []
+  onDie:
+    m_PersistentCalls:
+      m_Calls: []
+  onResurrected:
+    m_PersistentCalls:
+      m_Calls: []
+  isDead: 0
 --- !u!1 &9005010927722937738
 GameObject:
   m_ObjectHideFlags: 0
