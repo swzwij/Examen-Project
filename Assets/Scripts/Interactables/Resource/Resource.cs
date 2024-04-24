@@ -1,8 +1,9 @@
-using Examen.Inventory;
 using Examen.Items;
 using Examen.Networking;
+using Examen.Pathfinding.Grid;
 using Examen.Player.PlayerDataManagement;
 using Examen.Poolsystem;
+using Examen.Spawning.ResourceSpawning;
 using FishNet.Connection;
 using FishNet.Object;
 using MarkUlrich.Health;
@@ -18,10 +19,20 @@ namespace Examen.Interactables.Resource
         [SerializeField] protected int p_respawnTime;
 
         protected HealthData p_healthData;
+        protected bool p_hasServerStarted;
+        protected Cell p_cell;
 
         public Item ResourceItem => p_resourceItem;
+        public SpawnArea SpawnArea { get; set; }
+        public Cell Cell { get => p_cell; set => p_cell = value; }
 
-        private void OnEnable() => RespawnResource();
+        private void OnEnable()
+        {
+            if (!p_hasServerStarted || !IsServer)
+                return;
+
+            RespawnResource();
+        }
 
         private void Start() => ServerInstance.Instance.OnServerStarted += InitResource; 
 
@@ -33,19 +44,16 @@ namespace Examen.Interactables.Resource
             if (!IsServer)
                 return;
 
+            p_hasServerStarted = true;   
             p_healthData = GetComponent<HealthData>();
 
             p_healthData.onDie.AddListener(StartRespawnTimer);
+            p_healthData.onDie.AddListener(GetCell);
             p_healthData.onDie.AddListener(DisableObject);
+            p_healthData.onDie.AddListener(UpdateCell);
 
             p_healthData.onResurrected.AddListener(EnableObject);
-        }
-
-        [Server]
-        protected virtual void RespawnResource()
-        {
-            SetNewPostion(transform.position);
-            p_healthData.Resurrect(p_healthData.MaxHealth);
+            p_healthData.onResurrected.AddListener(UpdateCell);
         }
 
         /// <summary>
@@ -70,11 +78,12 @@ namespace Examen.Interactables.Resource
         public void DisableObject() => gameObject.SetActive(false);
 
         /// <summary>
-        /// Sets client resource position to server resource postion.
+        /// Sets client resource position to server resource position.
         /// </summary>
-        /// <param name="newPosition"> the postion of the server resource</param>
+        /// <param name="newPosition"> the position of the server resource</param>
         [ObserversRpc]
-        public virtual void SetNewPostion(Vector3 newPosition) => transform.position = newPosition;
+        public virtual void SetNewPosition(Vector3 newPosition) => transform.position = newPosition;
+
 
         /// <summary>
         /// Calls all functionalities that need to happen when you are interacting with this Resource
@@ -108,6 +117,20 @@ namespace Examen.Interactables.Resource
         public virtual void ReceiveInteract()
         {
             // Todo: Play given animation
+        }
+
+        [Server]
+        protected void GetCell() => Cell = GridSystem.Instance.GetCellFromWorldPosition(transform.position);
+
+        [Server]
+        protected void UpdateCell() => SpawnArea.DelayCellUpdate(Cell);
+
+        [Server]
+        protected virtual void RespawnResource()
+        {
+            transform.position = SpawnArea.GetRandomPosition(out p_cell);
+            SetNewPosition(transform.position);
+            p_healthData.Resurrect(p_healthData.MaxHealth);
         }
 
         private void OnDestroy() => ServerInstance.Instance.OnServerStarted -= InitResource;
