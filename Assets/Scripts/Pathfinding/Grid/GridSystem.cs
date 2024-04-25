@@ -193,13 +193,12 @@ namespace Examen.Pathfinding.Grid
         {
             yield return new WaitForEndOfFrame();
 
-            Profiler.BeginSample("___GridSystem Update Cell Delayed");
             Cell cell = _cells[cellX, cellY];
+
             foreach (Node node in cell.Nodes)
             {
-                Profiler.BeginSample("___GridSystem For Loop");
-
                 Vector3 position = node.Position;
+                
                 if (IsWalkableArea(position, out float elevation))
                 {
                     node.IsWalkable = true;
@@ -208,60 +207,32 @@ namespace Examen.Pathfinding.Grid
                     node.MaxConnectionDistance = _maxConnectionDistance;
                     node.MaxElevationDifference = _maxElevationDifference;
                     cell.ActiveNodes.Add(node);
+                    continue;
                 }
-                else
-                {
-                    node.IsWalkable = false;
-                }
-
-                Profiler.EndSample();
+                
+                node.IsWalkable = false;
             }
-            Profiler.EndSample();
-
-            Profiler.BeginSample("___GridSystem Connected Nodes");
 
             ConnectNodesInCell(cell);
-
-            Profiler.EndSample();
         }
 
         private void ConnectNodes()
         {
-            Profiler.BeginSample("___GridSystem ConnectNodes");
-
-
             for (int x = 0; x < _gridSize.x; x++)
             {
                 for (int y = 0; y < _gridSize.y; y++)
-                {
-                    Profiler.BeginSample("___GridSystem CheckNodeConnections");
-
                     CheckNodeConnections(x, y);
-
-                    Profiler.EndSample();
-                }
             }
-
-            Profiler.EndSample();
         }
 
         private void ConnectNodesInCell(Cell cell)
         {
             for (int i = 0; i < cell.Nodes.Count; i++)
-            {
                 CheckNodeConnections(cell.Nodes.ElementAt(i).GridPosition.x, cell.Nodes.ElementAt(i).GridPosition.y);
-            }
-        }
-
-        private void CheckNodeConnections(Node node)
-        {
-
         }
 
         private void CheckNodeConnections(int x, int y)
         {
-            Profiler.BeginSample("___GridSystem CheckNodeConnections");
-
             Node currentNode = _nodes[x, y];
 
             for (int i = x - 1; i <= x + 1; i++)
@@ -279,8 +250,6 @@ namespace Examen.Pathfinding.Grid
                     currentNode.AddConnectedNode(otherNode);
                 }
             }
-
-            Profiler.EndSample();
         }
 
         /// <summary>
