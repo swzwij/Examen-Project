@@ -27,8 +27,8 @@ namespace Examen.Pathfinding
         [Server]
         public List<Node> FindPath(Vector3 startPosition, Vector3 targetPosition)
         {
-            Node startNode = _gridSystem.GetNodeFromWorldPosition(startPosition);
-            Node targetNode = _gridSystem.GetClosestWalkableNode(targetPosition);
+            Node startNode = GridSystem.Instance.GetNodeFromWorldPosition(startPosition);
+            Node targetNode = GridSystem.Instance.GetClosestWalkableNode(targetPosition);
 
             _openSet.Clear();
             _closedSet.Clear();

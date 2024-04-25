@@ -139,7 +139,7 @@ MonoBehaviour:
   _cameraSettings:
   - _cameraType: 0
     _cameraSettings:
-      _distance: 10
+      _distance: 25
       _zoomLevel: 1
       _angle: 45
       _transitionSpeed: 0.05
