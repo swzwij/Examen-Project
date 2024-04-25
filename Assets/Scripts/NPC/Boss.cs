@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Exame.Attacks;
 using Examen.Attacks;
 using Examen.Pathfinding;
+using FishNet.Connection;
 using FishNet.Object;
 using MarkUlrich.Health;
 using UnityEngine;
@@ -10,7 +11,7 @@ using UnityEngine;
 namespace Examen.NPC
 {
     [RequireComponent(typeof(WaypointFollower))]
-    public class Boss : NetworkBehaviour
+    public class Boss : Interactable
     {
         [SerializeField] private WaypointFollower _waypointFollower;
         [SerializeField] private float _turnSpeed = 1f;
@@ -20,6 +21,7 @@ namespace Examen.NPC
         [SerializeField] private float _repeatInterval = 1f;
         
         private Dictionary<AttackTypes, BaseAttack> _attackTypes = new();
+        private HealthData _healthData;
         private bool _hasClearedPath;
 
         private void Awake()
@@ -36,6 +38,23 @@ namespace Examen.NPC
 
             foreach (BaseAttack attack in _attacks)
                 _attackTypes.Add(attack.AttackType, attack);
+        }
+
+        [Server]
+        public override void Interact(NetworkConnection connection, float damageAmount = 0)
+        {
+            _healthData.TakeDamage(damageAmount);
+        }
+
+        public override void PlayInteractingSound()
+        {
+            
+        }
+
+        [ObserversRpc]
+        public virtual void BroadcastInteract()
+        {
+            // Todo: Play given animation
         }
 
         private void ProcessStructureEncounter(HealthData healthData)
