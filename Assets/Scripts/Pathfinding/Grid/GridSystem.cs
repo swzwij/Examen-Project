@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MarkUlrich.Utils;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace Examen.Pathfinding.Grid
 {
@@ -192,9 +193,12 @@ namespace Examen.Pathfinding.Grid
         {
             yield return new WaitForEndOfFrame();
 
+            Profiler.BeginSample("___GridSystem Update Cell Delayed");
             Cell cell = _cells[cellX, cellY];
             foreach (Node node in cell.Nodes)
             {
+                Profiler.BeginSample("___GridSystem For Loop");
+
                 Vector3 position = node.Position;
                 if (IsWalkableArea(position, out float elevation))
                 {
@@ -209,27 +213,60 @@ namespace Examen.Pathfinding.Grid
                 {
                     node.IsWalkable = false;
                 }
-            }
 
-            ConnectNodes();
+                Profiler.EndSample();
+            }
+            Profiler.EndSample();
+
+            Profiler.BeginSample("___GridSystem Connected Nodes");
+
+            ConnectNodesInCell(cell);
+
+            Profiler.EndSample();
         }
 
         private void ConnectNodes()
         {
-            foreach (int x in Enumerable.Range(0, _gridSize.x))
+            Profiler.BeginSample("___GridSystem ConnectNodes");
+
+
+            for (int x = 0; x < _gridSize.x; x++)
             {
-                foreach (int y in Enumerable.Range(0, _gridSize.y))
+                for (int y = 0; y < _gridSize.y; y++)
+                {
+                    Profiler.BeginSample("___GridSystem CheckNodeConnections");
+
                     CheckNodeConnections(x, y);
+
+                    Profiler.EndSample();
+                }
             }
+
+            Profiler.EndSample();
+        }
+
+        private void ConnectNodesInCell(Cell cell)
+        {
+            for (int i = 0; i < cell.Nodes.Count; i++)
+            {
+                CheckNodeConnections(cell.Nodes.ElementAt(i).GridPosition.x, cell.Nodes.ElementAt(i).GridPosition.y);
+            }
+        }
+
+        private void CheckNodeConnections(Node node)
+        {
+
         }
 
         private void CheckNodeConnections(int x, int y)
         {
+            Profiler.BeginSample("___GridSystem CheckNodeConnections");
+
             Node currentNode = _nodes[x, y];
 
-            foreach (int i in Enumerable.Range(x - 1, _maxNodeConnections))
+            for (int i = x - 1; i <= x + 1; i++)
             {
-                foreach (int j in Enumerable.Range(y - 1, _maxNodeConnections))
+                for (int j = y - 1; j <= y + 1; j++)
                 {
                     if (i == x && j == y || i < 0 || i >= _gridSize.x || j < 0 || j >= _gridSize.y)
                         continue;
@@ -242,6 +279,8 @@ namespace Examen.Pathfinding.Grid
                     currentNode.AddConnectedNode(otherNode);
                 }
             }
+
+            Profiler.EndSample();
         }
 
         /// <summary>

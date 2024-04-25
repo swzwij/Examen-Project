@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace Examen.Pathfinding.Grid
 {
@@ -54,21 +55,14 @@ namespace Examen.Pathfinding.Grid
         /// <param name="node">The node to add as a connected node.</param>
         public void AddConnectedNode(Node node)
         {
-            if (CalculateElevation(node) > _maxElevationDifference || CalculateDistance(node) > _maxConnectionDistance)
+            if (CalculateElevation(node) > _maxElevationDifference || CalculateDistance(node) > _maxConnectionDistance * _maxConnectionDistance)
                 return;
             
-            Vector3 direction = node.Position - Position;
-            float distance = Vector3.Distance(Position, node.Position);
-            Ray ray = new(Position, direction);
-
-            if (Physics.Linecast(ray.origin, ray.origin + ray.direction * distance))
-                return;
-
             _connectedNodes.Add(node);
         }
 
         private float CalculateElevation(Node otherNode) => Mathf.Abs(_elevation - otherNode._elevation);
-        private float CalculateDistance(Node otherNode) => Vector3.Distance(_position, otherNode._position);
+        private float CalculateDistance(Node otherNode) => (_position - otherNode._position).sqrMagnitude;
     }
 }
 
