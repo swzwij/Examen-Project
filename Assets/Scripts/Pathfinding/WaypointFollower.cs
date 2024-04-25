@@ -8,28 +8,15 @@ namespace Examen.Pathfinding
 {
     public class WaypointFollower : PathFollower
     {
-        [SerializeField] private List<Transform> _waypoints = new();
+        private List<Transform> _waypoints = new();
         private List<Node> _completePath = new();
         private int _currentWaypointIndex = 0;
-        private Transform _waypointsParent;
-        private bool _hasInitialised;
 
         protected override void Start() => base.Start();
 
-        private void InitBoss()
+        public void InitBoss(List<Transform> newWaypoints)
         {
-            _waypointsParent = new GameObject().transform;
-            _waypointsParent.name = $"{gameObject.name} - Waypoints";
-
-            _waypoints.Clear();
-
-            for (int i = transform.childCount - 1; i >= 0; i--)
-            {
-                _waypoints.Add(transform.GetChild(i));
-                transform.GetChild(i).SetParent(_waypointsParent);
-            }
-
-            _waypoints.Reverse();
+            _waypoints = newWaypoints;
 
             if (_waypoints.Count == 0)
                 return;
@@ -61,12 +48,6 @@ namespace Examen.Pathfinding
         {
             if (!IsServer)
                 return;
-
-            if (!_hasInitialised)
-            {
-                _hasInitialised = true;
-                InitBoss();
-            }
 
             UpdateBoss(_waypoints);
         }

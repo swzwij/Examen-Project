@@ -31,7 +31,7 @@ namespace Examen.Poolsystem
         /// <param name="nameTag">The name of the category the object is in.</param>
         /// <param name="spawnPrefab">The object you want to spawn in.</param>
         /// <param name="parentTransform">The object you want the spawnobject to be the childobject of.</param>
-        public void SpawnObject(string nameTag, GameObject spawnPrefab, Transform parentTransform = null) 
+        public GameObject SpawnObject(string nameTag, GameObject spawnPrefab, Transform parentTransform = null) 
             => SpawnObject(nameTag, parentTransform, spawnPrefab);
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Examen.Poolsystem
         /// <param name="nameTag">The name of the category the object is in.</param>
         /// <param name="parentTransform">The object you want the spawnobject to be the childobject of.</param>
         /// <param name="spawnPrefab">The object you want to spawn in.</param>
-        public void SpawnObject(string nameTag, Transform parentTransform = null, GameObject spawnPrefab = null)
+        public GameObject SpawnObject(string nameTag, Transform parentTransform = null, GameObject spawnPrefab = null)
         {
             if (_objectStack?.ContainsKey(nameTag) == true && _objectStack[nameTag].Any())
             {
@@ -51,15 +51,17 @@ namespace Examen.Poolsystem
                 AddActiveObject(nameTag, lastObject);
 
                 lastObject.SetActive(true);
-                return;
+                return lastObject;
             }
 
             if (spawnPrefab == null) 
-                return;
+                return null;
 
             GameObject newGameObject = Instantiate(spawnPrefab);
             MoveObjectToActiveScene(newGameObject, parentTransform);
             AddActiveObject(nameTag, newGameObject);
+
+            return newGameObject;
         }
 
         /// <summary>

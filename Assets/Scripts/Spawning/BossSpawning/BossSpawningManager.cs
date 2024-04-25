@@ -1,17 +1,21 @@
 using Examen.Networking;
+using Examen.Pathfinding;
 using Examen.Poolsystem;
 using FishNet.Component.Spawning;
 using FishNet.Object;
 using MarkUlrich.Health;
+using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class BossSpawningManager : NetworkBehaviour
 {
     [Header("Boss Spawning")]
     [SerializeField] private int _bossDownTimer = 60;
-    [SerializeField] private HealthData _bossPrefab;
     [SerializeField] private PlayerSpawner _spawner;
+    [SerializeField] private List<HealthData> _bossPrefabs;
+    [SerializeField] private List<BossSpawnPoints> _bossSpawnPoints;
 
     [Header("Boss UI")]
     [SerializeField] private List<BossHealthBar> _sliders;
@@ -22,24 +26,33 @@ public class BossSpawningManager : NetworkBehaviour
 
     private void Start()
     {
-        ServerInstance.Instance.OnServerStarted += CreateBoss;
+        ServerInstance.Instance.OnServerStarted += SpawnBoss;
 
         _spawner.OnSpawned += (NetworkObject obj) => SendBossInfoOnConnection();
     }
 
     [Server]
-    private void CreateBoss()
+    private void SpawnBoss()
     {
-        if(_spawnedBosses >= _sliders.Count)
+        if (_spawnedBosses >= _sliders.Count)
         {
             Debug.LogError("Cant add more Boss");
             return;
         }
 
-        HealthData healthData = Instantiate(_bossPrefab);
+        int randomNumber = Random.Range(0, _bossSpawnPoints.Count);
+        int randomNumber2 = Random.Range(0, _bossPrefabs.Count);
 
-        PoolSystem.Instance.AddActiveObject(healthData.name, healthData.gameObject);
-        healthData.onDie.AddListener(() => StartNextSpawnTimer(healthData.gameObject));
+        GameObject boss = PoolSystem.Instance.SpawnObject(_bossPrefabs[randomNumber2].name, _bossPrefabs[randomNumber2].gameObject);
+
+        if (_bossSpawnPoints[randomNumber].Waypoints.Count == 0)
+            _bossSpawnPoints[randomNumber].SetWaypoints();
+
+        boss.transform.position = _bossSpawnPoints[randomNumber].Waypoints[0].position;
+        boss.GetComponent<WaypointFollower>().InitBoss(_bossSpawnPoints[randomNumber].Waypoints);
+        HealthData healthData = boss.GetComponent<HealthData>();
+
+        healthData.onDie.AddListener(() => StartNextSpawnTimer(boss));
         _spawnedBosses++;
 
         AddSlider(healthData);
@@ -91,7 +104,15 @@ public class BossSpawningManager : NetworkBehaviour
             _currentActiveBossSliders.Remove(bossObject);
         }
 
-        PoolSystem.Instance.StartRespawnTimer(_bossDownTimer, bossObject.name, bossObject.transform.parent); // todo: remove this line when we have more bosses
         PoolSystem.Instance.DespawnObject(bossObject.name, bossObject);
+        StartCoroutine(WaitForNextSpawn());
     }
+
+    private IEnumerator WaitForNextSpawn()
+    {
+        yield return new WaitForSeconds(_bossDownTimer);
+
+        SpawnBoss();
+    }
+  
 }
