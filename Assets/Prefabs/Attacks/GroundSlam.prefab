@@ -51,16 +51,15 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 5998508435628983183}
   p_attackType: 1
   p_damage: 10
-  p_cooldown: 1
   p_prepareTime: 0.25
-  p_attackActiveDuration: 1
+  p_cooldown: 1
   _resetTime: 0.25
   _radius: 5
   _layerMask:
     serializedVersion: 2
     m_Bits: 72
   _projector: {fileID: 8641482507666070848}
-  interval: 1
+  _animation: {fileID: 0}
 --- !u!114 &5998508435628983183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,10 +112,6 @@ PrefabInstance:
     - target: {fileID: 625794941294020433, guid: fb47f884dca688f44a48608a8ce7cfbb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7552112301429425587, guid: fb47f884dca688f44a48608a8ce7cfbb, type: 3}
-      propertyPath: m_IgnoreLayers.m_Bits
-      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 7943257184595032718, guid: fb47f884dca688f44a48608a8ce7cfbb, type: 3}
       propertyPath: m_Name

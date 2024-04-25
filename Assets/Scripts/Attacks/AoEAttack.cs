@@ -10,14 +10,13 @@ namespace Exame.Attacks
     public class AoEAttack : BaseAttack
     {
         [Header("AoE Attack Settings")]
-        [SerializeField] private float p_prepareTime = 1f;
-        [SerializeField] private float p_attackActiveDuration = 1f;
         [SerializeField] private float _resetTime = 1f;
         [SerializeField] private float _radius = 5f;
         [SerializeField] private LayerMask _layerMask;
 
         [Header("Visuals")]
         [SerializeField] private Projector _projector;
+        [SerializeField] private Animation _animation;
 
         private readonly Dictionary<Collider, HealthData> _damagedTargets = new();
         private float AoERadius => _radius * 1.2f;
@@ -29,10 +28,15 @@ namespace Exame.Attacks
             _projector = GetComponentInChildren<Projector>();
             _projector.orthographicSize = 0;
             BroadCastProjectorSize(_projector.orthographicSize);
-            IncreaseCooldown(p_attackActiveDuration + _resetTime);
         }
 
-        protected override void Attack() => StartCoroutine(PrepareAoEAttack());
+        protected override void PrepareAttack()
+        {
+            base.PrepareAttack();
+            StartCoroutine(PrepareProjector());
+        }
+
+        protected override void Attack() => ActivateAoEAttack();
 
         private void ActivateAoEAttack()
         {
@@ -40,7 +44,7 @@ namespace Exame.Attacks
             Collider[] colliders = Physics.OverlapSphere(transform.position, _radius, _layerMask);
             foreach (Collider collider in colliders)
             {
-                if (_damagedTargets.ContainsKey(collider))
+                if (_damagedTargets.TryGetValue(collider, out _))
                 {
                     _damagedTargets[collider].TakeDamage(p_damage);
                     Debug.LogError($"Damaging {collider.name} again");
@@ -56,13 +60,6 @@ namespace Exame.Attacks
             }
 
             StartCoroutine(ResetProjector());
-        }
-
-        private IEnumerator PrepareAoEAttack()
-        {
-            StartCoroutine(PrepareProjector());
-            yield return new WaitForSeconds(p_prepareTime + p_attackActiveDuration);
-            ActivateAoEAttack();
         }
 
         private IEnumerator PrepareProjector()

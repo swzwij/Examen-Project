@@ -11,36 +11,48 @@ namespace Exame.Attacks
         [Header("Base Attack Settings")]
         [SerializeField] protected AttackTypes p_attackType;
         [SerializeField] protected float p_damage = 10f;
+        [SerializeField] protected float p_prepareTime = 0f;
         [SerializeField] protected float p_cooldown = 1f;
 
         protected Animator p_animator;
         protected Coroutine p_cooldownCoroutine;
-        private bool _hasAnimator;
 
-        protected float CurrentAnimationLength => p_animator.GetCurrentAnimatorClipInfo(0).Length;
         public bool CanAttack { get; protected set; } = true;
         public AttackTypes AttackType => p_attackType;
         public float Cooldown => p_cooldown;
+        public float PrepareTime => p_prepareTime;
 
         public event Action OnAttack;
-        public event Action OnAttacked;
+        public event Action<bool> OnAttacked;
 
         protected virtual void OnEnable()
         {
-            if (TryGetComponent(out p_animator))
-                _hasAnimator = true;
-
-            OnAttack += ActivateAttack;
+            OnAttack += StartAttack;
+            p_animator = GetComponentInParent<Animator>();
         }
 
-        public virtual void ActivateAttack()
+        public virtual void StartAttack()
         {
             if (!CanAttack)
                 return;
 
             CanAttack = false;
+            StartCoroutine(AttackPreparation());
+        }
+
+        protected virtual void PrepareAttack()
+        {
+            p_animator.SetTrigger("Attack");
+            BroadCastAnimation("Attack");
+        }
+
+        protected IEnumerator AttackPreparation()
+        {
+            PrepareAttack();
+            float animationTime = p_animator.GetCurrentAnimatorStateInfo(0).length;
+            yield return new WaitForSeconds(p_prepareTime + animationTime);
             Attack();
-            OnAttacked?.Invoke();
+            OnAttacked?.Invoke(true);
             p_cooldownCoroutine = StartCoroutine(AttackCooldown());
         }
 
@@ -48,22 +60,20 @@ namespace Exame.Attacks
 
         protected IEnumerator AttackCooldown()
         {
-            if (_hasAnimator)
-                yield return new WaitForSeconds(CurrentAnimationLength);
-            
             yield return new WaitForSeconds(p_cooldown);
             CanAttack = true;
             BroadCastCanAttack(true);
+            OnAttacked?.Invoke(false);
         }
 
         protected void IncreaseCooldown(float amount) => p_cooldown += amount;
 
         [ObserversRpc]
-        private void BroadCastCanAttack(bool canAttack)
-        {
-            CanAttack = canAttack;
-        }
+        private void BroadCastCanAttack(bool canAttack) => CanAttack = canAttack;
 
-        protected virtual void OnDisable() => OnAttack -= ActivateAttack;
+        [ObserversRpc]
+        private void BroadCastAnimation(string trigger) => p_animator.SetTrigger(trigger);
+
+        protected virtual void OnDisable() => OnAttack -= StartAttack;
     }
 }

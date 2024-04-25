@@ -108,6 +108,9 @@ namespace Examen.Pathfinding
             OnPathCleared?.Invoke(true);
         }
 
+        [Server]
+        public void ToggleWaiting(bool isWaiting) => p_isWaiting = isWaiting;
+
         /// <summary>
         /// Continues following the current path.
         /// </summary>

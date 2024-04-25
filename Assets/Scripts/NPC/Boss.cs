@@ -14,6 +14,7 @@ namespace Examen.NPC
     public class Boss : Interactable
     {
         [SerializeField] private WaypointFollower _waypointFollower;
+        [SerializeField] private Animator p_animator;
         [SerializeField] private float _turnSpeed = 1f;
 
         [Header("Attack Settings")]
@@ -37,7 +38,11 @@ namespace Examen.NPC
             _waypointFollower.OnPathCleared += SetHasClearedPath;
 
             foreach (BaseAttack attack in _attacks)
+            {
                 _attackTypes.Add(attack.AttackType, attack);
+                if (attack is AoEAttack aoeAttack)
+                    aoeAttack.OnAttacked += _waypointFollower.ToggleWaiting;
+            }
         }
 
         [Server]
@@ -59,13 +64,13 @@ namespace Examen.NPC
 
         private void ProcessStructureEncounter(HealthData healthData)
         {
-            StartCoroutine(RepeatingAttack(_repeatInterval, AttackTypes.AOE, !_hasClearedPath)); // TODO: Add functionality for determining if should use AOE or SPECIAL attack.
+            StartCoroutine(RepeatingAttack(_repeatInterval, AttackTypes.AOE)); // TODO: Add functionality for determining if should use AOE or SPECIAL attack.
         }
 
         private void ProcessAttack(AttackTypes attackType)
         {
             if (GetAttack(attackType, out BaseAttack attack))
-                attack.ActivateAttack();
+                attack.StartAttack();
             else
                 Debug.LogError($"Attack type {attackType} not found in dictionary.");
         }
@@ -79,18 +84,19 @@ namespace Examen.NPC
             return false;
         }
 
-        protected IEnumerator RepeatingAttack(float interval, AttackTypes attackType, bool routineCondition)
+        protected IEnumerator RepeatingAttack(float interval, AttackTypes attackType)
         {
             BaseAttack attack = _attackTypes[attackType];
-            float totalinterval = interval + attack.Cooldown;
+            float totalinterval = interval + attack.Cooldown + attack.PrepareTime;
 
-            while (routineCondition) // TODO replace with a condition (such as the path no longer being blocked)
+            while (!_hasClearedPath) // TODO replace with a condition (such as the path no longer being blocked)
             {
                 if (!attack.CanAttack)
                     yield return null;
 
-                yield return new WaitForSeconds(totalinterval);
                 ProcessAttack(attackType);
+
+                yield return new WaitForSeconds(totalinterval);                
             }
         }
 

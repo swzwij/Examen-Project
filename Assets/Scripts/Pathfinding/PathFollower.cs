@@ -23,6 +23,7 @@ namespace Examen.Pathfinding
         protected bool p_hasInteracted;
         protected Vector3 p_currentTarget;
         protected bool p_hasFoundBlockage;
+        protected bool p_isWaiting;
         protected Pathfinder p_pathfinder;
         protected Pointer p_pointer;
         protected Interactor p_interactor;
@@ -127,19 +128,15 @@ namespace Examen.Pathfinding
 
                 Vector3 nodeDirection = adjustedNode - transform.position;
 
-                // if (p_turnCoroutine == null)
-                //     StopCoroutine(p_turnCoroutine);
-
-                // p_turnCoroutine = StartCoroutine(TurnToTarget(adjustedNode, p_turnSpeed));
-
                 while (Vector3.Distance(transform.position, adjustedNode) > 0.1f)
                 {
+                    if (p_isWaiting)
+                        yield return null;
+
                     float angleToNode = Vector3.Angle(nodeDirection, transform.forward);
-                    print($"Angle to node: {angleToNode / 100 + 1}");
                     MoveToTarget(adjustedNode, p_speed / (angleToNode / 100 + 1));
                     TurnToTarget(adjustedNode);
 
-                    //BroadcastPosition(transform.position);
                     BroadcastPath(P_CurrentPathPositions);
                     Debug.DrawRay(transform.position, transform.forward * p_obstacleCheckDistance, Color.blue);
                     yield return null;
