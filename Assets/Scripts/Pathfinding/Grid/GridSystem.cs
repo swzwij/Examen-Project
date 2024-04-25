@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using MarkUlrich.Utils;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace Examen.Pathfinding.Grid
 {
