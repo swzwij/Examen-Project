@@ -55,7 +55,7 @@ MonoBehaviour:
   _nodeHeightOffset: 0.3
   _walkableLayerMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 129
   _obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -64,6 +64,7 @@ MonoBehaviour:
   _gridSize: {x: 54, y: 126}
   _nodeDistance: 2
   _maxNodeConnections: 3
+  _currentCells: []
 --- !u!114 &5339269168325016233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,7 +93,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 0
+  <PrefabId>k__BackingField: 10
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
