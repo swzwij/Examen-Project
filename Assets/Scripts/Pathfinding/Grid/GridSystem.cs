@@ -196,6 +196,9 @@ namespace Examen.Pathfinding.Grid
 
             foreach (Node node in cell.Nodes)
             {
+                if (node.IsOccupied) // TODO: Add check later for reversing this when it should be walkable again
+                    continue;
+
                 Vector3 position = node.Position;
                 
                 if (IsWalkableArea(position, out float elevation))
@@ -339,6 +342,64 @@ namespace Examen.Pathfinding.Grid
             Cell currentCell = _cells[x, y];
 
             return currentCell;
+        }
+
+        public HashSet<Node> GetNodesInBounds(Vector3 position, Vector3 size, Quaternion rotation)
+        {
+            Cell cell = GetCellFromWorldPosition(position);
+
+            Bounds bounds = new Bounds(position, size);
+            HashSet<Node> nodes = new();
+
+            foreach (Node node in cell.Nodes)
+            {
+                Vector3 nodePosition = node.Position;
+                Vector3 localPosition = Quaternion.Inverse(rotation) * (nodePosition - position);
+
+                if (bounds.Contains(localPosition))
+                    nodes.Add(node);
+            }
+
+            return nodes;
+        }
+
+        public HashSet<Node> GetNodesInTransformBounds(Transform target)
+        {
+            Cell cell = GetCellFromWorldPosition(target.position);
+            HashSet<Cell> cells = new()
+            {
+                cell
+            };
+            foreach (Cell adjacentCell in cell.GetAdjacentCells())
+                cells.Add(adjacentCell);
+
+            Bounds bounds = new(target.position, target.localScale);
+            HashSet<Node> nodes = new();
+
+            foreach (Cell currentCell in cells)
+            {
+                foreach (Node node in currentCell.Nodes)
+                {
+                    if (bounds.Contains(node.Position))
+                        nodes.Add(node);
+                }
+            }
+
+            return nodes;
+        }
+
+        public HashSet<Node> GetNodesInTransformBounds(Vector3 position, Vector3 size, Quaternion rotation)
+        {
+            Bounds bounds = new(position, size);
+            HashSet<Node> nodes = new();
+
+            foreach (Node node in _nodes)
+            {
+                if (bounds.Contains(node.Position))
+                    nodes.Add(node);
+            }
+
+            return nodes;
         }
 
         private void OnDrawGizmos()

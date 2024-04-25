@@ -125,7 +125,9 @@ namespace Examen.Building
 
             Destroy(_currentPreview);
             UpdateStructurePlacement(structurePrefab, spawnLocation, spawnRotation);
-            UpdateCells(spawnLocation);
+            //UpdateCells(spawnLocation);
+            UpdateCells(structurePrefab.transform);
+            // Mark Note: Grid updating and such is not working because the GridSystem is not being found and probably also because the structure is not owned by the server.
         }
 
         [ServerRpc]
@@ -146,6 +148,21 @@ namespace Examen.Building
         {
             Cell currentCell = _gridSystem.GetCellFromWorldPosition(placedPosition);
             currentCell.UpdateCell();
+        }
+
+        [ServerRpc]
+        private void UpdateCells(Transform target)
+        {
+            HashSet<Node> nodes = _gridSystem.GetNodesInTransformBounds(target.position, target.localScale, target.rotation);
+            foreach (Node node in nodes)
+            {
+                node.IsWalkable = false;
+                node.IsOccupied = true; // TODO: Make sure this is set to false when the object is destroyed.
+                Debug.LogError($"Node at {node.Position} is now occupied.");
+            }
+
+            // Cell currentCell = _gridSystem.GetCellFromWorldPosition(target.position);
+            // currentCell.UpdateCell();
         }
 
         private void SetStructurePosition()

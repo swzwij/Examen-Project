@@ -12,6 +12,7 @@ namespace Examen.Pathfinding.Grid
         private float _maxElevationDifference;
         private float _maxConnectionDistance;
         private bool _isWalkable;
+        private bool _isOccupied;
         private Vector2Int _gridPosition;
         private float _nodeHeightOffset = 0.3f;
         private Node _parent;
@@ -29,6 +30,7 @@ namespace Examen.Pathfinding.Grid
         public Vector3 Position { get => _position; set => _position = value; }
         public float Elevation { get => _elevation; set => _elevation = value; }
         public bool IsWalkable { get => _isWalkable; set => _isWalkable = value; }
+        public bool IsOccupied { get => _isOccupied; set => _isOccupied = value; }
         public float MaxElevationDifference { get => _maxElevationDifference; set => _maxElevationDifference = value; }
         public float MaxConnectionDistance { get => _maxConnectionDistance; set => _maxConnectionDistance = value; }
         public Vector2Int GridPosition { get => _gridPosition; set => _gridPosition = value; }
@@ -46,6 +48,7 @@ namespace Examen.Pathfinding.Grid
             _maxElevationDifference = 0.6f;
             _maxConnectionDistance = 1.5f;
             _isWalkable = false;
+            _isOccupied = false;
         }
 
         /// <summary>
