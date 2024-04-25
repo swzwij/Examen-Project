@@ -171,6 +171,7 @@ GameObject:
   - component: {fileID: 7692977816705919355}
   - component: {fileID: 3694398312710353908}
   - component: {fileID: 5753440854157603489}
+  - component: {fileID: 9004772994036572953}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -527,6 +528,23 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &9004772994036572953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6297853107807436002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e755d73c82b69694abb9ddc6430f55ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  _knockbackDistance: 0
+  _midPointOffset: 0
 --- !u!1001 &2721883193640779307
 PrefabInstance:
   m_ObjectHideFlags: 0
