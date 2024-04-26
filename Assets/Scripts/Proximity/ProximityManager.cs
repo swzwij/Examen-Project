@@ -1,16 +1,16 @@
-
 using System.Collections.Generic;
-using MarkUlrich.Health;
+using FishNet.Object;
 using Unity.VisualScripting;
+using UnityEngine;
 
 namespace Examen.Proximity
 {
     public static class ProximityManager
     {
-        private static readonly Dictionary<HealthData, AgentTypes> _proximityAgents = new(); // rename to agent
-        private static readonly Dictionary<AgentTypes, List<HealthData>> _newProximityAgents = new(); // Test later
+        private static readonly Dictionary<ProximityAgent, AgentTypes> _proximityAgents = new();
+        private static readonly Dictionary<AgentTypes, List<ProximityAgent>> _proximityAgentsByType = new(); // Test later
 
-        public static void Subscribe(HealthData agent, AgentTypes agentType)
+        public static void Subscribe(this ProximityAgent agent, AgentTypes agentType)
         {
             if (_proximityAgents.TryGetValue(agent, out _))
                 return;
@@ -18,15 +18,15 @@ namespace Examen.Proximity
             _proximityAgents.Add(agent, agentType);
         }
 
-        public static void Unsubscribe(HealthData agent)
+        public static void Unsubscribe(this ProximityAgent agent)
         {
             if (_proximityAgents.TryGetValue(agent, out _))
                 _proximityAgents.Remove(agent);
         }
 
-        public static HashSet<HealthData> GetEntitesOfType(AgentTypes agentTypes)
+        public static HashSet<ProximityAgent> GetEntitesOfType(AgentTypes agentTypes)
         {
-            HashSet<HealthData> entities = new();
+            HashSet<ProximityAgent> entities = new();
 
             foreach (var entity in _proximityAgents)
             {
@@ -37,27 +37,35 @@ namespace Examen.Proximity
             return entities;
         }
 
-        public static HashSet<HealthData> GetEntitiesInRange(this HealthData sourceAgent, float range, params AgentTypes[] agentTypes)
+        public static HashSet<ProximityAgent> GetAgentsInRange(this ProximityAgent sourceAgent, float range, params AgentTypes[] agentTypes)
         {
-            // TODO: Add default parameter which defaults to all entities
-            HashSet<HealthData> entitites = new();
+            HashSet<ProximityAgent> allAgents = new();
 
             if (agentTypes.Length == 0)
                 agentTypes = new[] {AgentTypes.PLAYER, AgentTypes.NPC, AgentTypes.STRUCTURE};
 
             foreach (AgentTypes agentType in agentTypes)
-                entitites.AddRange(GetEntitesOfType(agentType));
+                allAgents.AddRange(GetEntitesOfType(agentType));
 
-            foreach (HealthData agent in entitites)
+            if (allAgents.Count == 0)
+                return allAgents;
+
+            HashSet<ProximityAgent> agents = new();
+            float rangeSquared = range * range;
+
+            foreach (ProximityAgent agent in allAgents)
             {
-                float distance = (sourceAgent.transform.position - agent.transform.position).sqrMagnitude;
-                if (distance >= range)
+                if (agent == sourceAgent)
                     continue;
-                
-                entitites.Add(agent);
+
+                float distanceSquared = (agent.transform.position - sourceAgent.transform.position).sqrMagnitude;
+                if (distanceSquared >= rangeSquared)
+                    continue;
+
+                agents.Add(agent);
             }
 
-            return entitites;
+            return agents;
         }
     }
 

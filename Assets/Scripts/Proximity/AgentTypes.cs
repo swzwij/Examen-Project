@@ -4,6 +4,7 @@ namespace Examen.Proximity
     {
         PLAYER,
         NPC,
-        STRUCTURE
+        STRUCTURE,
+        RESOURCE
     }
 }

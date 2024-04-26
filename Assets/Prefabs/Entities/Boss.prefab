@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 963922711327761331}
   - component: {fileID: 8639327567892040567}
   - component: {fileID: 6290603315369264579}
+  - component: {fileID: 3547070070015157389}
   - component: {fileID: 4374533680099441062}
   - component: {fileID: 6810126444432453413}
   - component: {fileID: 9181585673909579258}
@@ -112,6 +113,25 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3547070070015157389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5760878545938402771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 815b2066ae5f6074f9eb80906be8b0a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 9181585673909579258}
+  _networkObjectCache: {fileID: 9181585673909579258}
+  _agentType: 1
+  _defaultRange: 15
+  _checkProximity: 1
+  _agentTypesToCheck: 0000000002000000
 --- !u!114 &4374533680099441062
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,7 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9a604492ad089246baeec7d19bd4c84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 0
+  _componentIndexCache: 2
   _addedNetworkObject: {fileID: 9181585673909579258}
   _networkObjectCache: {fileID: 9181585673909579258}
   _diagonalCost: 14
@@ -141,7 +161,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b4fe012d37c3e04d9400d754a4fba34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 1
+  _componentIndexCache: 3
   _addedNetworkObject: {fileID: 9181585673909579258}
   _networkObjectCache: {fileID: 9181585673909579258}
   p_speed: 5
@@ -167,6 +187,8 @@ MonoBehaviour:
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
   _networkBehaviours:
+  - {fileID: 3547070070015157389}
+  - {fileID: 0}
   - {fileID: 4374533680099441062}
   - {fileID: 6810126444432453413}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
@@ -180,7 +202,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 10
+  <PrefabId>k__BackingField: 12
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
