@@ -16,8 +16,8 @@ namespace Examen.Proximity
         [SerializeField] private AgentTypes[] _agentTypesToCheck;
 
         private HashSet<ProximityAgent> _nearbyAgents = new();
-
-        public HashSet<ProximityAgent> NearbyAgents => _nearbyAgents;
+        
+        public HashSet<ProximityAgent> NearbyAgents => RequestProximityData();
 
         private void Awake() => InitProximity();
 
@@ -34,8 +34,11 @@ namespace Examen.Proximity
             GetProximityData(_defaultRange, _agentTypesToCheck);
         }
 
-        public HashSet<ProximityAgent> RequestProximityData(float range, params AgentTypes[] agentTypesToCheck)
+        public HashSet<ProximityAgent> RequestProximityData(float range = 0, params AgentTypes[] agentTypesToCheck)
         {
+            if (range <= 0)
+                range = _defaultRange;
+
             GetProximityData(range, agentTypesToCheck);
             return _nearbyAgents;
         }
@@ -48,6 +51,11 @@ namespace Examen.Proximity
 
             _nearbyAgents = this.GetAgentsInRange(range, agentTypesToCheck);
             BroadCastNearbyAgents(_nearbyAgents.ToArray());
+
+#region Testing
+            // foreach (ProximityAgent agent in _nearbyAgents)
+            //     Debug.DrawLine(transform.position, agent.transform.position, Color.black);
+#endregion
         }
 
         [ObserversRpc]
@@ -57,8 +65,13 @@ namespace Examen.Proximity
                 return;
 
             _nearbyAgents = agents.ToHashSet();
-            if (_nearbyAgents.Count == 0)
-                return;
+#region Testing
+            // if (_nearbyAgents.Count == 0)
+            //     return;
+
+            // foreach (ProximityAgent agent in _nearbyAgents)
+            //     Debug.LogError($"Agent: {agent.name} is nearby");
+#endregion
         }
 
         private void OnDrawGizmos()

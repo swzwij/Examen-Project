@@ -7,8 +7,8 @@ namespace Examen.Proximity
 {
     public class TestingProximity : NetworkBehaviour
     {
-        [SerializeField] private AgentTypes[] _agentTypesToCheck;
-        [SerializeField] private float _range = 15f;
+        //[SerializeField] private AgentTypes[] _agentTypesToCheck;
+        //[SerializeField] private float _range = 15f;
         [SerializeField] private ProximityAgent[] _nearbyAgents;
         private ProximityAgent _proximityAgent;
 
@@ -22,7 +22,8 @@ namespace Examen.Proximity
         {
             while (true)
             {
-                _nearbyAgents = _proximityAgent.RequestProximityData(_range, _agentTypesToCheck).ToArray();
+                //_nearbyAgents = _proximityAgent.RequestProximityData(_range, _agentTypesToCheck).ToArray();
+                _nearbyAgents = _proximityAgent.NearbyAgents.ToArray();
                 yield return new WaitForSeconds(interval);
             }
         }
