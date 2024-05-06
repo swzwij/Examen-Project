@@ -11,16 +11,16 @@ namespace Examen.Inventory
 
         public Dictionary<ItemInstance, int> CurrentItems => _currentItems;
 
-        public Action<Dictionary<ItemInstance, int>> OnItemsChanged;
+        public Action<InventoryPackage> OnItemsChanged;
 
         /// <summary>
         /// Overrides currentItems with the new given items.
         /// </summary>
         /// <param name="newItems">The new items that will overwrite the current items.</param>
-        public void SetItems(Dictionary<ItemInstance, int> newItems) 
+        public void SetItems(Dictionary<ItemInstance, int> newItems, InventoryPackage package) 
         {
             _currentItems = newItems;
-            OnItemsChanged?.Invoke(_currentItems);
+            OnItemsChanged?.Invoke(package);
         } 
     }
 }

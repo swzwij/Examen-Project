@@ -9,9 +9,11 @@ namespace Examen.Inventory
         [SerializeField] private Image _image;
         [SerializeField] private Text _text;
 
-        public void Initialize(Item item, int amount)
+        [SerializeField] private Sprite[] _sprites;
+
+        public void Initialize(ItemInstance item, int amount)
         {
-            _image.sprite = item.Icon;
+            _image.sprite = item.Name == "Wood" ? _sprites[0] : _sprites[1];
             _text.text = $"{amount}";
         }
 
