@@ -9,15 +9,26 @@ namespace Examen.Inventory
         [SerializeField] private InventoryDisplayItem _displayItem;
         [SerializeField] private Transform _content;
 
-        private Dictionary<Item, InventoryDisplayItem> _inventoryItems = new();
+        private readonly Dictionary<Item, InventoryDisplayItem> _inventoryItems = new();
 
         private void OnEnable() 
         {
-            InventorySystem.Instance.ItemAdded += UpdateDisplayItem;
-            UpdateDisplay();
+            InventorySystem.Instance.OnItemsChanged += UpdateDisplay;
+            UpdateDisplay(InventorySystem.Instance.CurrentItems);
         }
 
-        private void OnDisable() => InventorySystem.Instance.ItemAdded -= UpdateDisplayItem;
+        private void OnDisable() => InventorySystem.Instance.OnItemsChanged -= UpdateDisplay;
+
+        private void UpdateDisplay(Dictionary<Item, int> items)
+        {
+            foreach (InventoryDisplayItem displayItem in _inventoryItems.Values)
+                Destroy(displayItem.gameObject);
+
+            _inventoryItems.Clear();
+
+            foreach (Item item in items.Keys)
+                UpdateDisplayItem(item, items[item]);
+        }
 
         private void UpdateDisplayItem(Item item, int itemAmount)
         {
@@ -30,14 +41,6 @@ namespace Examen.Inventory
             InventoryDisplayItem displayItem = Instantiate(_displayItem, _content);
             displayItem.Initialize(item, itemAmount);
             _inventoryItems.Add(item, displayItem);
-        }
-
-        private void UpdateDisplay()
-        {
-            Dictionary<Item, int> items = InventorySystem.Instance.CurrentItems;
-
-            foreach(Item item in items.Keys)
-                UpdateDisplayItem(item, items[item]);
         }
     }
 }
