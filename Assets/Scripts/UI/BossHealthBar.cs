@@ -1,4 +1,3 @@
-using Examen.Networking;
 using FishNet.Object;
 using MarkUlrich.Health;
 using UnityEngine;
@@ -18,12 +17,10 @@ public class BossHealthBar : NetworkBehaviour
         if (_damage) BossHealthData.TakeDamage(1);
     }
 
-    [Server]
     public void ServerInitialize() => BossHealthData.onDamageTaken.AddListener(CallSetHealth);
 
     public void ClientInitialize(float bossMaxHealth)
     {
-        _healthBar = GetComponent<Slider>();
         _healthBar.maxValue = bossMaxHealth;
         _healthBar.value = _healthBar.maxValue;
     }

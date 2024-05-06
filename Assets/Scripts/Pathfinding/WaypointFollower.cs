@@ -21,15 +21,11 @@ namespace Examen.Pathfinding
             _waypointsParent = new GameObject().transform;
             _waypointsParent.name = $"{gameObject.name} - Waypoints";
 
-            _waypoints.Clear();
-
-            for (int i = transform.childCount - 1; i >= 0; i--)
-            {
-                _waypoints.Add(transform.GetChild(i));
-                transform.GetChild(i).SetParent(_waypointsParent);
-            }
-
+            for (int i = _waypoints.Count - 1; i >= 0; i--)
+                _waypoints[i].SetParent(_waypointsParent);
+            
             _waypoints.Reverse();
+                     
 
             if (_waypoints.Count == 0)
                 return;
