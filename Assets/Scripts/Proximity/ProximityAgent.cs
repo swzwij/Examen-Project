@@ -34,6 +34,13 @@ namespace Examen.Proximity
             GetProximityData(_defaultRange, _agentTypesToCheck);
         }
 
+        
+        /// <summary>
+        /// Requests proximity data for the specified range and agent types.
+        /// </summary>
+        /// <param name="range">The range within which to search for nearby agents. If set to 0 or less, the default range will be used.</param>
+        /// <param name="agentTypesToCheck">The agent types to check for proximity.</param>
+        /// <returns>A HashSet containing the nearby ProximityAgent instances.</returns>
         public HashSet<ProximityAgent> RequestProximityData(float range = 0, params AgentTypes[] agentTypesToCheck)
         {
             if (range <= 0)
@@ -51,11 +58,6 @@ namespace Examen.Proximity
 
             _nearbyAgents = this.GetAgentsInRange(range, agentTypesToCheck);
             BroadCastNearbyAgents(_nearbyAgents.ToArray());
-
-#region Testing
-            // foreach (ProximityAgent agent in _nearbyAgents)
-            //     Debug.DrawLine(transform.position, agent.transform.position, Color.black);
-#endregion
         }
 
         [ObserversRpc]
@@ -65,13 +67,6 @@ namespace Examen.Proximity
                 return;
 
             _nearbyAgents = agents.ToHashSet();
-#region Testing
-            // if (_nearbyAgents.Count == 0)
-            //     return;
-
-            // foreach (ProximityAgent agent in _nearbyAgents)
-            //     Debug.LogError($"Agent: {agent.name} is nearby");
-#endregion
         }
 
         private void OnDrawGizmos()
