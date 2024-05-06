@@ -7,13 +7,12 @@ using FishNet.Object;
 using MarkUlrich.Health;
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
 
 public class BossSpawningManager : NetworkBehaviour
 {
     [Header("Boss Spawning")]
-    [SerializeField] private int _bossDownTimer = 60;
+    [SerializeField] private int _bossDownTimer = 120;
     [SerializeField] private PlayerSpawner _spawner;
     [SerializeField] private List<HealthData> _bossPrefabs;
     [SerializeField] private List<BossSpawnPoints> _bossSpawnPoints;
@@ -41,18 +40,14 @@ public class BossSpawningManager : NetworkBehaviour
             _bossSpawnPoints[randomNumber].SetWaypoints();
 
         boss.transform.position = _bossSpawnPoints[randomNumber].Waypoints[0].position;
-        boss.GetComponent<WaypointFollower>().InitBoss(_bossSpawnPoints[randomNumber].Waypoints);
-        HealthData healthData = boss.GetComponent<HealthData>();
+        boss.GetComponent<WaypointFollower>().Waypoints = _bossSpawnPoints[randomNumber].Waypoints;
 
-        healthData.onDie.AddListener(() => StartNextSpawnTimer(boss));
+        StartNextSpawnTimer(boss);
 
-        AddSlider(healthData);
+        AddSlider(boss);
     }
 
-    private void SendBossInfoOnConnection()
-    {
-        ReceiveBossInfoOnConnection(_currentActiveBossSliders);
-    }
+    private void SendBossInfoOnConnection() => ReceiveBossInfoOnConnection(_currentActiveBossSliders);
 
     [ObserversRpc]
     private void ReceiveBossInfoOnConnection(Dictionary<GameObject, BossHealthBar> currentActiveBossSliders)
@@ -66,9 +61,10 @@ public class BossSpawningManager : NetworkBehaviour
         _hasConnected = true;
     }
 
-    private void AddSlider(HealthData bossHealth)
+    private void AddSlider(GameObject boss)
     {
-        BossHealthBar healthBar = bossHealth.gameObject.GetComponent<BossHealthBar>();
+        BossHealthBar healthBar = boss.GetComponent<BossHealthBar>();
+        HealthData bossHealth = boss.GetComponent<HealthData>();
 
         healthBar.BossHealthData = bossHealth;
         healthBar.ServerInitialize();
@@ -81,9 +77,7 @@ public class BossSpawningManager : NetworkBehaviour
     {
         if (_currentActiveBossSliders.TryGetValue(bossObject, out BossHealthBar healthBar))
             _currentActiveBossSliders.Remove(bossObject);
-       
 
-        PoolSystem.Instance.DespawnObject(bossObject.name, bossObject);
         StartCoroutine(WaitForNextSpawn());
     }
 

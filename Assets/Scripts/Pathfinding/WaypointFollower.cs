@@ -12,12 +12,11 @@ namespace Examen.Pathfinding
         private List<Node> _completePath = new();
         private int _currentWaypointIndex = 0;
 
-        protected override void Start() => base.Start();
+        public List<Transform> Waypoints { set { _waypoints = value; } }
 
-        public void InitBoss(List<Transform> newWaypoints)
+        protected override void Start()
         {
-            _waypoints = newWaypoints;
-
+            base.Start();
 
             if (_waypoints.Count == 0)
                 return;

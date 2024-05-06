@@ -8,6 +8,8 @@ public class BossSpawnPoints : MonoBehaviour
 
     public List<Transform> Waypoints {  get { return _waypoints; } }
 
+    private void Start() => SetWaypoints();
+
     public void SetWaypoints()
     {
         for (int i = 0; i < transform.childCount; i++)
