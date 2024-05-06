@@ -18,6 +18,7 @@ namespace Examen.Pathfinding
         {
             _waypoints = newWaypoints;
 
+
             if (_waypoints.Count == 0)
                 return;
 

@@ -1,6 +1,7 @@
 using Examen.Networking;
 using Examen.Pathfinding;
 using Examen.Poolsystem;
+using FishNet;
 using FishNet.Component.Spawning;
 using FishNet.Object;
 using MarkUlrich.Health;
@@ -17,10 +18,6 @@ public class BossSpawningManager : NetworkBehaviour
     [SerializeField] private List<HealthData> _bossPrefabs;
     [SerializeField] private List<BossSpawnPoints> _bossSpawnPoints;
 
-    [Header("Boss UI")]
-    [SerializeField] private List<BossHealthBar> _sliders;
-
-    private int _spawnedBosses;
     private bool _hasConnected;
     private Dictionary<GameObject, BossHealthBar> _currentActiveBossSliders = new();
 
@@ -34,16 +31,11 @@ public class BossSpawningManager : NetworkBehaviour
     [Server]
     private void SpawnBoss()
     {
-        if (_spawnedBosses >= _sliders.Count)
-        {
-            Debug.LogError("Cant add more Boss");
-            return;
-        }
-
         int randomNumber = Random.Range(0, _bossSpawnPoints.Count);
         int randomNumber2 = Random.Range(0, _bossPrefabs.Count);
 
         GameObject boss = PoolSystem.Instance.SpawnObject(_bossPrefabs[randomNumber2].name, _bossPrefabs[randomNumber2].gameObject);
+        InstanceFinder.ServerManager.Spawn(boss);
 
         if (_bossSpawnPoints[randomNumber].Waypoints.Count == 0)
             _bossSpawnPoints[randomNumber].SetWaypoints();
@@ -53,7 +45,6 @@ public class BossSpawningManager : NetworkBehaviour
         HealthData healthData = boss.GetComponent<HealthData>();
 
         healthData.onDie.AddListener(() => StartNextSpawnTimer(boss));
-        _spawnedBosses++;
 
         AddSlider(healthData);
     }
@@ -70,39 +61,27 @@ public class BossSpawningManager : NetworkBehaviour
             return;
 
         foreach (var sliders in currentActiveBossSliders)
-        {
-            sliders.Value.gameObject.SetActive(true);
             sliders.Value.ClientInitialize(1000);
-        }
 
         _hasConnected = true;
     }
 
     private void AddSlider(HealthData bossHealth)
     {
-        if (_currentActiveBossSliders.Count >= _sliders.Count)
-        {
-            Debug.LogError("Cant add more sliders");
-            return;
-        }
-
-        BossHealthBar healthBar = _sliders[_currentActiveBossSliders.Count];
+        BossHealthBar healthBar = bossHealth.gameObject.GetComponent<BossHealthBar>();
 
         healthBar.BossHealthData = bossHealth;
-        healthBar.gameObject.SetActive(true);
         healthBar.ServerInitialize();
 
         if(IsServer) 
-            _currentActiveBossSliders.Add(bossHealth.gameObject, _sliders[_currentActiveBossSliders.Count]);
+            _currentActiveBossSliders.Add(bossHealth.gameObject, healthBar);
     }
 
     private void StartNextSpawnTimer(GameObject bossObject)
     {
         if (_currentActiveBossSliders.TryGetValue(bossObject, out BossHealthBar healthBar))
-        {
-            healthBar.gameObject.SetActive(true);
             _currentActiveBossSliders.Remove(bossObject);
-        }
+       
 
         PoolSystem.Instance.DespawnObject(bossObject.name, bossObject);
         StartCoroutine(WaitForNextSpawn());
