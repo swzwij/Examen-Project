@@ -12,6 +12,7 @@ namespace Examen.Inventory
         public Dictionary<Item, int> CurrentItems => _currentItems;
 
         public Action<Item, int> ItemAdded;
+        public Action<Dictionary<Item, int>> OnItemsChanged;
 
         /// <summary>
         /// Add given item amount to the current item count.
@@ -37,8 +38,8 @@ namespace Examen.Inventory
         {
             if (!_currentItems.ContainsKey(removeItem))
                 return;
-          
-           _currentItems[removeItem] = _currentItems[removeItem] - itemAmount < 0 
+
+            _currentItems[removeItem] = _currentItems[removeItem] - itemAmount < 0 
                 ?  0 
                 : _currentItems[removeItem] - itemAmount;
         }
@@ -46,7 +47,11 @@ namespace Examen.Inventory
         /// <summary>
         /// Overrides currentItems with the new given items.
         /// </summary>
-        /// <param name="newItems">The new items you want the current items to override with.</param>
-        public void SetItems(Dictionary<Item, int> newItems) => _currentItems = newItems;
+        /// <param name="newItems">The new items that will overwrite the current items.</param>
+        public void SetItems(Dictionary<Item, int> newItems) 
+        {
+            _currentItems = newItems;
+            OnItemsChanged?.Invoke(_currentItems);
+        } 
     }
 }
