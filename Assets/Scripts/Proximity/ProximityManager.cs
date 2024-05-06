@@ -24,7 +24,7 @@ namespace Examen.Proximity
                 _proximityAgents.Remove(agent);
         }
 
-        public static HashSet<ProximityAgent> GetEntitesOfType(AgentTypes agentTypes)
+        public static HashSet<ProximityAgent> GetAgentsOfType(AgentTypes agentTypes)
         {
             HashSet<ProximityAgent> entities = new();
 
@@ -45,7 +45,7 @@ namespace Examen.Proximity
                 agentTypes = new[] {AgentTypes.PLAYER, AgentTypes.NPC, AgentTypes.STRUCTURE};
 
             foreach (AgentTypes agentType in agentTypes)
-                allAgents.AddRange(GetEntitesOfType(agentType));
+                allAgents.AddRange(GetAgentsOfType(agentType));
 
             if (allAgents.Count == 0)
                 return allAgents;
