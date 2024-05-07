@@ -41,7 +41,7 @@ namespace Examen.Proximity
         {
             HashSet<ProximityAgent> entities = new();
 
-            foreach (var entity in _proximityAgents)
+            foreach (KeyValuePair<ProximityAgent, AgentTypes> entity in _proximityAgents)
             {
                 if (entity.Value == agentTypes)
                     entities.Add(entity.Key);
