@@ -114,6 +114,13 @@ namespace Examen.Pathfinding
         }
 
         [Server]
+        public void StopPath()
+        {
+            if (p_followPathCoroutine != null)
+                StopCoroutine(p_followPathCoroutine);
+        }
+
+        [Server]
         protected IEnumerator FollowPath()
         {
             ResetBlockage();

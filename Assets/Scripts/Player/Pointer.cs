@@ -22,8 +22,12 @@ namespace Examen.Player
         public bool HasClickedUI { get; set; }
         public UnityEngine.Camera Camera => _myCamera;
 
+        public bool CanPoint;
+
         private void Start()
         {
+            CanPoint = true;
+
             InputManager.SubscribeToAction("Click", OnPointPerformed, out _clickAction);
             InputManager.TryGetAction("PointerPosition").Enable();
 
@@ -45,6 +49,9 @@ namespace Examen.Player
         public void PointAtPosition()
         {
             if (!IsOwner)
+                return;
+
+            if (!CanPoint)
                 return;
 
             Vector2 pointerPosition = InputManager.TryGetAction("PointerPosition").ReadValue<Vector2>();
