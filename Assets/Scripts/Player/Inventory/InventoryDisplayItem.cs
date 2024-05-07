@@ -13,7 +13,7 @@ namespace Examen.Inventory
 
         public void Initialize(ItemInstance item, int amount)
         {
-            _image.sprite = item.Name == "Wood" ? _sprites[0] : _sprites[1];
+            _image.sprite = item.Name == "Stone" ? _sprites[0] : _sprites[1];
             _text.text = $"{amount}";
         }
 
