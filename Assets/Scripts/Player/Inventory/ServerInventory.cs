@@ -10,7 +10,7 @@ using UnityEngine;
 
 public class ServerInventory : NetworkedSingletonInstance<ServerInventory>
 {
-    private Dictionary<int, Dictionary<Item, int>> _inventorySystems = new();
+    private Dictionary<int, Dictionary<ItemInstance, int>> _inventorySystems = new();
     private NetworkManager _networkManager;
 
     private void Start()
@@ -30,12 +30,14 @@ public class ServerInventory : NetworkedSingletonInstance<ServerInventory>
     [Server]
     public void AddItem(NetworkConnection connection, Item newItem, int itemAmount)
     {
+        ItemInstance itemInstance = new(newItem.Name);
+
         if (!_inventorySystems.ContainsKey(connection.ClientId))
             _inventorySystems.Add(connection.ClientId, new());
-        if (!_inventorySystems[connection.ClientId].ContainsKey(newItem))
-            _inventorySystems[connection.ClientId].Add(newItem, itemAmount);
+        if (!_inventorySystems[connection.ClientId].ContainsKey(itemInstance))
+            _inventorySystems[connection.ClientId].Add(itemInstance, itemAmount);
         else
-            _inventorySystems[connection.ClientId][newItem] += itemAmount;
+            _inventorySystems[connection.ClientId][itemInstance] += itemAmount;
 
         UpdateClientInventory(connection, _inventorySystems[connection.ClientId]);
     }
@@ -49,16 +51,18 @@ public class ServerInventory : NetworkedSingletonInstance<ServerInventory>
     [Server]
     public void RemoveItem(NetworkConnection connection, Item newItem, int itemAmount)
     {
-        if (!_inventorySystems.ContainsKey(connection.ClientId) || _inventorySystems[connection.ClientId][newItem] - itemAmount < 0)
+        ItemInstance itemInstance = new(newItem.Name);
+
+        if (!_inventorySystems.ContainsKey(connection.ClientId) || _inventorySystems[connection.ClientId][itemInstance] - itemAmount < 0)
             return;
 
-        _inventorySystems[connection.ClientId][newItem] -= itemAmount;
+        _inventorySystems[connection.ClientId][itemInstance] -= itemAmount;
 
         UpdateClientInventory(connection, _inventorySystems[connection.ClientId]);
     }
 
     [ObserversRpc]
-    private void UpdateClientInventory(NetworkConnection connection, Dictionary<Item, int> _currentItems)
+    private void UpdateClientInventory(NetworkConnection connection, Dictionary<ItemInstance, int> _currentItems)
     {
         if (_networkManager.ClientManager.Connection.ClientId != connection.ClientId)
             return;
