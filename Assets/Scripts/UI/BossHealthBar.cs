@@ -13,6 +13,9 @@ public class BossHealthBar : NetworkBehaviour
 
     private void Update()
     {
+        if (!IsServer)
+            _healthBar.transform.parent.rotation = Quaternion.LookRotation(Vector3.back);
+            
         if (_damage) 
             BossHealthData.TakeDamage(1);
     }
