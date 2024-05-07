@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class BossHealthBar : NetworkBehaviour
 {
     [SerializeField] private bool _damage;
-
     [SerializeField] private Slider _healthBar;
 
     public HealthData BossHealthData { get; set; }
@@ -14,7 +13,8 @@ public class BossHealthBar : NetworkBehaviour
 
     private void Update()
     {
-        if (_damage) BossHealthData.TakeDamage(1);
+        if (_damage) 
+            BossHealthData.TakeDamage(1);
     }
 
     public void ServerInitialize() => BossHealthData.onDamageTaken.AddListener(CallSetHealth);

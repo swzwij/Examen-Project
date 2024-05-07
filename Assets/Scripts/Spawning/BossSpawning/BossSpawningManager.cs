@@ -9,13 +9,12 @@ using UnityEngine;
 
 public class BossSpawningManager : NetworkBehaviour
 {
-    [Header("Boss Spawning")]
     [SerializeField] private int _bossDownTimer = 60;
     [SerializeField] private HealthData _bossPrefab;
     [SerializeField] private PlayerSpawner _spawner;
 
     private bool _hasConnected;
-    private Dictionary<GameObject, BossHealthBar> _currentActiveBossSliders = new();
+    private readonly Dictionary<GameObject, BossHealthBar> _currentActiveBossSliders = new();
 
     private void Start()
     {
@@ -47,9 +46,7 @@ public class BossSpawningManager : NetworkBehaviour
             return;
 
         foreach (var sliders in currentActiveBossSliders)
-        {
             sliders.Value.ClientInitialize(1000);
-        }
 
         _hasConnected = true;
     }

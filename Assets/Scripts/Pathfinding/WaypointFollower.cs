@@ -25,7 +25,6 @@ namespace Examen.Pathfinding
                 _waypoints[i].SetParent(_waypointsParent);
             
             _waypoints.Reverse();
-                     
 
             if (_waypoints.Count == 0)
                 return;
