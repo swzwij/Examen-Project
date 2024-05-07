@@ -35,5 +35,5 @@ public class BossHealthBar : NetworkBehaviour
     [ObserversRpc]
     private void SetUIHealth(float bossHealth) => _healthBar.value = bossHealth;
 
-    private void Despawn() => PoolSystem.Instance.DespawnObject(gameObject.name, gameObject);
+    private void Despawn() => BossSpawningManager.Instance.DespawnBoss(this);
 }

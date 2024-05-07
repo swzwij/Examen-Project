@@ -58,6 +58,7 @@ namespace Examen.Poolsystem
                 return null;
 
             GameObject newGameObject = Instantiate(spawnPrefab);
+            newGameObject.name = nameTag;
             MoveObjectToActiveScene(newGameObject, parentTransform);
             AddActiveObject(nameTag, newGameObject);
 
@@ -102,9 +103,12 @@ namespace Examen.Poolsystem
 
         private void MoveObjectToActiveScene(GameObject movingObject, Transform parentTransform)
         {
-            if (parentTransform == null)
-                SceneManager.MoveGameObjectToScene(movingObject, SceneManager.GetActiveScene());
-            else
+/*            if (parentTransform == null)
+            {
+                movingObject.transform.parent = 
+                //SceneManager.MoveGameObjectToScene(movingObject, SceneManager.GetActiveScene());
+            }
+            else*/
                 movingObject.transform.parent = parentTransform;
         }
 

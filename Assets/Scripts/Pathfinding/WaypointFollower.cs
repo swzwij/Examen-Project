@@ -12,21 +12,28 @@ namespace Examen.Pathfinding
         private List<Node> _completePath = new();
         private int _currentWaypointIndex = 0;
 
-        public List<Transform> Waypoints { set { _waypoints = value; } }
+        public List<Transform> Waypoints { get => _waypoints; set { _waypoints = value; } }
 
         protected override void Start()
         {
             base.Start();
 
-            if (_waypoints.Count == 0)
-                return;
-
             GenerateCompletePath();
         }
 
         [Server]
-        private void GenerateCompletePath()
+        public void ResetWaypointIndex()
         {
+            _currentWaypointIndex = 0;
+            GenerateCompletePath();
+        }
+
+        [Server]
+        public void GenerateCompletePath()
+        {
+            if (_waypoints.Count == 0)
+                return;
+
             for (int i = _currentWaypointIndex; i < _waypoints.Count; i++)
             {
                 if (i == _currentWaypointIndex)

@@ -5,11 +5,12 @@ using FishNet;
 using FishNet.Component.Spawning;
 using FishNet.Object;
 using MarkUlrich.Health;
+using MarkUlrich.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BossSpawningManager : NetworkBehaviour
+public class BossSpawningManager : NetworkedSingletonInstance<BossSpawningManager>
 {
     [Header("Boss Spawning")]
     [SerializeField] private int _bossDownTimer = 120;
@@ -18,13 +19,19 @@ public class BossSpawningManager : NetworkBehaviour
     [SerializeField] private List<BossSpawnPoints> _bossSpawnPoints;
 
     private bool _hasConnected;
-    private Dictionary<GameObject, BossHealthBar> _currentActiveBossSliders = new();
+    private Dictionary<BossHealthBar, float> _bossesHealth = new();
 
     private void Start()
     {
         ServerInstance.Instance.OnServerStarted += SpawnBoss;
 
         _spawner.OnSpawned += (NetworkObject obj) => SendBossInfoOnConnection();
+    }
+
+    public void DespawnBoss(BossHealthBar bossHealthBar)
+    {
+        PoolSystem.Instance.DespawnObject(bossHealthBar.gameObject.name, bossHealthBar.gameObject);
+        _bossesHealth.Remove(bossHealthBar);
     }
 
     [Server]
@@ -40,23 +47,38 @@ public class BossSpawningManager : NetworkBehaviour
             _bossSpawnPoints[randomSpawnPointNumber].SetWaypoints();
 
         boss.transform.position = _bossSpawnPoints[randomSpawnPointNumber].Spawnpoint.position;
-        boss.GetComponent<WaypointFollower>().Waypoints = _bossSpawnPoints[randomSpawnPointNumber].Waypoints;
-
+        StartCoroutine(DelayedPathStart(boss, randomSpawnPointNumber));
+        
         StartCoroutine(StartNextSpawnTimer());
 
         AddSlider(boss);
     }
 
-    private void SendBossInfoOnConnection() => ReceiveBossInfoOnConnection(_currentActiveBossSliders);
+    private IEnumerator DelayedPathStart(GameObject boss, int randomSpawnPointNumber)
+    {
+        yield return new WaitForSeconds(0.33f);
+
+        boss.TryGetComponent(out WaypointFollower waypointfollower);
+        waypointfollower.Waypoints = _bossSpawnPoints[randomSpawnPointNumber].Waypoints;
+
+        if (boss.TryGetComponent(out Pathfinder pathfinder))
+        {
+            waypointfollower.MyPathFinder = pathfinder;
+            waypointfollower.ResetWaypointIndex();
+        }
+    }
+
+    private void SendBossInfoOnConnection() => ReceiveBossInfoOnConnection(_bossesHealth);
+
 
     [ObserversRpc]
-    private void ReceiveBossInfoOnConnection(Dictionary<GameObject, BossHealthBar> currentActiveBossSliders)
+    private void ReceiveBossInfoOnConnection(Dictionary<BossHealthBar, float> currentActiveBossSliders)
     {
         if (_hasConnected)
             return;
 
-        foreach (var sliders in currentActiveBossSliders)
-            sliders.Value.ClientInitialize(1000);
+        foreach (KeyValuePair<BossHealthBar, float> sliders in currentActiveBossSliders)
+            sliders.Key.ClientInitialize(sliders.Value);
 
         _hasConnected = true;
     }
@@ -66,18 +88,21 @@ public class BossSpawningManager : NetworkBehaviour
         BossHealthBar healthBar = boss.GetComponent<BossHealthBar>();
         HealthData bossHealth = boss.GetComponent<HealthData>();
 
+        if (bossHealth.isDead)
+            bossHealth.Resurrect(bossHealth.MaxHealth);
+
         healthBar.BossHealthData = bossHealth;
         healthBar.ServerInitialize();
 
-        _currentActiveBossSliders.Add(bossHealth.gameObject, healthBar);
+        _bossesHealth.Add(healthBar, bossHealth.MaxHealth);
     }
 
     private void DespawnBosses()
     {
-        foreach (KeyValuePair<GameObject, BossHealthBar> slider in _currentActiveBossSliders)
-            PoolSystem.Instance.DespawnObject(slider.Key.name, slider.Key);
+        foreach (KeyValuePair<BossHealthBar, float> slider in _bossesHealth)
+            PoolSystem.Instance.DespawnObject(slider.Key.name, slider.Key.gameObject);
 
-        _currentActiveBossSliders.Clear();
+        _bossesHealth.Clear();
     }
 
     private IEnumerator StartNextSpawnTimer()
