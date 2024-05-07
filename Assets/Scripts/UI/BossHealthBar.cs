@@ -1,3 +1,4 @@
+using Examen.Poolsystem;
 using FishNet.Object;
 using MarkUlrich.Health;
 using UnityEngine;
@@ -17,7 +18,11 @@ public class BossHealthBar : NetworkBehaviour
         if (_damage) BossHealthData.TakeDamage(1);
     }
 
-    public void ServerInitialize() => BossHealthData.onDamageTaken.AddListener(CallSetHealth);
+    public void ServerInitialize()
+    {
+        BossHealthData.onDamageTaken.AddListener(CallSetHealth);
+        BossHealthData.onDie.AddListener(Despawn);
+    }
 
     public void ClientInitialize(float bossMaxHealth)
     {
@@ -30,4 +35,5 @@ public class BossHealthBar : NetworkBehaviour
     [ObserversRpc]
     private void SetUIHealth(float bossHealth) => _healthBar.value = bossHealth;
 
+    private void Despawn() => PoolSystem.Instance.DespawnObject(gameObject.name, gameObject);
 }

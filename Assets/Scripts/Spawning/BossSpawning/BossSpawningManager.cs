@@ -30,19 +30,19 @@ public class BossSpawningManager : NetworkBehaviour
     [Server]
     private void SpawnBoss()
     {
-        int randomNumber = Random.Range(0, _bossSpawnPoints.Count);
-        int randomNumber2 = Random.Range(0, _bossPrefabs.Count);
+        int randomSpawnPointNumber = Random.Range(0, _bossSpawnPoints.Count);
+        int randomBossPrefabNumber = Random.Range(0, _bossPrefabs.Count);
 
-        GameObject boss = PoolSystem.Instance.SpawnObject(_bossPrefabs[randomNumber2].name, _bossPrefabs[randomNumber2].gameObject);
+        GameObject boss = PoolSystem.Instance.SpawnObject(_bossPrefabs[randomBossPrefabNumber].name, _bossPrefabs[randomBossPrefabNumber].gameObject);
         InstanceFinder.ServerManager.Spawn(boss);
 
-        if (_bossSpawnPoints[randomNumber].Waypoints.Count == 0)
-            _bossSpawnPoints[randomNumber].SetWaypoints();
+        if (_bossSpawnPoints[randomSpawnPointNumber].Waypoints.Count == 0)
+            _bossSpawnPoints[randomSpawnPointNumber].SetWaypoints();
 
-        boss.transform.position = _bossSpawnPoints[randomNumber].Spawnpoint.position;
-        boss.GetComponent<WaypointFollower>().Waypoints = _bossSpawnPoints[randomNumber].Waypoints;
+        boss.transform.position = _bossSpawnPoints[randomSpawnPointNumber].Spawnpoint.position;
+        boss.GetComponent<WaypointFollower>().Waypoints = _bossSpawnPoints[randomSpawnPointNumber].Waypoints;
 
-        StartNextSpawnTimer(boss);
+        StartCoroutine(StartNextSpawnTimer());
 
         AddSlider(boss);
     }
@@ -69,19 +69,18 @@ public class BossSpawningManager : NetworkBehaviour
         healthBar.BossHealthData = bossHealth;
         healthBar.ServerInitialize();
 
-        if(IsServer) 
-            _currentActiveBossSliders.Add(bossHealth.gameObject, healthBar);
+        _currentActiveBossSliders.Add(bossHealth.gameObject, healthBar);
     }
 
-    private void StartNextSpawnTimer(GameObject bossObject)
+    private void DespawnBosses()
     {
-        if (_currentActiveBossSliders.TryGetValue(bossObject, out BossHealthBar healthBar))
-            _currentActiveBossSliders.Remove(bossObject);
+        foreach (KeyValuePair<GameObject, BossHealthBar> slider in _currentActiveBossSliders)
+            PoolSystem.Instance.DespawnObject(slider.Key.name, slider.Key);
 
-        StartCoroutine(WaitForNextSpawn());
+        _currentActiveBossSliders.Clear();
     }
 
-    private IEnumerator WaitForNextSpawn()
+    private IEnumerator StartNextSpawnTimer()
     {
         yield return new WaitForSeconds(_bossDownTimer);
 
