@@ -11,9 +11,9 @@ namespace Examen.Inventory
 
         [SerializeField] private Sprite[] _sprites;
 
-        public void Initialize(ItemInstance item, int amount)
+        public void Initialize(string item, int amount)
         {
-            _image.sprite = item.Name == "Stone" ? _sprites[0] : _sprites[1];
+            _image.sprite = item == "Stone" ? _sprites[0] : _sprites[1];
             _text.text = $"{amount}";
         }
 

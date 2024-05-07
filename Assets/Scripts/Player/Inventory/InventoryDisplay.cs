@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Examen.Items;
 using FishNet.Object;
 using UnityEngine;
@@ -9,8 +8,6 @@ namespace Examen.Inventory
     {
         [SerializeField] private InventoryDisplayItem _displayItem;
         [SerializeField] private Transform _content;
-
-        private readonly Dictionary<ItemInstance, InventoryDisplayItem> _inventoryItems = new();
 
         private void OnEnable() 
         {
@@ -27,7 +24,7 @@ namespace Examen.Inventory
             ClearDisplay();
 
             foreach (ItemInstance item in package.Items.Keys)
-                UpdateDisplayItem(item, package.Items[item]);
+                UpdateDisplayItem(item.Name, package.Items[item]);
         }
 
         [ObserversRpc]
@@ -38,19 +35,16 @@ namespace Examen.Inventory
             
             foreach (Transform child in _content)
                 Destroy(child.gameObject);
-
-            _inventoryItems.Clear();
         }
 
         [ObserversRpc]
-        private void UpdateDisplayItem(ItemInstance item, int itemAmount)
+        private void UpdateDisplayItem(string item, int itemAmount)
         {
             if (!IsOwner)
                 return;
 
             InventoryDisplayItem displayItem = Instantiate(_displayItem, _content);
             displayItem.Initialize(item, itemAmount);
-            _inventoryItems.Add(item, displayItem);
         }
     }
 }
