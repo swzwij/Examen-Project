@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class BossSpawnPoints : MonoBehaviour
 {
-    [SerializeField] private List<Transform> _waypoints = new();
+   private Transform _spawnpoint;
+   private List<Transform> _waypoints = new();
 
+    public Transform Spawnpoint {  get { return _spawnpoint; } }
     public List<Transform> Waypoints {  get { return _waypoints; } }
 
     private void Start() => SetWaypoints();
 
     public void SetWaypoints()
     {
-        for (int i = 0; i < transform.childCount; i++)
+        _spawnpoint = transform.GetChild(0);
+
+        for (int i = 1; i < transform.childCount; i++)
             _waypoints.Add(transform.GetChild(i));
     }
 }

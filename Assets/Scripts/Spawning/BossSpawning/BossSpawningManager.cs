@@ -39,7 +39,7 @@ public class BossSpawningManager : NetworkBehaviour
         if (_bossSpawnPoints[randomNumber].Waypoints.Count == 0)
             _bossSpawnPoints[randomNumber].SetWaypoints();
 
-        boss.transform.position = _bossSpawnPoints[randomNumber].Waypoints[0].position;
+        boss.transform.position = _bossSpawnPoints[randomNumber].Spawnpoint.position;
         boss.GetComponent<WaypointFollower>().Waypoints = _bossSpawnPoints[randomNumber].Waypoints;
 
         StartNextSpawnTimer(boss);
