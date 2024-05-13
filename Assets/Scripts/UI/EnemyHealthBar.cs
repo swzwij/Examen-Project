@@ -22,8 +22,14 @@ namespace Examen.UI
                 EnemyHealthData.TakeDamage(1);
         }
 
+        /// <summary>
+        /// Sets up the health on the server side
+        /// </summary>
         public void ServerInitialize() => EnemyHealthData.onDamageTaken.AddListener(CallSetHealth);
 
+        /// <summary>
+        /// Sets up the health on the client side
+        /// </summary>
         public void ClientInitialize(float enemyMaxHealth)
         {
             _healthBar.maxValue = enemyMaxHealth;
