@@ -120,7 +120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13e3e38fcf685dc40aa88bebdeec26b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 8
+  _componentIndexCache: 7
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
 --- !u!114 &3713117069067843006
@@ -324,11 +324,13 @@ GameObject:
   - component: {fileID: 5755628630257008346}
   - component: {fileID: 4964243218378621144}
   - component: {fileID: 431041323644128263}
+  - component: {fileID: 8846684616281501733}
   - component: {fileID: 3679868855582776512}
   - component: {fileID: 7692977816705919355}
   - component: {fileID: 3694398312710353908}
   - component: {fileID: 5753440854157603489}
   - component: {fileID: 2256975833209865345}
+  - component: {fileID: -3125127787560503172}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -456,10 +458,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 226658194d0dd59449bc76e1fe9faf79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 2
+  _componentIndexCache: 1
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
   p_speed: 25
+  p_turnSpeed: 15
   p_obstacleCheckDistance: 3
   p_obstaclesLayerMask:
     serializedVersion: 2
@@ -477,7 +480,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9a604492ad089246baeec7d19bd4c84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 3
+  _componentIndexCache: 2
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
   _diagonalCost: 14
@@ -494,11 +497,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72487ff4dc28fb8418848132a371b17e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 4
+  _componentIndexCache: 3
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
   _pointerDistance: 10000
   _myCamera: {fileID: 2467539732417906286}
+--- !u!114 &8846684616281501733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6297853107807436002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 665c672f2e2777c47b3254da291fff52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 1000
+  onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onHealthAdded:
+    m_PersistentCalls:
+      m_Calls: []
+  onDamageTaken:
+    m_PersistentCalls:
+      m_Calls: []
+  onDie:
+    m_PersistentCalls:
+      m_Calls: []
+  onResurrected:
+    m_PersistentCalls:
+      m_Calls: []
+  isDead: 0
 --- !u!114 &3679868855582776512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -516,7 +548,6 @@ MonoBehaviour:
   <PredictedSpawn>k__BackingField: {fileID: 0}
   _networkBehaviours:
   - {fileID: 8625715633896628598}
-  - {fileID: 0}
   - {fileID: 5755628630257008346}
   - {fileID: 4964243218378621144}
   - {fileID: 431041323644128263}
@@ -552,7 +583,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f1d30f6ad20a7a4daec169bfb05daaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 5
+  _componentIndexCache: 4
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
   damageAmount: 1
@@ -568,7 +599,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5df33346329c9df45abaaab7b955478d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 6
+  _componentIndexCache: 5
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
   _placeAllowed: {fileID: 2100000, guid: de8e4d3314c2d464889c2450c9b4620f, type: 2}
@@ -689,9 +720,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ace8c97033910ba47bdfff1c79f3f2ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 7
+  _componentIndexCache: 6
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
+--- !u!114 &-3125127787560503172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6297853107807436002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e755d73c82b69694abb9ddc6430f55ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  _knockbackDistance: 0
+  _midPointOffset: 0
+  _rayDistance: 2
 --- !u!1001 &2721883193640779307
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -719,7 +768,7 @@ PrefabInstance:
     - target: {fileID: 4510470394853979682, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
       propertyPath: _structure
       value: 
-      objectReference: {fileID: 474151977902375623, guid: 1d9017d1dacf3d9489b4fc4ed73f08dc, type: 3}
+      objectReference: {fileID: 6532071527663233859, guid: f3f48d6370667ba45976db709069cc15, type: 3}
     - target: {fileID: 4510470394853979682, guid: 10eb4b4ac3b6c194296d5052b801d3f4, type: 3}
       propertyPath: _structurePreview
       value: 

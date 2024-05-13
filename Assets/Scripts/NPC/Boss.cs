@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Exame.Attacks;
 using Examen.Attacks;
 using Examen.Pathfinding;
+using Examen.Proximity;
 using FishNet.Connection;
 using FishNet.Object;
 using MarkUlrich.Health;
@@ -10,28 +11,45 @@ using UnityEngine;
 
 namespace Examen.NPC
 {
-    [RequireComponent(typeof(WaypointFollower))]
+    [RequireComponent(typeof(WaypointFollower), typeof(ProximityAgent))]
     public class Boss : Interactable
     {
         [SerializeField] private WaypointFollower _waypointFollower;
         [SerializeField] private Animator p_animator;
-        [SerializeField] private float _turnSpeed = 1f;
 
         [Header("Attack Settings")]
         [SerializeField] private BaseAttack[] _attacks;
         [SerializeField] private float _repeatInterval = 1f;
+
+        [Header("Proximity Settings")]
+        [SerializeField] private int _nearbyPlayerThreshold = 2;
+        [SerializeField] private int _nearbyStructureThreshold = 1;
         
         private Dictionary<AttackTypes, BaseAttack> _attackTypes = new();
+        private HashSet<ProximityAgent> _nearbyPlayers = new();
+        private HashSet<ProximityAgent> _nearbyStructures = new();
         private HealthData _healthData;
+        private ProximityAgent _proximityAgent;
         private bool _hasClearedPath;
+        private bool _canAttack = true;
 
         private void Awake()
         {
             _waypointFollower = GetComponent<WaypointFollower>();
             _waypointFollower.OnBossInitialised += InitBoss;
+            p_animator.SetFloat("WalkSpeed", _waypointFollower.Speed);
+
+            _proximityAgent = GetComponent<ProximityAgent>();
         }
 
-        [Server]
+        private void FixedUpdate()
+        {
+            if (!IsServer || !_canAttack)
+                return;
+
+            ScanForNearbyAgents();
+        }
+
         private void InitBoss()
         {
             _waypointFollower.OnStructureEncountered += ProcessStructureEncounter;
@@ -40,8 +58,8 @@ namespace Examen.NPC
             foreach (BaseAttack attack in _attacks)
             {
                 _attackTypes.Add(attack.AttackType, attack);
-                if (attack is AoEAttack aoeAttack)
-                    aoeAttack.OnAttacked += _waypointFollower.ToggleWaiting;
+                attack.OnAttacked += _waypointFollower.ToggleWaiting;
+                attack.OnAttackFinished += SetCanAttack;
             }
         }
 
@@ -102,5 +120,26 @@ namespace Examen.NPC
 
         [Server]
         private void SetHasClearedPath(bool hasClearedPath) => _hasClearedPath = hasClearedPath;
+
+        private void UpdateProximityData()
+        {
+            _nearbyPlayers = _proximityAgent.RequestProximityData(AgentTypes.PLAYER);
+            _nearbyStructures = _proximityAgent.RequestProximityData(AgentTypes.STRUCTURE);
+        }
+
+        [Server]
+        private void ScanForNearbyAgents()
+        {
+            _canAttack = false;
+            UpdateProximityData();
+
+            if (_nearbyPlayers.Count < _nearbyPlayerThreshold && _nearbyStructures.Count < _nearbyStructureThreshold)
+                return;
+            
+            ProcessAttack(AttackTypes.AOE);
+        }
+
+        [Server]
+        private void SetCanAttack(bool canAttack) => _canAttack = canAttack;
     }
 }

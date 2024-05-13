@@ -86,10 +86,20 @@ namespace Examen.Pathfinding
             {
                 p_hasFoundBlockage = true;
 
-                p_waitForClearance = StartCoroutine(WaitForPathClearance());
+                GenerateCompletePath();
+                if (p_currentPath.Count <= 0)
+                {
+                    p_waitForClearance = StartCoroutine(WaitForPathClearance());
+                    
+                    if (p_obstacleHit.collider.TryGetComponent(out HealthData healthData))
+                        OnStructureEncountered?.Invoke(healthData);
+                    
+                    return;
+                }
 
-                if (p_obstacleHit.collider.TryGetComponent(out HealthData healthData))
-                    OnStructureEncountered?.Invoke(healthData);
+                // Check if distance to current waypoint is shorter than to next waypoint
+                if (Vector3.Distance(transform.position, waypoints[_currentWaypointIndex].position) < Vector3.Distance(transform.position, waypoints[_currentWaypointIndex + 1].position))
+                    _currentWaypointIndex++;
             }
         }
 

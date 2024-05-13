@@ -22,12 +22,13 @@ namespace Exame.Attacks
         public float Cooldown => p_cooldown;
         public float PrepareTime => p_prepareTime;
 
-        public event Action OnAttack;
+        public event Action OnAttackStarted;
         public event Action<bool> OnAttacked;
+        public event Action<bool> OnAttackFinished;
 
         protected virtual void OnEnable()
         {
-            OnAttack += StartAttack;
+            OnAttackStarted += StartAttack;
             p_animator = GetComponentInParent<Animator>();
         }
 
@@ -53,6 +54,7 @@ namespace Exame.Attacks
             yield return new WaitForSeconds(p_prepareTime + animationTime);
             Attack();
             OnAttacked?.Invoke(true);
+            OnAttackFinished?.Invoke(false);
             p_cooldownCoroutine = StartCoroutine(AttackCooldown());
         }
 
@@ -64,6 +66,7 @@ namespace Exame.Attacks
             CanAttack = true;
             BroadCastCanAttack(true);
             OnAttacked?.Invoke(false);
+            OnAttackFinished?.Invoke(true);
         }
 
         protected void IncreaseCooldown(float amount) => p_cooldown += amount;
@@ -74,6 +77,6 @@ namespace Exame.Attacks
         [ObserversRpc]
         private void BroadCastAnimation(string trigger) => p_animator.SetTrigger(trigger);
 
-        protected virtual void OnDisable() => OnAttack -= StartAttack;
+        protected virtual void OnDisable() => OnAttackStarted -= StartAttack;
     }
 }
