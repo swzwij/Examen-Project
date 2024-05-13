@@ -19,7 +19,7 @@ namespace Examen.Spawning.BossSpawning
         [SerializeField] private int _enemyDownTimer = 60;
         [SerializeField] private PlayerSpawner _spawner;
         [SerializeField] private List<HealthData> _enemyPrefabs;
-        [SerializeField] private List<BossSpawnPoints> _enemySpawnPoints;
+        [SerializeField] private List<EnemySpawnPoints> _enemySpawnPoints;
 
         private bool _hasConnected;
         private Dictionary<EnemyHealthBar, float> _enemiesHealth = new();
@@ -30,21 +30,21 @@ namespace Examen.Spawning.BossSpawning
             _spawner.OnSpawned += SendEnemyInfoOnConnection;
         }
 
-        public void DespawnEnemy(EnemyHealthBar bossHealthBar)
+        public void DespawnEnemy(EnemyHealthBar enemyHealthBar)
         {
-            PoolSystem.Instance.DespawnObject(bossHealthBar.gameObject.name, bossHealthBar.gameObject);
-            _enemiesHealth.Remove(bossHealthBar);
+            PoolSystem.Instance.DespawnObject(enemyHealthBar.gameObject.name, enemyHealthBar.gameObject);
+            _enemiesHealth.Remove(enemyHealthBar);
         }
 
         private void SendEnemyInfoOnConnection(NetworkObject obj) => ReceiveEnemyInfoOnConnection(_enemiesHealth);
 
         [ObserversRpc]
-        private void ReceiveEnemyInfoOnConnection(Dictionary<EnemyHealthBar, float> currentActiveBossSliders)
+        private void ReceiveEnemyInfoOnConnection(Dictionary<EnemyHealthBar, float> currentActiveEnemySliders)
         {
             if (_hasConnected)
                 return;
 
-            foreach (KeyValuePair<EnemyHealthBar, float> sliders in currentActiveBossSliders)
+            foreach (KeyValuePair<EnemyHealthBar, float> sliders in currentActiveEnemySliders)
                 sliders.Key.ClientInitialize(sliders.Value);
 
             _hasConnected = true;
@@ -54,55 +54,55 @@ namespace Examen.Spawning.BossSpawning
         private void SpawnEnemy()
         {
             int randomSpawnPointNumber = Random.Range(0, _enemySpawnPoints.Count);
-            int randomBossPrefabNumber = Random.Range(0, _enemyPrefabs.Count);
+            int randomEnemyPrefabNumber = Random.Range(0, _enemyPrefabs.Count);
 
-            GameObject boss = PoolSystem.Instance.SpawnObject(_enemyPrefabs[randomBossPrefabNumber].name, _enemyPrefabs[randomBossPrefabNumber].gameObject);
-            InstanceFinder.ServerManager.Spawn(boss);
+            GameObject enemy = PoolSystem.Instance.SpawnObject(_enemyPrefabs[randomEnemyPrefabNumber].name, _enemyPrefabs[randomEnemyPrefabNumber].gameObject);
+            InstanceFinder.ServerManager.Spawn(enemy);
 
-            EnableEnemy(boss);
+            EnableEnemy(enemy);
 
             if (_enemySpawnPoints[randomSpawnPointNumber].Waypoints.Count == 0)
                 _enemySpawnPoints[randomSpawnPointNumber].SetWaypoints();
 
-            boss.transform.position = _enemySpawnPoints[randomSpawnPointNumber].Spawnpoint.position;
-            StartCoroutine(DelayedPathStart(boss, randomSpawnPointNumber));
+            enemy.transform.position = _enemySpawnPoints[randomSpawnPointNumber].Spawnpoint.position;
+            StartCoroutine(DelayedPathStart(enemy, randomSpawnPointNumber));
 
             StartCoroutine(StartNextSpawnTimer());
 
-            AddSlider(boss);
+            AddSlider(enemy);
         }
 
         [ObserversRpc]
-        private void EnableEnemy(GameObject boss) => boss.SetActive(true);
+        private void EnableEnemy(GameObject enemy) => enemy.SetActive(true);
 
 
-        private IEnumerator DelayedPathStart(GameObject boss, int randomSpawnPointNumber)
+        private IEnumerator DelayedPathStart(GameObject enemy, int randomSpawnPointNumber)
         {
             yield return new WaitForSeconds(0.33f);
 
-            boss.TryGetComponent(out WaypointFollower waypointfollower);
+            enemy.TryGetComponent(out WaypointFollower waypointfollower);
             waypointfollower.Waypoints = _enemySpawnPoints[randomSpawnPointNumber].Waypoints;
 
-            if (boss.TryGetComponent(out Pathfinder pathfinder))
+            if (enemy.TryGetComponent(out Pathfinder pathfinder))
             {
                 waypointfollower.MyPathFinder = pathfinder;
                 waypointfollower.ResetWaypointIndex();
             }
         }
 
-        private void AddSlider(GameObject boss)
+        private void AddSlider(GameObject enemy)
         {
-            EnemyHealthBar healthBar = boss.GetComponent<EnemyHealthBar>();
-            HealthData bossHealth = boss.GetComponent<HealthData>();
+            EnemyHealthBar healthBar = enemy.GetComponent<EnemyHealthBar>();
+            HealthData enemyHealth = enemy.GetComponent<HealthData>();
 
-            if (bossHealth.isDead)
-                bossHealth.Resurrect(bossHealth.MaxHealth);
+            if (enemyHealth.isDead)
+                enemyHealth.Resurrect(enemyHealth.MaxHealth);
 
-            healthBar.EnemyHealthData = bossHealth;
+            healthBar.EnemyHealthData = enemyHealth;
             healthBar.ServerInitialize();
-            ReceiveEnemyInfoOnSpawn(healthBar, bossHealth.MaxHealth);
+            ReceiveEnemyInfoOnSpawn(healthBar, enemyHealth.MaxHealth);
 
-            _enemiesHealth.Add(healthBar, bossHealth.Health);
+            _enemiesHealth.Add(healthBar, enemyHealth.Health);
         }
 
         [ObserversRpc]

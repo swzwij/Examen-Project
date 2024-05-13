@@ -2,7 +2,7 @@ using Examen.Networking;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BossSpawnPoints : MonoBehaviour
+public class EnemySpawnPoints : MonoBehaviour
 {
    private Transform _spawnpoint;
    private List<Transform> _waypoints = new();

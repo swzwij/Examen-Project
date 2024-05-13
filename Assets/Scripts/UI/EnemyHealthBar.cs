@@ -44,7 +44,7 @@ namespace Examen.UI
         private void CallSetHealth() => SetUIHealth(EnemyHealthData.Health);
 
         [ObserversRpc]
-        private void SetUIHealth(float bossHealth) => _healthBar.value = bossHealth;
+        private void SetUIHealth(float enemyHealth) => _healthBar.value = enemyHealth;
 
         private void Despawn()
         {

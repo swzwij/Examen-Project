@@ -11,7 +11,6 @@ namespace Examen.Pathfinding
         [SerializeField] private List<Transform> _waypoints = new();
         private List<Node> _completePath = new();
         private int _currentWaypointIndex = 0;
-        private Transform _waypointsParent;
 
         public List<Transform> Waypoints { get => _waypoints; set { _waypoints = value; } }
         protected override void Start()
