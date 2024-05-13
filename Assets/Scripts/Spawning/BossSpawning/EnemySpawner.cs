@@ -10,7 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BossSpawningManager : NetworkedSingletonInstance<BossSpawningManager>
+public class EnemySpawner : NetworkedSingletonInstance<EnemySpawner>
 {
     [Header("Boss Spawning")]
     [SerializeField] private int _bossDownTimer = 120;
@@ -19,7 +19,7 @@ public class BossSpawningManager : NetworkedSingletonInstance<BossSpawningManage
     [SerializeField] private List<BossSpawnPoints> _bossSpawnPoints;
 
     private bool _hasConnected;
-    private Dictionary<BossHealthBar, float> _bossesHealth = new();
+    private Dictionary<EnemyHealthBar, float> _bossesHealth = new();
 
     private void Start()
     {
@@ -28,7 +28,7 @@ public class BossSpawningManager : NetworkedSingletonInstance<BossSpawningManage
         _spawner.OnSpawned += (NetworkObject obj) => SendBossInfoOnConnection();
     }
 
-    public void DespawnBoss(BossHealthBar bossHealthBar)
+    public void DespawnBoss(EnemyHealthBar bossHealthBar)
     {
         PoolSystem.Instance.DespawnObject(bossHealthBar.gameObject.name, bossHealthBar.gameObject);
         _bossesHealth.Remove(bossHealthBar);
@@ -37,12 +37,12 @@ public class BossSpawningManager : NetworkedSingletonInstance<BossSpawningManage
     private void SendBossInfoOnConnection() => ReceiveBossInfoOnConnection(_bossesHealth);
 
     [ObserversRpc]
-    private void ReceiveBossInfoOnConnection(Dictionary<BossHealthBar, float> currentActiveBossSliders)
+    private void ReceiveBossInfoOnConnection(Dictionary<EnemyHealthBar, float> currentActiveBossSliders)
     {
         if (_hasConnected)
             return;
 
-        foreach (KeyValuePair<BossHealthBar, float> sliders in currentActiveBossSliders)
+        foreach (KeyValuePair<EnemyHealthBar, float> sliders in currentActiveBossSliders)
             sliders.Key.ClientInitialize(sliders.Value);
 
         _hasConnected = true;
@@ -90,7 +90,7 @@ public class BossSpawningManager : NetworkedSingletonInstance<BossSpawningManage
 
     private void AddSlider(GameObject boss)
     {
-        BossHealthBar healthBar = boss.GetComponent<BossHealthBar>();
+        EnemyHealthBar healthBar = boss.GetComponent<EnemyHealthBar>();
         HealthData bossHealth = boss.GetComponent<HealthData>();
 
         if (bossHealth.isDead)
@@ -104,12 +104,12 @@ public class BossSpawningManager : NetworkedSingletonInstance<BossSpawningManage
     }
 
     [ObserversRpc]
-    private void ReceiveBossInfoOnSpawn(BossHealthBar healthbar, float healthAmount) => healthbar.ClientInitialize(healthAmount);
+    private void ReceiveBossInfoOnSpawn(EnemyHealthBar healthbar, float healthAmount) => healthbar.ClientInitialize(healthAmount);
 
 
     private void DespawnBosses()
     {
-        foreach (KeyValuePair<BossHealthBar, float> slider in _bossesHealth)
+        foreach (KeyValuePair<EnemyHealthBar, float> slider in _bossesHealth)
             PoolSystem.Instance.DespawnObject(slider.Key.name, slider.Key.gameObject);
 
         _bossesHealth.Clear();

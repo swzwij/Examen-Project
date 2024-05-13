@@ -4,7 +4,7 @@ using MarkUlrich.Health;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BossHealthBar : NetworkBehaviour
+public class EnemyHealthBar : NetworkBehaviour
 {
     [SerializeField] private bool _damage;
 
@@ -42,7 +42,7 @@ public class BossHealthBar : NetworkBehaviour
         BossHealthData.onDie.RemoveListener(Despawn);
         BossHealthData.onDie.RemoveListener(BroadcastDespawn);
 
-        BossSpawningManager.Instance.DespawnBoss(this);
+        EnemySpawner.Instance.DespawnBoss(this);
     }
 
     [ObserversRpc]
