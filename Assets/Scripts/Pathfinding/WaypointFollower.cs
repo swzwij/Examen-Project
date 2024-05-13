@@ -53,7 +53,7 @@ namespace Examen.Pathfinding
 
         protected override void FixedUpdate() 
         {
-            if (!IsServer)
+            if (!IsServer || _waypoints.Count <= 0)
                 return;
 
             UpdateBoss(_waypoints);
