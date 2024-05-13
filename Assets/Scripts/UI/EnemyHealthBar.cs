@@ -1,3 +1,4 @@
+using Examen.Spawning.BossSpawning;
 using FishNet.Object;
 using MarkUlrich.Health;
 using UnityEngine;
@@ -51,7 +52,7 @@ namespace Examen.UI
             EnemyHealthData.onDie.RemoveListener(Despawn);
             EnemyHealthData.onDie.RemoveListener(BroadcastDespawn);
 
-            EnemySpawner.Instance.DespawnBoss(this);
+            EnemySpawner.Instance.DespawnEnemy(this);
         }
 
         [ObserversRpc]
