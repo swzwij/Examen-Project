@@ -13,6 +13,9 @@ namespace Examen.Pathfinding
     [RequireComponent(typeof(Pathfinder))]
     public class PathFollower : NetworkBehaviour
     {
+        public float _baseSpeed { get; private set; }
+        public float Speed { get { return p_speed; } set { p_speed = value; } }
+
         [SerializeField] protected float p_speed = 5f;
         [SerializeField] protected float p_turnSpeed = 15f;
         [SerializeField] protected float p_obstacleCheckDistance = 1f;
@@ -44,6 +47,8 @@ namespace Examen.Pathfinding
 
         protected virtual void Start() 
         {
+            _baseSpeed = p_speed;
+
             p_pathfinder = GetComponent<Pathfinder>();
             p_pathRenderer = GetComponent<LineRenderer>();
 
