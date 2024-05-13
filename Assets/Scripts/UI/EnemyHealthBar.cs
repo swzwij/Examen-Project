@@ -1,50 +1,60 @@
-using Examen.Poolsystem;
 using FishNet.Object;
 using MarkUlrich.Health;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EnemyHealthBar : NetworkBehaviour
+namespace Examen.UI
 {
-    [SerializeField] private bool _damage;
-
-    [SerializeField] private Slider _healthBar;
-
-    public HealthData BossHealthData { get; set; }
-    public Slider HealthSlider => _healthBar;
-
-    private void Update()
+    public class EnemyHealthBar : NetworkBehaviour
     {
-        if (_damage) BossHealthData.TakeDamage(1);
+        [SerializeField] private bool _damage;
+        [SerializeField] private Slider _healthBar;
+
+        public HealthData EnemyHealthData { get; set; }
+        public Slider HealthSlider => _healthBar;
+
+        private void Update()
+        {
+            if (!IsServer)
+                _healthBar.transform.parent.rotation = Quaternion.LookRotation(Vector3.back);
+
+            if (_damage) EnemyHealthData.TakeDamage(1);
+        }
+
+        /// <summary>
+        /// Sets up the health on the server side
+        /// </summary>
+        public void ServerInitialize()
+        {
+            EnemyHealthData.onDamageTaken.AddListener(CallSetHealth);
+            EnemyHealthData.onDie.AddListener(Despawn);
+            EnemyHealthData.onDie.AddListener(BroadcastDespawn);
+        }
+
+        /// <summary>
+        /// Sets up the health on the client side
+        /// </summary>
+        public void ClientInitialize(float enemyMaxHealth)
+        {
+            _healthBar.maxValue = enemyMaxHealth;
+            _healthBar.value = _healthBar.maxValue;
+        }
+
+        private void CallSetHealth() => SetUIHealth(EnemyHealthData.Health);
+
+        [ObserversRpc]
+        private void SetUIHealth(float bossHealth) => _healthBar.value = bossHealth;
+
+        private void Despawn()
+        {
+            EnemyHealthData.onDamageTaken.RemoveListener(CallSetHealth);
+            EnemyHealthData.onDie.RemoveListener(Despawn);
+            EnemyHealthData.onDie.RemoveListener(BroadcastDespawn);
+
+            EnemySpawner.Instance.DespawnBoss(this);
+        }
+
+        [ObserversRpc]
+        private void BroadcastDespawn() => gameObject.SetActive(false);
     }
-
-    public void ServerInitialize()
-    {
-        BossHealthData.onDamageTaken.AddListener(CallSetHealth);
-        BossHealthData.onDie.AddListener(Despawn);
-        BossHealthData.onDie.AddListener(BroadcastDespawn);
-    }
-
-    public void ClientInitialize(float bossMaxHealth)
-    {
-        _healthBar.maxValue = bossMaxHealth;
-        _healthBar.value = _healthBar.maxValue;
-    }
-
-    private void CallSetHealth() => SetUIHealth(BossHealthData.Health);
-
-    [ObserversRpc]
-    private void SetUIHealth(float bossHealth) => _healthBar.value = bossHealth;
-
-    private void Despawn()
-    {
-        BossHealthData.onDamageTaken.RemoveListener(CallSetHealth);
-        BossHealthData.onDie.RemoveListener(Despawn);
-        BossHealthData.onDie.RemoveListener(BroadcastDespawn);
-
-        EnemySpawner.Instance.DespawnBoss(this);
-    }
-
-    [ObserversRpc]
-    private void BroadcastDespawn() => gameObject.SetActive(false);
 }

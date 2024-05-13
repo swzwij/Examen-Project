@@ -193,9 +193,11 @@ namespace Examen.Pathfinding.Grid
             yield return new WaitForEndOfFrame();
 
             Cell cell = _cells[cellX, cellY];
+
             foreach (Node node in cell.Nodes)
             {
                 Vector3 position = node.Position;
+                
                 if (IsWalkableArea(position, out float elevation))
                 {
                     node.IsWalkable = true;
@@ -204,32 +206,37 @@ namespace Examen.Pathfinding.Grid
                     node.MaxConnectionDistance = _maxConnectionDistance;
                     node.MaxElevationDifference = _maxElevationDifference;
                     cell.ActiveNodes.Add(node);
+                    continue;
                 }
-                else
-                {
-                    node.IsWalkable = false;
-                }
+                
+                node.IsWalkable = false;
             }
 
-            ConnectNodes();
+            ConnectNodesInCell(cell);
         }
 
         private void ConnectNodes()
         {
-            foreach (int x in Enumerable.Range(0, _gridSize.x))
+            for (int x = 0; x < _gridSize.x; x++)
             {
-                foreach (int y in Enumerable.Range(0, _gridSize.y))
+                for (int y = 0; y < _gridSize.y; y++)
                     CheckNodeConnections(x, y);
             }
+        }
+
+        private void ConnectNodesInCell(Cell cell)
+        {
+            for (int i = 0; i < cell.Nodes.Count; i++)
+                CheckNodeConnections(cell.Nodes.ElementAt(i).GridPosition.x, cell.Nodes.ElementAt(i).GridPosition.y);
         }
 
         private void CheckNodeConnections(int x, int y)
         {
             Node currentNode = _nodes[x, y];
 
-            foreach (int i in Enumerable.Range(x - 1, _maxNodeConnections))
+            for (int i = x - 1; i <= x + 1; i++)
             {
-                foreach (int j in Enumerable.Range(y - 1, _maxNodeConnections))
+                for (int j = y - 1; j <= y + 1; j++)
                 {
                     if (i == x && j == y || i < 0 || i >= _gridSize.x || j < 0 || j >= _gridSize.y)
                         continue;

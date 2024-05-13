@@ -8,32 +8,33 @@ namespace Examen.Pathfinding
 {
     public class WaypointFollower : PathFollower
     {
-        private List<Transform> _waypoints = new();
+        [SerializeField] private List<Transform> _waypoints = new();
         private List<Node> _completePath = new();
         private int _currentWaypointIndex = 0;
+        private Transform _waypointsParent;
+        private bool _hasInitialised;
 
-        public List<Transform> Waypoints { get => _waypoints; set { _waypoints = value; } }
+        protected override void Start() => base.Start();
 
-        protected override void Start()
+        private void InitBoss()
         {
-            base.Start();
+            _waypointsParent = new GameObject().transform;
+            _waypointsParent.name = $"{gameObject.name} - Waypoints";
 
-            GenerateCompletePath();
-        }
+            for (int i = _waypoints.Count - 1; i >= 0; i--)
+                _waypoints[i].SetParent(_waypointsParent);
+            
+            _waypoints.Reverse();
 
-        [Server]
-        public void ResetWaypointIndex()
-        {
-            _currentWaypointIndex = 0;
-            GenerateCompletePath();
-        }
-
-        [Server]
-        public void GenerateCompletePath()
-        {
             if (_waypoints.Count == 0)
                 return;
 
+            GenerateCompletePath();
+        }
+
+        [Server]
+        private void GenerateCompletePath()
+        {
             for (int i = _currentWaypointIndex; i < _waypoints.Count; i++)
             {
                 if (i == _currentWaypointIndex)
@@ -53,8 +54,14 @@ namespace Examen.Pathfinding
 
         protected override void FixedUpdate() 
         {
-            if (!IsServer || _waypoints.Count <= 0)
+            if (!IsServer)
                 return;
+
+            if (!_hasInitialised)
+            {
+                _hasInitialised = true;
+                InitBoss();
+            }
 
             UpdateBoss(_waypoints);
         }
