@@ -22,6 +22,7 @@ public class BossHealthBar : NetworkBehaviour
     {
         BossHealthData.onDamageTaken.AddListener(CallSetHealth);
         BossHealthData.onDie.AddListener(Despawn);
+        BossHealthData.onDie.AddListener(BroadcastDespawn);
     }
 
     public void ClientInitialize(float bossMaxHealth)
@@ -35,5 +36,15 @@ public class BossHealthBar : NetworkBehaviour
     [ObserversRpc]
     private void SetUIHealth(float bossHealth) => _healthBar.value = bossHealth;
 
-    private void Despawn() => BossSpawningManager.Instance.DespawnBoss(this);
+    private void Despawn()
+    {
+        BossHealthData.onDamageTaken.RemoveListener(CallSetHealth);
+        BossHealthData.onDie.RemoveListener(Despawn);
+        BossHealthData.onDie.RemoveListener(BroadcastDespawn);
+
+        BossSpawningManager.Instance.DespawnBoss(this);
+    }
+
+    [ObserversRpc]
+    private void BroadcastDespawn() => gameObject.SetActive(false);
 }

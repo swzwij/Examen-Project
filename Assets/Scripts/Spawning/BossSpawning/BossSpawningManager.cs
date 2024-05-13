@@ -34,6 +34,20 @@ public class BossSpawningManager : NetworkedSingletonInstance<BossSpawningManage
         _bossesHealth.Remove(bossHealthBar);
     }
 
+    private void SendBossInfoOnConnection() => ReceiveBossInfoOnConnection(_bossesHealth);
+
+    [ObserversRpc]
+    private void ReceiveBossInfoOnConnection(Dictionary<BossHealthBar, float> currentActiveBossSliders)
+    {
+        if (_hasConnected)
+            return;
+
+        foreach (KeyValuePair<BossHealthBar, float> sliders in currentActiveBossSliders)
+            sliders.Key.ClientInitialize(sliders.Value);
+
+        _hasConnected = true;
+    }
+
     [Server]
     private void SpawnBoss()
     {
@@ -42,6 +56,8 @@ public class BossSpawningManager : NetworkedSingletonInstance<BossSpawningManage
 
         GameObject boss = PoolSystem.Instance.SpawnObject(_bossPrefabs[randomBossPrefabNumber].name, _bossPrefabs[randomBossPrefabNumber].gameObject);
         InstanceFinder.ServerManager.Spawn(boss);
+
+        EnableEnemy(boss);
 
         if (_bossSpawnPoints[randomSpawnPointNumber].Waypoints.Count == 0)
             _bossSpawnPoints[randomSpawnPointNumber].SetWaypoints();
@@ -53,6 +69,10 @@ public class BossSpawningManager : NetworkedSingletonInstance<BossSpawningManage
 
         AddSlider(boss);
     }
+
+    [ObserversRpc]
+    private void EnableEnemy(GameObject boss) => boss.SetActive(true);
+
 
     private IEnumerator DelayedPathStart(GameObject boss, int randomSpawnPointNumber)
     {
@@ -68,21 +88,6 @@ public class BossSpawningManager : NetworkedSingletonInstance<BossSpawningManage
         }
     }
 
-    private void SendBossInfoOnConnection() => ReceiveBossInfoOnConnection(_bossesHealth);
-
-
-    [ObserversRpc]
-    private void ReceiveBossInfoOnConnection(Dictionary<BossHealthBar, float> currentActiveBossSliders)
-    {
-        if (_hasConnected)
-            return;
-
-        foreach (KeyValuePair<BossHealthBar, float> sliders in currentActiveBossSliders)
-            sliders.Key.ClientInitialize(sliders.Value);
-
-        _hasConnected = true;
-    }
-
     private void AddSlider(GameObject boss)
     {
         BossHealthBar healthBar = boss.GetComponent<BossHealthBar>();
@@ -93,9 +98,14 @@ public class BossSpawningManager : NetworkedSingletonInstance<BossSpawningManage
 
         healthBar.BossHealthData = bossHealth;
         healthBar.ServerInitialize();
+        ReceiveBossInfoOnSpawn(healthBar, bossHealth.MaxHealth);
 
-        _bossesHealth.Add(healthBar, bossHealth.MaxHealth);
+        _bossesHealth.Add(healthBar, bossHealth.Health);
     }
+
+    [ObserversRpc]
+    private void ReceiveBossInfoOnSpawn(BossHealthBar healthbar, float healthAmount) => healthbar.ClientInitialize(healthAmount);
+
 
     private void DespawnBosses()
     {
