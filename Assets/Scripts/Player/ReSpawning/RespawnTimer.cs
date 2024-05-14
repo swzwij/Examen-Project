@@ -16,12 +16,12 @@ namespace Examen.Player.ReSpawning
         [SerializeField] private int _startCount = 9;
         private int _currentCount;
 
-        private revivable _revivable;
+        private HealthData _healthData;
 
         private void Start()
         {
-            _revivable = _player.GetComponent<revivable>();
-            Debug.Log(_revivable.gameObject);
+            _healthData = _player.GetComponent<HealthData>();
+            Debug.Log(_healthData.gameObject);
         }
 
         private void OnEnable() => StartCoroutine(CountDown());
@@ -37,7 +37,7 @@ namespace Examen.Player.ReSpawning
                 yield return new WaitForSeconds(1);
             }
 
-            _revivable.ForcedRespawn();
+            _healthData.Resurrect(100);
         }
     }
 }
