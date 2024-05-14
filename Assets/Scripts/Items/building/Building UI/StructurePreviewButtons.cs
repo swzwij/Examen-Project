@@ -1,3 +1,7 @@
+using Examen.Inventory;
+using Examen.Networking;
+using FishNet.Managing;
+using FishNet.Object;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +14,7 @@ namespace Examen.Building.BuildingUI
 
         private bool _isCameraInitialised;
 
+        public List<StructureCost> StructureCost { private get; set; }
         public BuildingManager OwnedBuildingManager { private get; set; }
         public UnityEngine.Camera Camera { get; set; }
 
@@ -24,6 +29,7 @@ namespace Examen.Building.BuildingUI
                 Transform child = transform.GetChild(i);
                 _buttons.Add(child);
             }
+
         }
 
         private void Update()
@@ -63,7 +69,11 @@ namespace Examen.Building.BuildingUI
         /// <summary>
         /// Places the structure managed by the OwnedBuildingManager.
         /// </summary>
-        public void PlaceStructure() => OwnedBuildingManager.SetStructure();
-    }
+        public void PlaceStructure()
+        {
+            InventorySystem.Instance.RemoveItems(StructureCost);
+            OwnedBuildingManager.SetStructure();
+        }
 
+    }
 }

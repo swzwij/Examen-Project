@@ -10,7 +10,7 @@ using UnityEngine;
 
 public class ServerInventory : NetworkedSingletonInstance<ServerInventory>
 {
-    private Dictionary<int, Dictionary<ItemInstance, int>> _inventorySystems = new();
+    private Dictionary<int, Dictionary<string, int>> _inventorySystems = new();
     private NetworkManager _networkManager;
 
     private void Start()
@@ -30,14 +30,12 @@ public class ServerInventory : NetworkedSingletonInstance<ServerInventory>
     [Server]
     public void AddItem(NetworkConnection connection, Item newItem, int itemAmount)
     {
-        ItemInstance itemInstance = new(newItem.Name);
-
         if (!_inventorySystems.ContainsKey(connection.ClientId))
             _inventorySystems.Add(connection.ClientId, new());
-        if (!_inventorySystems[connection.ClientId].ContainsKey(itemInstance))
-            _inventorySystems[connection.ClientId].Add(itemInstance, itemAmount);
+        if (!_inventorySystems[connection.ClientId].ContainsKey(newItem.Name))
+            _inventorySystems[connection.ClientId].Add(newItem.Name, itemAmount);
         else
-            _inventorySystems[connection.ClientId][itemInstance] += itemAmount;
+            _inventorySystems[connection.ClientId][newItem.Name] += itemAmount;
 
         UpdateClientInventory(connection, _inventorySystems[connection.ClientId]);
     }
@@ -48,21 +46,27 @@ public class ServerInventory : NetworkedSingletonInstance<ServerInventory>
     /// <param name="connection">The client you want the item removed from.</param>
     /// <param name="newItem">The item you want to remove.</param>
     /// <param name="itemAmount">The amount of items you want to remove</param>
-    [Server]
-    public void RemoveItem(NetworkConnection connection, Item newItem, int itemAmount)
-    {
-        ItemInstance itemInstance = new(newItem.Name);
+    //public void RemoveItem(NetworkConnection connection, Item newItem, int itemAmount) => SendRemoveItem(connection, newItem, itemAmount);
 
-        if (!_inventorySystems.ContainsKey(connection.ClientId) || _inventorySystems[connection.ClientId][itemInstance] - itemAmount < 0)
+
+    public void RemoveItem(NetworkConnection connection, Item newItem, int itemAmount) => s(connection, newItem, itemAmount);
+     
+    [ServerRpc]
+    public void s(NetworkConnection connection, Item newItem, int itemAmount) => RemoveItems(connection, newItem, itemAmount);
+
+    [Server]
+    private void RemoveItems(NetworkConnection connection, Item newItem, int itemAmount)
+    {
+        if (!_inventorySystems.ContainsKey(connection.ClientId) || _inventorySystems[connection.ClientId][newItem.Name] - itemAmount < 0)
             return;
 
-        _inventorySystems[connection.ClientId][itemInstance] -= itemAmount;
+        _inventorySystems[connection.ClientId][newItem.Name] -= itemAmount;
 
         UpdateClientInventory(connection, _inventorySystems[connection.ClientId]);
     }
 
     [ObserversRpc]
-    private void UpdateClientInventory(NetworkConnection connection, Dictionary<ItemInstance, int> _currentItems)
+    private void UpdateClientInventory(NetworkConnection connection, Dictionary<string, int> _currentItems)
     {
         if (_networkManager.ClientManager.Connection.ClientId != connection.ClientId)
             return;

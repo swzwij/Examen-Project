@@ -25,15 +25,17 @@ namespace Examen.Building.BuildingUI
             _button = GetComponent<Button>();
 
             InventorySystem.Instance.OnItemsChanged += PlaceStructure;
+
+            PlaceStructure(null);
         }
 
-        private void PlaceStructure(Dictionary<ItemInstance, int> _)
+        private void PlaceStructure(Dictionary<string, int> _)
         {
             int _currentItems = 0;
 
             foreach (StructureCost item in _structureCost)
             {
-                if (InventorySystem.Instance.CurrentItems.ContainsKey(item.Item) && InventorySystem.Instance.CurrentItems[item.Item] > item.Amount)
+                if (InventorySystem.Instance.CurrentItems.ContainsKey(item.ItemName) && InventorySystem.Instance.CurrentItems[item.ItemName] > item.Amount)
                     _currentItems++;
             }
 
@@ -41,13 +43,15 @@ namespace Examen.Building.BuildingUI
         }
 
         public void OnPointerDown(PointerEventData eventData)
-            => _buildingManager.SpawnStructurePreview(_structurePreview, _structure);
+            => _buildingManager.SpawnStructurePreview(_structurePreview, _structure, _structureCost);
     }
 
     [Serializable]
     public struct StructureCost
     {
-        public ItemInstance Item;
+        public Item Item;
         public int Amount;
+
+        public readonly string ItemName => Item.Name;
     }
 }
