@@ -1031,7 +1031,9 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 7451343417797423076}
   _networkObjectCache: {fileID: 7451343417797423076}
   _displayItem: {fileID: 5202236290990543716, guid: 85bf008687bfb024490ea5afdc3fccac, type: 3}
-  _content: {fileID: 7147658956927721393}
+  _contents:
+  - {fileID: 7147658956927721393}
+  - {fileID: 5001443365300197742}
 --- !u!114 &1484964846317780065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2701,7 +2703,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 7451343417797423076}
   _networkObjectCache: {fileID: 7451343417797423076}
   _displayItem: {fileID: 5202236290990543716, guid: 85bf008687bfb024490ea5afdc3fccac, type: 3}
-  _content: {fileID: 5001443365300197742}
+  _contents: []
 --- !u!1 &6129132725688323765
 GameObject:
   m_ObjectHideFlags: 0

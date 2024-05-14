@@ -7,7 +7,9 @@ namespace Examen.Inventory
     public class InventoryDisplay : NetworkBehaviour
     {
         [SerializeField] private InventoryDisplayItem _displayItem;
-        [SerializeField] private Transform _content;
+        [SerializeField] private Transform[] _contents;
+
+        private InventoryPackage _currentPackage;
 
         private void OnEnable() 
         {
@@ -19,9 +21,16 @@ namespace Examen.Inventory
             InventorySystem.Instance.OnItemsChanged -= UpdateDisplay;
         }
 
+        public void UpdateDisplay()
+        {
+            UpdateDisplay(_currentPackage);
+        }
+
         private void UpdateDisplay(InventoryPackage package)
         {            
             ClearDisplay();
+
+            _currentPackage = package;
 
             foreach (ItemInstance item in package.Items.Keys)
                 UpdateDisplayItem(item.Name, package.Items[item]);
@@ -33,8 +42,11 @@ namespace Examen.Inventory
             if (!IsOwner)
                 return;
             
-            foreach (Transform child in _content)
-                Destroy(child.gameObject);
+            foreach (Transform content in _contents)
+            {
+                foreach (Transform child in content)
+                    Destroy(child.gameObject);
+            }
         }
 
         [ObserversRpc]
@@ -43,8 +55,11 @@ namespace Examen.Inventory
             if (!IsOwner)
                 return;
 
-            InventoryDisplayItem displayItem = Instantiate(_displayItem, _content);
-            displayItem.Initialize(item, itemAmount);
+            foreach (Transform child in _contents)
+            {
+                InventoryDisplayItem displayItem = Instantiate(_displayItem, child);
+                displayItem.Initialize(item, itemAmount);
+            }
         }
     }
 }

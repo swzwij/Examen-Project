@@ -1,3 +1,4 @@
+using Examen.Inventory;
 using UnityEngine;
 
 namespace Examen.Building.BuildingUI
