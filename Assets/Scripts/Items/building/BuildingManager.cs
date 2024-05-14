@@ -9,6 +9,7 @@ using Examen.Building.BuildingUI;
 using Examen.Structure;
 using System.Collections.Generic;
 using Swzwij.Extensions;
+using Examen.Structures;
 
 namespace Examen.Building
 {

@@ -1,5 +1,6 @@
 using Examen.Inventory;
 using Examen.Items;
+using Examen.Structures;
 using FishNet.Object;
 using System;
 using System.Collections.Generic;
@@ -24,12 +25,12 @@ namespace Examen.Building.BuildingUI
             _buildingManager = GetComponentInParent<BuildingManager>();
             _button = GetComponent<Button>();
 
-            InventorySystem.Instance.OnItemsChanged += PlaceStructure;
+            InventorySystem.Instance.OnItemsChanged += CheckStructureCost;
 
-            PlaceStructure(null);
+            CheckStructureCost(null);
         }
 
-        private void PlaceStructure(Dictionary<string, int> _)
+        private void CheckStructureCost(Dictionary<string, int> _)
         {
             int _currentItems = 0;
 
@@ -44,14 +45,5 @@ namespace Examen.Building.BuildingUI
 
         public void OnPointerDown(PointerEventData eventData)
             => _buildingManager.SpawnStructurePreview(_structurePreview, _structure, _structureCost);
-    }
-
-    [Serializable]
-    public struct StructureCost
-    {
-        public Item Item;
-        public int Amount;
-
-        public readonly string ItemName => Item.Name;
     }
 }

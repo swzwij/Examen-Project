@@ -1,7 +1,7 @@
 using Examen.Inventory;
 using Examen.Networking;
+using Examen.Structures;
 using FishNet.Managing;
-using FishNet.Object;
 using System.Collections.Generic;
 using UnityEngine;
 

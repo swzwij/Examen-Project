@@ -1,6 +1,7 @@
 using Examen.Building.BuildingUI;
 using Examen.Items;
 using Examen.Networking;
+using Examen.Structures;
 using FishNet.Connection;
 using FishNet.Managing;
 using FishNet.Object;
@@ -31,6 +32,11 @@ namespace Examen.Inventory
             OnItemsChanged?.Invoke(_currentItems);
         }
 
+        /// <summary>
+        /// Removes given items from given player.
+        /// </summary>
+        /// <param name="connection"> Connection of the player you want to remove from. </param>
+        /// <param name="structureCost"> The item and amount you want to remove. /param>
         public void RemoveItems(NetworkConnection connection ,List<StructureCost> structureCost)
         {
             foreach (var item in structureCost)
@@ -38,6 +44,6 @@ namespace Examen.Inventory
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void RemoveItem(NetworkConnection connection, string itemName, int amount) => ServerInventory.Instance.RemoveItem(connection, itemName, amount);
+        private void RemoveItem(NetworkConnection connection, string itemName, int amount) => ServerInventory.Instance.RemoveItem(connection, itemName, amount);
     }
 }
