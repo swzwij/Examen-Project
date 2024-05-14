@@ -48,19 +48,13 @@ public class ServerInventory : NetworkedSingletonInstance<ServerInventory>
     /// <param name="itemAmount">The amount of items you want to remove</param>
     //public void RemoveItem(NetworkConnection connection, Item newItem, int itemAmount) => SendRemoveItem(connection, newItem, itemAmount);
 
-
-    public void RemoveItem(NetworkConnection connection, Item newItem, int itemAmount) => s(connection, newItem, itemAmount);
-     
-    [ServerRpc]
-    public void s(NetworkConnection connection, Item newItem, int itemAmount) => RemoveItems(connection, newItem, itemAmount);
-
     [Server]
-    private void RemoveItems(NetworkConnection connection, Item newItem, int itemAmount)
+    public void RemoveItem(NetworkConnection connection, string newItemName, int itemAmount)
     {
-        if (!_inventorySystems.ContainsKey(connection.ClientId) || _inventorySystems[connection.ClientId][newItem.Name] - itemAmount < 0)
+        if (!_inventorySystems.ContainsKey(connection.ClientId) || _inventorySystems[connection.ClientId][newItemName] - itemAmount < 0)
             return;
 
-        _inventorySystems[connection.ClientId][newItem.Name] -= itemAmount;
+        _inventorySystems[connection.ClientId][newItemName] -= itemAmount;
 
         UpdateClientInventory(connection, _inventorySystems[connection.ClientId]);
     }

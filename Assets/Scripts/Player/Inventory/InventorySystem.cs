@@ -14,14 +14,11 @@ namespace Examen.Inventory
 {
     public class InventorySystem : NetworkedSingletonInstance<InventorySystem>
     {
-        private NetworkManager _networkManager;
         private static Dictionary<string, int> _currentItems = new();
 
         public Dictionary<string, int> CurrentItems => _currentItems;
 
         public Action<Dictionary<string, int>> OnItemsChanged;
-
-        private void Start() => ServerInstance.Instance.TryGetComponent(out _networkManager);
 
 
         /// <summary>
@@ -34,13 +31,13 @@ namespace Examen.Inventory
             OnItemsChanged?.Invoke(_currentItems);
         }
 
-
-        public void RemoveItems(List<StructureCost> structureCost)
-        { 
-            print("AAHHH");
-
+        public void RemoveItems(NetworkConnection connection ,List<StructureCost> structureCost)
+        {
             foreach (var item in structureCost)
-                ServerInventory.Instance.RemoveItem(_networkManager.ClientManager.Connection, item.Item, item.Amount);
+                RemoveItem(connection, item.ItemName, item.Amount);
         }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void RemoveItem(NetworkConnection connection, string itemName, int amount) => ServerInventory.Instance.RemoveItem(connection, itemName, amount);
     }
 }

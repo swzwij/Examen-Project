@@ -9,6 +9,7 @@ namespace Examen.Building.BuildingUI
 {
     public class StructurePreviewButtons : MonoBehaviour
     {
+        private NetworkManager _networkManager;
         private Canvas _canvas;
         private HashSet<Transform> _buttons = new();
 
@@ -24,6 +25,8 @@ namespace Examen.Building.BuildingUI
 
         private void Awake()
         {
+            ServerInstance.Instance.TryGetComponent(out _networkManager);
+
             for (int i = 0; i < transform.childCount; i++)
             {
                 Transform child = transform.GetChild(i);
@@ -71,8 +74,8 @@ namespace Examen.Building.BuildingUI
         /// </summary>
         public void PlaceStructure()
         {
-            InventorySystem.Instance.RemoveItems(StructureCost);
             OwnedBuildingManager.SetStructure();
+            InventorySystem.Instance.RemoveItems(_networkManager.ClientManager.Connection,StructureCost);
         }
 
     }
