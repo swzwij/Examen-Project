@@ -121,7 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13e3e38fcf685dc40aa88bebdeec26b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 7
+  _componentIndexCache: 8
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
 --- !u!114 &3713117069067843006
@@ -526,6 +526,7 @@ MonoBehaviour:
   - {fileID: 7692977816705919355}
   - {fileID: 3694398312710353908}
   - {fileID: 2256975833209865345}
+  - {fileID: 410825919990198455}
   - {fileID: 7296310588199703723}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
@@ -736,9 +737,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5e6a50da3ac9ec4eab39645623096a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 7
   _addedNetworkObject: {fileID: 3679868855582776512}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 3679868855582776512}
   isAlive: 1
   isRevivable: 0
   _deathScreen: {fileID: 7988786214561389260}
@@ -979,6 +980,26 @@ PrefabInstance:
     - target: {fileID: 6912199420926223361, guid: 64aa5168004dabe4baefaa75c18ef07b, type: 3}
       propertyPath: m_Name
       value: DeathScreen
+      objectReference: {fileID: 0}
+    - target: {fileID: 6912199420926223361, guid: 64aa5168004dabe4baefaa75c18ef07b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7381839278334362507, guid: 64aa5168004dabe4baefaa75c18ef07b, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 2467539732417906286}
+    - target: {fileID: 7626802916271781804, guid: 64aa5168004dabe4baefaa75c18ef07b, type: 3}
+      propertyPath: _player
+      value: 
+      objectReference: {fileID: 6297853107807436002}
+    - target: {fileID: 8367906776076173598, guid: 64aa5168004dabe4baefaa75c18ef07b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 410825919990198455}
+    - target: {fileID: 8367906776076173598, guid: 64aa5168004dabe4baefaa75c18ef07b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ForcedRespawn
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
