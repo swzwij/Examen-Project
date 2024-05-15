@@ -13,6 +13,7 @@ namespace Examen.Player
         private Vector3 _pointerWorldPosition;
         private InputAction _clickAction;
 
+        public Action<RaycastHit> OnHovering;
         public Action<Vector3> OnPointedAtPosition;
         public Action<Vector3> OnPointedUIInteraction;
         public Action<GameObject> OnPointedGameobject;
@@ -21,6 +22,15 @@ namespace Examen.Player
 
         public bool HasClickedUI { get; set; }
         public UnityEngine.Camera Camera => _myCamera;
+        public Ray PointerRay 
+        {
+            get
+            {
+                Vector2 pointerPosition = InputManager.TryGetAction("PointerPosition").ReadValue<Vector2>();
+                return _myCamera.ScreenPointToRay(pointerPosition);
+            }
+        }
+        
 
         private void Start()
         {
@@ -29,6 +39,8 @@ namespace Examen.Player
 
             InitCamera();
         }
+
+        private void FixedUpdate() => Hover();
 
         private void InitCamera()
         {
@@ -47,10 +59,7 @@ namespace Examen.Player
             if (!IsOwner)
                 return;
 
-            Vector2 pointerPosition = InputManager.TryGetAction("PointerPosition").ReadValue<Vector2>();
-            Ray pointerRay = _myCamera.ScreenPointToRay(pointerPosition);
-
-            ProcessPointerPosition(pointerRay);
+            ProcessPointerPosition(PointerRay);
         }
 
         private void ProcessPointerPosition(Ray pointerRay)
@@ -78,6 +87,14 @@ namespace Examen.Player
                 if (hit.transform.TryGetComponent(out Interactable interactable))
                     OnPointedAtInteractable?.Invoke(interactable);
             }
+        }
+
+        private void Hover()
+        {
+            if (!IsOwner || !Physics.Raycast(PointerRay, out RaycastHit hit, _pointerDistance))
+                return;
+            
+            OnHovering?.Invoke(hit);
         }
 
         private void OnPointPerformed(InputAction.CallbackContext context)
