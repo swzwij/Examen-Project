@@ -15,7 +15,7 @@ namespace Examen.Pathfinding.Grid
         public int CellY { get; set; }
         public HashSet<Node> ActiveNodes { get => _activeNodes; set => _activeNodes = value; }
         public HashSet<Node> Nodes => _nodes;
-        public HashSet<Cell> Neighbours { get; set; } = new HashSet<Cell>();
+        public HashSet<Cell> Neighbours { get; set; } = new();
 
         /// <summary>
         /// Adds a node to the cell.
@@ -29,7 +29,7 @@ namespace Examen.Pathfinding.Grid
         public void UpdateCell()
         {
             GridSystem.UpdateCell(CellX, CellY);
-            foreach (var neighbour in Neighbours)
+            foreach (Cell neighbour in Neighbours)
                 GridSystem.UpdateCell(neighbour.CellX, neighbour.CellY);
         }
     }
