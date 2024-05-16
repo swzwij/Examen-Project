@@ -16,7 +16,6 @@ namespace Exame.Attacks
 
         [Header("Visuals")]
         [SerializeField] private Projector _projector;
-        [SerializeField] private Animation _animation;
 
         private readonly Dictionary<Collider, HealthData> _damagedTargets = new();
         private float AoERadius => _radius * 1.2f;
@@ -40,14 +39,12 @@ namespace Exame.Attacks
 
         private void ActivateAoEAttack()
         {
-            Debug.LogError("Activating AoE Attack");
             Collider[] colliders = Physics.OverlapSphere(transform.position, _radius, _layerMask);
             foreach (Collider collider in colliders)
             {
                 if (_damagedTargets.TryGetValue(collider, out _))
                 {
                     _damagedTargets[collider].TakeDamage(p_damage);
-                    Debug.LogError($"Damaging {collider.name} again");
                     continue;
                 }
 
@@ -64,6 +61,7 @@ namespace Exame.Attacks
 
         private IEnumerator PrepareProjector()
         {
+            yield return new WaitForSeconds(p_prepareTime + CurrentAnimationTime / 2);
             float prepareTime = p_prepareTime / 2;
             while (prepareTime > 0)
             {

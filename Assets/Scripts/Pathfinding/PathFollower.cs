@@ -26,7 +26,6 @@ namespace Examen.Pathfinding
         protected bool p_hasInteracted;
         protected Vector3 p_currentTarget;
         protected bool p_hasFoundBlockage;
-        protected bool p_isWaiting;
         protected Pathfinder p_pathfinder;
         protected Pointer p_pointer;
         protected Interactor p_interactor;
@@ -144,9 +143,6 @@ namespace Examen.Pathfinding
 
                 while (Vector3.Distance(transform.position, adjustedNode) > 0.1f)
                 {
-                    if (p_isWaiting)
-                        yield return null;
-
                     float angleToNode = Vector3.Angle(nodeDirection, transform.forward);
                     MoveToTarget(adjustedNode, p_speed / (angleToNode / 100 + 1));
                     TurnToTarget(adjustedNode);

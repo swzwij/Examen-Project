@@ -50,9 +50,10 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 5998508435628983183}
   _networkObjectCache: {fileID: 5998508435628983183}
   p_attackType: 1
-  p_damage: 10
-  p_prepareTime: 0.25
+  p_damage: 30
+  p_prepareTime: 0.5
   p_cooldown: 1
+  p_animationTrigger: Attack
   _resetTime: 0.25
   _radius: 5
   _layerMask:
@@ -88,7 +89,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 5
+  <PrefabId>k__BackingField: 9
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0

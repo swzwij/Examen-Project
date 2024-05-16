@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4661868421625354277}
   - component: {fileID: 2556768225675572015}
   - component: {fileID: 2008946782905985116}
+  - component: {fileID: 8426079236571924867}
   m_Layer: 6
   m_Name: Projectile Tower
   m_TagString: Untagged
@@ -97,7 +98,7 @@ MonoBehaviour:
   - {fileID: 2008946782905985116}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField:
-  - {fileID: 592569649619355868}
+  - {fileID: 0}
   SerializedTransformProperties:
     Position: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0, w: 1}
@@ -127,6 +128,25 @@ MonoBehaviour:
   _componentIndexCache: 1
   _addedNetworkObject: {fileID: 2556768225675572015}
   _networkObjectCache: {fileID: 2556768225675572015}
+--- !u!114 &8426079236571924867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 383376843492830689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 815b2066ae5f6074f9eb80906be8b0a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 2556768225675572015}
+  _networkObjectCache: {fileID: 0}
+  _agentType: 2
+  _defaultRange: 15
+  _checkProximity: 0
+  _agentTypesToCheck: 
 --- !u!1 &807205776367393532
 GameObject:
   m_ObjectHideFlags: 0
@@ -293,6 +313,14 @@ PrefabInstance:
     - target: {fileID: 566136660525228074, guid: 7a11b3f18611a6b4e90a1a9c72cb5102, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 754519626610721002, guid: 7a11b3f18611a6b4e90a1a9c72cb5102, type: 3}
+      propertyPath: <IsNested>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 923054387084015839, guid: 7a11b3f18611a6b4e90a1a9c72cb5102, type: 3}
+      propertyPath: <IsNested>k__BackingField
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 964832477431063583, guid: 7a11b3f18611a6b4e90a1a9c72cb5102, type: 3}
       propertyPath: m_Layer
@@ -547,17 +575,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7a11b3f18611a6b4e90a1a9c72cb5102, type: 3}
---- !u!114 &592569649619355868 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2189759296706224930, guid: 7a11b3f18611a6b4e90a1a9c72cb5102, type: 3}
-  m_PrefabInstance: {fileID: 1610789545072520190}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &7944408024607878164 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8654398474486679530, guid: 7a11b3f18611a6b4e90a1a9c72cb5102, type: 3}

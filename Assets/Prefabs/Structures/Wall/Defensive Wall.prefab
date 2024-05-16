@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 491836076556998306}
   - component: {fileID: 5552943733325945252}
   - component: {fileID: 469185336814167079}
+  - component: {fileID: 2317068140298745374}
+  - component: {fileID: 711564666670267745}
   m_Layer: 6
   m_Name: Defensive Wall
   m_TagString: Untagged
@@ -73,9 +75,9 @@ MonoBehaviour:
   <PredictedSpawn>k__BackingField: {fileID: 0}
   _networkBehaviours:
   - {fileID: 469185336814167079}
+  - {fileID: 711564666670267745}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
-  <ChildNetworkObjects>k__BackingField:
-  - {fileID: 8669263346421339745}
+  <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
     Position: {x: -9.58, y: 0, z: -0.32}
     Rotation: {x: 0, y: 0, z: 0, w: 1}
@@ -85,7 +87,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 0
+  <PrefabId>k__BackingField: 11
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
@@ -105,6 +107,66 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 5552943733325945252}
   _networkObjectCache: {fileID: 5552943733325945252}
+--- !u!114 &2317068140298745374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6777373753182490975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 665c672f2e2777c47b3254da291fff52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 60
+  onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onHealthAdded:
+    m_PersistentCalls:
+      m_Calls: []
+  onDamageTaken:
+    m_PersistentCalls:
+      m_Calls: []
+  onDie:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2317068140298745374}
+        m_TargetAssemblyTypeName: MarkUlrich.Health.HealthData, Assembly-CSharp
+        m_MethodName: DestroySelf
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onResurrected:
+    m_PersistentCalls:
+      m_Calls: []
+  isDead: 0
+--- !u!114 &711564666670267745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6777373753182490975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 815b2066ae5f6074f9eb80906be8b0a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 1
+  _addedNetworkObject: {fileID: 5552943733325945252}
+  _networkObjectCache: {fileID: 5552943733325945252}
+  _agentType: 2
+  _defaultRange: 15
+  _checkProximity: 0
+  _agentTypesToCheck: 
 --- !u!1001 &2515820485117050146
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -113,6 +175,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3009626377616880893}
     m_Modifications:
+    - target: {fileID: -1410169776654564997, guid: f3f48d6370667ba45976db709069cc15, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1677675473593434184, guid: f3f48d6370667ba45976db709069cc15, type: 3}
       propertyPath: m_Name
       value: DefensiveWall
@@ -203,14 +269,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2018628963007224562, guid: f3f48d6370667ba45976db709069cc15, type: 3}
   m_PrefabInstance: {fileID: 2515820485117050146}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8669263346421339745 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6532071527663233859, guid: f3f48d6370667ba45976db709069cc15, type: 3}
-  m_PrefabInstance: {fileID: 2515820485117050146}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

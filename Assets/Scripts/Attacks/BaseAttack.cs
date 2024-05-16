@@ -20,18 +20,15 @@ namespace Exame.Attacks
 
         public bool CanAttack { get; protected set; } = true;
         public AttackTypes AttackType => p_attackType;
+        public float CurrentAnimationTime => p_animator.GetCurrentAnimatorStateInfo(0).length;
         public float Cooldown => p_cooldown;
         public float PrepareTime => p_prepareTime;
 
-        public event Action OnAttackStarted;
+        public event Action<bool> OnAttackStarted;
         public event Action<bool> OnAttacked;
         public event Action<bool> OnAttackFinished;
 
-        protected virtual void OnEnable()
-        {
-            OnAttackStarted += StartAttack;
-            p_animator = GetComponentInParent<Animator>();
-        }
+        protected virtual void OnEnable() => p_animator = GetComponentInParent<Animator>();
 
         public virtual void StartAttack()
         {
@@ -39,6 +36,8 @@ namespace Exame.Attacks
                 return;
 
             CanAttack = false;
+            OnAttackStarted?.Invoke(true);
+            OnAttackFinished?.Invoke(false);
             StartCoroutine(AttackPreparation());
         }
 
@@ -51,11 +50,11 @@ namespace Exame.Attacks
         protected IEnumerator AttackPreparation()
         {
             PrepareAttack();
-            float animationTime = p_animator.GetCurrentAnimatorStateInfo(0).length;
-            yield return new WaitForSeconds(p_prepareTime + animationTime);
+            yield return new WaitForSeconds(p_prepareTime);
+            yield return new WaitForSeconds(CurrentAnimationTime);
+            Debug.LogError(CurrentAnimationTime);
             Attack();
             OnAttacked?.Invoke(true);
-            OnAttackFinished?.Invoke(false);
             p_cooldownCoroutine = StartCoroutine(AttackCooldown());
         }
 
@@ -66,6 +65,7 @@ namespace Exame.Attacks
             yield return new WaitForSeconds(p_cooldown);
             CanAttack = true;
             BroadCastCanAttack(true);
+            OnAttackStarted?.Invoke(false);
             OnAttacked?.Invoke(false);
             OnAttackFinished?.Invoke(true);
         }
@@ -77,7 +77,5 @@ namespace Exame.Attacks
 
         [ObserversRpc]
         private void BroadCastAnimation(string trigger) => p_animator.SetTrigger(trigger);
-
-        protected virtual void OnDisable() => OnAttackStarted -= StartAttack;
     }
 }

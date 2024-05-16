@@ -37,7 +37,7 @@ namespace Examen.NPC
         {
             _waypointFollower = GetComponent<WaypointFollower>();
             _waypointFollower.OnBossInitialised += InitBoss;
-            _waypointFollower.OnPathStarted += StartWalking;
+            _waypointFollower.OnPathStarted += TriggerWalking;
 
             _proximityAgent = GetComponent<ProximityAgent>();
         }
@@ -54,18 +54,18 @@ namespace Examen.NPC
         {
             _waypointFollower.OnStructureEncountered += ProcessStructureEncounter;
             _waypointFollower.OnPathCleared += SetHasClearedPath;
-            _waypointFollower.OnPathCompleted += Idle;
-            _waypointFollower.OnPathBlocked += Idle;
+            _waypointFollower.OnPathCompleted += TriggerIdle;
+            _waypointFollower.OnPathBlocked += TriggerIdle;
 
             foreach (BaseAttack attack in _attacks)
             {
                 _attackTypes.Add(attack.AttackType, attack);
-                attack.OnAttacked += _waypointFollower.ToggleWaiting;
+                attack.OnAttackStarted += _waypointFollower.ToggleWaiting;
                 attack.OnAttackFinished += SetCanAttack;
             }
 
             if (TryGetComponent(out _healthData))
-                _healthData.onDie.AddListener(Die);
+                _healthData.onDie.AddListener(TriggerDie);
 
             _waypointFollower.OnBossInitialised -= InitBoss;
         }
@@ -137,7 +137,6 @@ namespace Examen.NPC
         [Server]
         private void ScanForNearbyAgents()
         {
-            _canAttack = false;
             UpdateProximityData();
 
             if (_nearbyPlayers.Count < _nearbyPlayerThreshold && _nearbyStructures.Count < _nearbyStructureThreshold)
@@ -152,20 +151,21 @@ namespace Examen.NPC
         [ObserversRpc]
         private void BroadCastAnimation(string trigger) => p_animator.SetTrigger(trigger);
 
-        private void Idle()
+        private void TriggerIdle()
         {
             p_animator.SetTrigger("Idle");
             BroadCastAnimation("Idle");
+            _waypointFollower.ToggleWaiting(true);
         }
 
-        private void StartWalking()
+        private void TriggerWalking()
         {
             p_animator.SetFloat("WalkSpeed", _waypointFollower.Speed);
             p_animator.SetTrigger("Walk");
             BroadCastAnimation("Walk");
         }
 
-        private void Die()
+        private void TriggerDie()
         {
             p_animator.SetTrigger("Die");
             BroadCastAnimation("Die");
@@ -177,9 +177,9 @@ namespace Examen.NPC
         {
             _waypointFollower.OnStructureEncountered -= ProcessStructureEncounter;
             _waypointFollower.OnPathCleared -= SetHasClearedPath;
-            _waypointFollower.OnPathStarted -= StartWalking;
-            _waypointFollower.OnPathCompleted -= Idle;
-            _waypointFollower.OnPathBlocked -= Idle;
+            _waypointFollower.OnPathStarted -= TriggerWalking;
+            _waypointFollower.OnPathCompleted -= TriggerIdle;
+            _waypointFollower.OnPathBlocked -= TriggerIdle;
 
             foreach (BaseAttack attack in _attacks)
             {
@@ -188,7 +188,7 @@ namespace Examen.NPC
             }
 
             if (_healthData)
-                _healthData.onDie.RemoveListener(Die);
+                _healthData.onDie.RemoveListener(TriggerDie);
         }
 
         private void OnDestroy() => RemoveListeners();

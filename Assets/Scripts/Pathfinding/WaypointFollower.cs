@@ -141,7 +141,18 @@ namespace Examen.Pathfinding
         }
 
         [Server]
-        public void ToggleWaiting(bool isWaiting) => p_isWaiting = isWaiting;
+        public void ToggleWaiting(bool isWaiting)
+        {
+            if (isWaiting)
+            {
+                if (p_followPathCoroutine != null)
+                    StopCoroutine(p_followPathCoroutine);
+            }
+            else
+            {
+                ContinuePath();
+            }
+        }
 
         /// <summary>
         /// Continues following the current path.
