@@ -609,6 +609,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3923595253397406392}
   - component: {fileID: 7369490754966886718}
+  - component: {fileID: 8125511487271898242}
   m_Layer: 0
   m_Name: PreviewSpeedRoad
   m_TagString: Untagged
@@ -654,6 +655,20 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.5, y: 1, z: 3.5}
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &8125511487271898242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6998917638401128604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e72fefe04da6b54bab0d75daaf84a3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _meshRenderers:
+  - {fileID: 2379060863546112732}
 --- !u!1 &7986346977061390032
 GameObject:
   m_ObjectHideFlags: 0
