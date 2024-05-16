@@ -34,6 +34,7 @@ public class ServerInventory : NetworkedSingletonInstance<ServerInventory>
 
         if (!_inventorySystems.ContainsKey(connection.ClientId))
             _inventorySystems.Add(connection.ClientId, new());
+
         if (!_inventorySystems[connection.ClientId].ContainsKey(itemInstance))
             _inventorySystems[connection.ClientId].Add(itemInstance, itemAmount);
         else
