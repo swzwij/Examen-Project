@@ -1,6 +1,7 @@
 using Examen.Inventory;
 using Examen.Networking;
 using Examen.Structures;
+using FishNet;
 using FishNet.Managing;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,6 @@ namespace Examen.Building.BuildingUI
 {
     public class StructurePreviewButtons : MonoBehaviour
     {
-        private NetworkManager _networkManager;
         private Canvas _canvas;
         private HashSet<Transform> _buttons = new();
 
@@ -25,7 +25,6 @@ namespace Examen.Building.BuildingUI
 
         private void Awake()
         {
-            ServerInstance.Instance.TryGetComponent(out _networkManager);
 
             for (int i = 0; i < transform.childCount; i++)
             {
@@ -75,7 +74,7 @@ namespace Examen.Building.BuildingUI
         public void PlaceStructure()
         {
             OwnedBuildingManager.SetStructure();
-            InventorySystem.Instance.RemoveItems(_networkManager.ClientManager.Connection,StructureCost);
+            InventorySystem.Instance.RemoveItems(InstanceFinder.NetworkManager.ClientManager.Connection,StructureCost);
         }
 
     }

@@ -1,15 +1,9 @@
-using Examen.Building.BuildingUI;
-using Examen.Items;
-using Examen.Networking;
 using Examen.Structures;
 using FishNet.Connection;
-using FishNet.Managing;
 using FishNet.Object;
-using JetBrains.Annotations;
 using MarkUlrich.Utils;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Examen.Inventory
 {
@@ -39,7 +33,7 @@ namespace Examen.Inventory
         /// <param name="structureCost"> The item and amount you want to remove. /param>
         public void RemoveItems(NetworkConnection connection ,List<StructureCost> structureCost)
         {
-            foreach (var item in structureCost)
+            foreach (StructureCost item in structureCost)
                 RemoveItem(connection, item.ItemName, item.Amount);
         }
 

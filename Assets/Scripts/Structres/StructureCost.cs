@@ -2,7 +2,6 @@ using Examen.Items;
 using System;
 using UnityEngine;
 
-
 namespace Examen.Structures
 {
     [Serializable]
@@ -12,6 +11,5 @@ namespace Examen.Structures
 
         public int Amount;
         public readonly string ItemName => Item.Name;
-
     }
 }
