@@ -327,16 +327,30 @@ namespace Examen.Pathfinding.Grid
             Node closestNode = null;
             float closestDistance = float.MaxValue;
 
-            foreach (Node node in _nodes)
+            closestNode = GetNodeFromWorldPosition(position);
+            if (closestNode.IsWalkable)
+                return closestNode;
+            
+            for (int x = -1; x <= 1; x++)
             {
-                if (!node.IsWalkable)
-                    continue;
-
-                float distance = Vector3.Distance(node.Position, position);
-                if (distance < closestDistance)
+                for (int y = -1; y <= 1; y++)
                 {
-                    closestNode = node;
-                    closestDistance = distance;
+                    int checkX = closestNode.GridPosition.x + x;
+                    int checkY = closestNode.GridPosition.y + y;
+
+                    if (checkX >= 0 && checkX < _gridSize.x && checkY >= 0 && checkY < _gridSize.y)
+                    {
+                        Node node = _nodes[checkX, checkY];
+                        if (!node.IsWalkable)
+                            continue;
+
+                        float distance = Vector3.Distance(node.Position, position);
+                        if (distance < closestDistance)
+                        {
+                            closestNode = node;
+                            closestDistance = distance;
+                        }
+                    }
                 }
             }
 
