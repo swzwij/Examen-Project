@@ -42,6 +42,8 @@ namespace Examen.Pathfinding
         public bool IsPathBlocked 
             => Physics.Raycast(transform.position, transform.forward, out p_obstacleHit, p_obstacleCheckDistance, p_obstaclesLayerMask);
 
+        public event Action OnPathStarted;
+        public event Action OnPathBlocked;
         public event Action OnPathCompleted;
         public event Action<Interactable> OnInteractableReached;
 
@@ -73,6 +75,7 @@ namespace Examen.Pathfinding
 
             p_hasFoundBlockage = true;
             StartPath(p_currentTarget);
+            OnPathBlocked?.Invoke();
         }
 
         protected void ProcessPointerPosition(Interactable targetInteractable)
@@ -123,6 +126,7 @@ namespace Examen.Pathfinding
         protected IEnumerator FollowPath()
         {
             ResetBlockage();
+            OnPathStarted?.Invoke();
             while (p_currentNodeIndex < p_currentPath.Count)
             {
                 Vector3 currentNode = p_currentPath[p_currentNodeIndex].Position;

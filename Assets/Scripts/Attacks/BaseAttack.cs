@@ -13,6 +13,7 @@ namespace Exame.Attacks
         [SerializeField] protected float p_damage = 10f;
         [SerializeField] protected float p_prepareTime = 0f;
         [SerializeField] protected float p_cooldown = 1f;
+        [SerializeField] protected string p_animationTrigger = "Attack";
 
         protected Animator p_animator;
         protected Coroutine p_cooldownCoroutine;
@@ -43,8 +44,8 @@ namespace Exame.Attacks
 
         protected virtual void PrepareAttack()
         {
-            p_animator.SetTrigger("Attack");
-            BroadCastAnimation("Attack");
+            p_animator.SetTrigger(p_animationTrigger);
+            BroadCastAnimation(p_animationTrigger);
         }
 
         protected IEnumerator AttackPreparation()
