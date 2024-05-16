@@ -60,6 +60,7 @@ namespace Examen.Pathfinding.Grid
             InitializeGrid(_gridSize, InitializeNode);
             ConnectNodes();
             InitializeCells();
+            ConnectCells();
             OnGridCreated?.Invoke();
         }
 
@@ -128,7 +129,6 @@ namespace Examen.Pathfinding.Grid
             cell.gameObject.layer = 2; // Ignore raycast
             cell.transform.SetParent(transform);
             cell.transform.position = GetCellPosition(x, y);
-            cell.Collider.size = CellSize;
             cell.GridSystem = this;
             cell.CellX = x;
             cell.CellY = y;
@@ -247,6 +247,27 @@ namespace Examen.Pathfinding.Grid
                         continue;
 
                     currentNode.AddConnectedNode(otherNode);
+                }
+            }
+        }
+
+        private void ConnectCells()
+        {
+            foreach (Cell cell in _cells)
+                ConnectCell(cell);
+        }
+
+        private void ConnectCell(Cell cell)
+        {
+            for (int i = cell.CellX - 1; i <= cell.CellX + 1; i++)
+            {
+                for (int j = cell.CellY - 1; j <= cell.CellY + 1; j++)
+                {
+                    if (i == cell.CellX && j == cell.CellY || i < 0 || i >= _cells.GetLength(0) || j < 0 || j >= _cells.GetLength(1))
+                        continue;
+
+                    Cell neighbour = _cells[i, j];
+                    cell.Neighbours.Add(neighbour);
                 }
             }
         }

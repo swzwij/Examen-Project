@@ -15,9 +15,7 @@ namespace Examen.Pathfinding.Grid
         public int CellY { get; set; }
         public HashSet<Node> ActiveNodes { get => _activeNodes; set => _activeNodes = value; }
         public HashSet<Node> Nodes => _nodes;
-        public BoxCollider Collider => GetComponent<BoxCollider>();
-
-        private void OnTriggerExit(Collider other) => GridSystem.UpdateCell(CellX, CellY);
+        public HashSet<Cell> Neighbours { get; set; } = new();
 
         /// <summary>
         /// Adds a node to the cell.
@@ -28,6 +26,11 @@ namespace Examen.Pathfinding.Grid
         /// <summary>
         /// Updates this cell.
         /// </summary>
-        public void UpdateCell() => GridSystem.UpdateCell(CellX, CellY);
+        public void UpdateCell()
+        {
+            GridSystem.UpdateCell(CellX, CellY);
+            foreach (Cell neighbour in Neighbours)
+                GridSystem.UpdateCell(neighbour.CellX, neighbour.CellY);
+        }
     }
 }
