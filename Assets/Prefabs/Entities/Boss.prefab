@@ -295,7 +295,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 9181585673909579258}
   _networkObjectCache: {fileID: 9181585673909579258}
   p_speed: 2
-  p_turnSpeed: 5
+  p_turnSpeed: 10
   p_obstacleCheckDistance: 1
   p_obstaclesLayerMask:
     serializedVersion: 2

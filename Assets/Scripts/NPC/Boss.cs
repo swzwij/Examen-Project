@@ -19,7 +19,9 @@ namespace Examen.NPC
 
         [Header("Attack Settings")]
         [SerializeField] private BaseAttack[] _attacks;
-        [SerializeField] private float _repeatInterval = 1f;
+        [SerializeField] private float _attackInterval = 1f;
+        [SerializeField] private float _scanInterval = 5f;
+        [SerializeField] [Range(0,100)] private float _attackChance = 25f;
 
         [Header("Proximity Settings")]
         [SerializeField] private int _nearbyPlayerThreshold = 2;
@@ -30,6 +32,7 @@ namespace Examen.NPC
         private HashSet<ProximityAgent> _nearbyStructures = new();
         private HealthData _healthData;
         private ProximityAgent _proximityAgent;
+        private Coroutine _scanningCoroutine;
         private bool _hasClearedPath;
         private bool _canAttack = true;
 
@@ -89,7 +92,7 @@ namespace Examen.NPC
 
         private void ProcessStructureEncounter(HealthData healthData)
         {
-            StartCoroutine(RepeatingAttack(_repeatInterval, AttackTypes.AOE)); // TODO: Add functionality for determining if should use AOE or SPECIAL attack.
+            StartCoroutine(RepeatingAttack(_attackInterval, AttackTypes.AOE)); // TODO: Add functionality for determining if should use AOE or SPECIAL attack.
         }
 
         private void ProcessAttack(AttackTypes attackType)
@@ -139,8 +142,25 @@ namespace Examen.NPC
         {
             UpdateProximityData();
 
-            if (_nearbyPlayers.Count < _nearbyPlayerThreshold && _nearbyStructures.Count < _nearbyStructureThreshold)
+            if (_nearbyPlayers.Count > _nearbyPlayerThreshold)
+                ProcessAttack(AttackTypes.AOE);
+
+            if (_scanningCoroutine != null)
                 return;
+
+            _scanningCoroutine = StartCoroutine(ScanInterval(_scanInterval));
+        }
+
+        [Server]
+        private bool WillAttack() => Random.Range(0, 100) <= _attackChance;
+
+        [Server]
+        private IEnumerator ScanInterval(float interval)
+        {
+            yield return new WaitForSeconds(interval);
+
+            if (_nearbyStructures.Count <= _nearbyStructureThreshold || !WillAttack())
+                yield break;
             
             ProcessAttack(AttackTypes.AOE);
         }
