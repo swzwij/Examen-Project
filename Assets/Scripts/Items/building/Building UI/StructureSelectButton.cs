@@ -15,9 +15,8 @@ namespace Examen.Building.BuildingUI
 
         private void Awake() => _buildingManager = GetComponentInParent<BuildingManager>();
 
-        public void OnPointerDown(PointerEventData eventData)
-        {
-            _buildingManager.SpawnStructurePreview(_structurePreview, _structure);
-        }
+        public void OnPointerDown(PointerEventData eventData) 
+            => _buildingManager.SpawnStructurePreview(_structurePreview, _structure);
+        
     }
 }
