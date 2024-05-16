@@ -18,16 +18,12 @@ namespace Examen.Player.ReSpawning
 
         private HealthData _healthData;
 
-        private void Start()
-        {
-            _healthData = _player.GetComponent<HealthData>();
-            Debug.Log(_healthData.gameObject);
-        }
+        private void Start() => _healthData = _player.GetComponent<HealthData>();
 
         private void OnEnable() => StartCoroutine(CountDown());
         private void OnDisable() => StopCoroutine(CountDown());
 
-        IEnumerator CountDown()
+        private IEnumerator CountDown()
         {
             _currentCount = _startCount;
 

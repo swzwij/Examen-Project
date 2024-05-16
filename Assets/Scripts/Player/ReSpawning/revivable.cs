@@ -10,8 +10,8 @@ namespace Examen.Player.ReSpawning
     [RequireComponent(typeof(HealthData), typeof(Pointer))]
     public class revivable : Interactable
     {
-        [HideInInspector] public bool isAlive = true;
-        [HideInInspector] public bool isRevivable;
+        private bool isAlive = true;
+        private bool isRevivable;
 
         [SerializeField] private GameObject _deathScreen;
         [SerializeField] private Vector3 _reSpawnLocation;
