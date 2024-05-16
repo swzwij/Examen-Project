@@ -15,7 +15,6 @@ namespace Examen.Inventory
 
         private void OnDisable() => InventorySystem.Instance.OnItemsChanged -= UpdateDisplay;
         
-
         /// <summary>
         /// Updates the display with the current package.
         /// </summary>

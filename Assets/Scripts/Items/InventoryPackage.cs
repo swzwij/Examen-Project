@@ -14,7 +14,7 @@ namespace Examen.Items
         /// <summary>
         /// Initializes the inventory package with the items.
         /// </summary>
-        /// <param name="items">The InventoryPackages</param>
+        /// <param name="items">The InventoryPackages.</param>
         public InventoryPackage(Dictionary<ItemInstance, int> items) => _items = items;
         
     }
