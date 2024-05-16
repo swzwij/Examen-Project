@@ -324,10 +324,10 @@ namespace Examen.Pathfinding.Grid
         /// <returns>The closest walkable node to the specified position.</returns>
         public Node GetClosestWalkableNode(Vector3 position)
         {
-            Node closestNode = null;
             float closestDistance = float.MaxValue;
+            closestDistance *= closestDistance;
 
-            closestNode = GetNodeFromWorldPosition(position);
+            Node closestNode = GetNodeFromWorldPosition(position);
             if (closestNode.IsWalkable)
                 return closestNode;
             
@@ -344,7 +344,7 @@ namespace Examen.Pathfinding.Grid
                         if (!node.IsWalkable)
                             continue;
 
-                        float distance = Vector3.Distance(node.Position, position);
+                        float distance = (node.Position - position).sqrMagnitude;
                         if (distance < closestDistance)
                         {
                             closestNode = node;
