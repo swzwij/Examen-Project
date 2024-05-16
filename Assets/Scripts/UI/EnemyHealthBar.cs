@@ -16,7 +16,7 @@ namespace Examen.UI
         private void Update()
         {
             if (!IsServer)
-                _healthBar.transform.parent.rotation = Quaternion.LookRotation(Vector3.back);
+                _healthBar.transform.parent.rotation = Quaternion.LookRotation(Vector3.back + Vector3.up);
 
             if (_damage)
                 EnemyHealthData.TakeDamage(1);
