@@ -125,10 +125,15 @@ namespace Examen.Pathfinding
         [Server]
         protected IEnumerator FollowPath()
         {
-            ResetBlockage();
             OnPathStarted?.Invoke();
             while (p_currentNodeIndex < p_currentPath.Count)
             {
+                if (p_hasFoundBlockage)
+                {
+                    ResetBlockage();
+                    yield return null;
+                }
+
                 Vector3 currentNode = p_currentPath[p_currentNodeIndex].Position;
                 Vector3 adjustedNode = currentNode;
                 adjustedNode.y = transform.localScale.y/2 + 
@@ -175,7 +180,7 @@ namespace Examen.Pathfinding
         }
 
         [Server]
-        protected void ResetBlockage() => p_hasFoundBlockage = false;
+        protected void ResetBlockage() => p_hasFoundBlockage = IsPathBlocked;
 
         private void RequestDIstanceToTarget()
         {

@@ -78,29 +78,30 @@ namespace Examen.Pathfinding
         [Server]
         private void UpdateFollower(List<Transform> waypoints)
         {
-            if (Vector3.Distance(transform.position, waypoints[_currentWaypointIndex].position) < 5f 
-            && _currentWaypointIndex < waypoints.Count-1)
+            if (Vector3.Distance(transform.position, waypoints[_currentWaypointIndex].position) < 5f
+            && _currentWaypointIndex < waypoints.Count - 1)
                 _currentWaypointIndex++;
 
-            if (IsPathBlocked && !p_hasFoundBlockage)
+            if (!IsPathBlocked || p_hasFoundBlockage)
+                return;
+            
+            p_hasFoundBlockage = true;
+            Debug.LogError("Path blocked");
+
+            GenerateCompletePath();
+            if (p_currentPath.Count <= 0)
             {
-                p_hasFoundBlockage = true;
+                p_waitForClearance = StartCoroutine(WaitForPathClearance());
 
-                GenerateCompletePath();
-                if (p_currentPath.Count <= 0)
-                {
-                    p_waitForClearance = StartCoroutine(WaitForPathClearance());
-                    
-                    if (p_obstacleHit.collider.TryGetComponent(out HealthData healthData))
-                        OnStructureEncountered?.Invoke(healthData);
-                    
-                    return;
-                }
+                if (p_obstacleHit.collider.TryGetComponent(out HealthData healthData))
+                    OnStructureEncountered?.Invoke(healthData);
 
-                // Check if distance to current waypoint is shorter than to next waypoint
-                if (Vector3.Distance(transform.position, waypoints[_currentWaypointIndex].position) < Vector3.Distance(transform.position, waypoints[_currentWaypointIndex + 1].position))
-                    _currentWaypointIndex++;
+                return;
             }
+
+            // Check if distance to current waypoint is shorter than to next waypoint
+            if (Vector3.Distance(transform.position, waypoints[_currentWaypointIndex].position) < Vector3.Distance(transform.position, waypoints[_currentWaypointIndex + 1].position))
+                _currentWaypointIndex++;
         }
 
         [Server]

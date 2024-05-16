@@ -149,21 +149,26 @@ namespace Examen.NPC
         [Server]
         private void SetCanAttack(bool canAttack) => _canAttack = canAttack;
 
+        [ObserversRpc]
+        private void BroadCastAnimation(string trigger) => p_animator.SetTrigger(trigger);
+
         private void Idle()
         {
             p_animator.SetTrigger("Idle");
-            Debug.LogError("Idle");
+            BroadCastAnimation("Idle");
         }
 
         private void StartWalking()
         {
             p_animator.SetFloat("WalkSpeed", _waypointFollower.Speed);
             p_animator.SetTrigger("Walk");
+            BroadCastAnimation("Walk");
         }
 
         private void Die()
         {
             p_animator.SetTrigger("Die");
+            BroadCastAnimation("Die");
             _waypointFollower.enabled = false;
             _proximityAgent.enabled = false;
         }
