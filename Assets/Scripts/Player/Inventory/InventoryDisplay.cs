@@ -11,21 +11,16 @@ namespace Examen.Inventory
 
         private InventoryPackage _currentPackage;
 
-        private void OnEnable() 
-        {
-            InventorySystem.Instance.OnItemsChanged += UpdateDisplay;
-        }
+        private void OnEnable() => InventorySystem.Instance.OnItemsChanged += UpdateDisplay;
 
-        private void OnDisable() 
-        {
-            InventorySystem.Instance.OnItemsChanged -= UpdateDisplay;
-        }
+        private void OnDisable() => InventorySystem.Instance.OnItemsChanged -= UpdateDisplay;
+        
 
-        public void UpdateDisplay()
-        {
-            UpdateDisplay(_currentPackage);
-        }
-
+        /// <summary>
+        /// Updates the display with the current package.
+        /// </summary>
+        public void UpdateDisplay() => UpdateDisplay(_currentPackage);
+        
         private void UpdateDisplay(InventoryPackage package)
         {            
             ClearDisplay();

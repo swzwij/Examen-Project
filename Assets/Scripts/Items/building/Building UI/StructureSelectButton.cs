@@ -8,7 +8,6 @@ namespace Examen.Building.BuildingUI
     [RequireComponent(typeof(Button))]
     public class StructureSelectButton : MonoBehaviour, IPointerDownHandler
     {
-        [SerializeField] private BuildMenu _buildMenu;
         [SerializeField] protected GameObject _structurePreview;
         [SerializeField] protected NetworkObject _structure;
 

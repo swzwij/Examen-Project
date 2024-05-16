@@ -62,10 +62,5 @@ public class ServerInventory : NetworkedSingletonInstance<ServerInventory>
 
     [ServerRpc(RunLocally = true)]
     private void UpdateClientInventory(NetworkConnection connection, InventoryPackage package)
-    {
-        // if (_networkManager.ClientManager.Connection.ClientId != connection.ClientId)
-        //     return;
-
-        InventorySystem.Instance.SetItems(package.Items, package);
-    }
+        => InventorySystem.Instance.SetItems(package.Items, package);
 }
