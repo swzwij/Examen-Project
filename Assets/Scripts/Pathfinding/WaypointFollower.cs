@@ -12,6 +12,7 @@ namespace Examen.Pathfinding
     {
         [SerializeField] private Transform _waypointsParent;
         [SerializeField] private List<Transform> _waypoints = new();
+        [SerializeField] private float _waypointDistanceThreshold = 5f;
         private List<Node> _completePath = new();
         private int _currentWaypointIndex = 0;
         private bool _hasInitialised;
@@ -78,30 +79,50 @@ namespace Examen.Pathfinding
         [Server]
         private void UpdateFollower(List<Transform> waypoints)
         {
-            if (Vector3.Distance(transform.position, waypoints[_currentWaypointIndex].position) < 5f
-            && _currentWaypointIndex < waypoints.Count - 1)
+            float sqrDistanceToTarget = (transform.position - waypoints[_currentWaypointIndex].position).sqrMagnitude;
+            float sqrDistanceThreshold = _waypointDistanceThreshold * _waypointDistanceThreshold;
+            if (sqrDistanceToTarget < sqrDistanceThreshold && _currentWaypointIndex < waypoints.Count - 1)
                 _currentWaypointIndex++;
 
             if (!IsPathBlocked || p_hasFoundBlockage)
                 return;
             
             p_hasFoundBlockage = true;
-            Debug.LogError("Path blocked");
 
             GenerateCompletePath();
-            if (p_currentPath.Count <= 0)
-            {
-                p_waitForClearance = StartCoroutine(WaitForPathClearance());
-
-                if (p_obstacleHit.collider.TryGetComponent(out HealthData healthData))
-                    OnStructureEncountered?.Invoke(healthData);
-
+            if (IsNewPathBlocked())
                 return;
-            }
 
-            // Check if distance to current waypoint is shorter than to next waypoint
-            if (Vector3.Distance(transform.position, waypoints[_currentWaypointIndex].position) < Vector3.Distance(transform.position, waypoints[_currentWaypointIndex + 1].position))
+            if (IsNextWaypointCloser())
                 _currentWaypointIndex++;
+        }
+
+        [Server]
+        protected bool IsNewPathBlocked()
+        {
+            if (p_currentPath.Count > 0)
+                return false;
+            
+            p_waitForClearance = StartCoroutine(WaitForPathClearance());
+
+            if (p_obstacleHit.collider.TryGetComponent(out HealthData healthData))
+                OnStructureEncountered?.Invoke(healthData);
+
+            return true;
+        }
+
+        [Server]
+        protected bool IsNextWaypointCloser()
+        {
+            if (_currentWaypointIndex >= _waypoints.Count)
+                return false;
+
+            float sqrDistanceToTarget = (transform.position - _waypoints[_currentWaypointIndex].position).sqrMagnitude;
+            float sqrDistanceThreshold = _waypointDistanceThreshold * _waypointDistanceThreshold;
+            if (sqrDistanceToTarget >= sqrDistanceThreshold)
+                return false;
+            
+            return true;
         }
 
         [Server]
