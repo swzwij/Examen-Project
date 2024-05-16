@@ -1,24 +1,52 @@
 using UnityEngine;
 using FishNet;
 using FishNet.Object;
+using Examen.Proximity;
+using System.Collections.Generic;
 
 namespace Examen.Structures
 {
+    [RequireComponent(typeof(ProximityAgent))]
     public class ProjectileTower : NetworkBehaviour
     {
         [SerializeField] private Transform _barrel;
         [SerializeField] private Transform _firePoint;
         [SerializeField] private NetworkObject projectilePrefab;
         [SerializeField] private float _shootInterval;
-        [SerializeField] private float _range;
 
+        private ProximityAgent _proximityAgent;
         private Transform _boss;
         private float _timer = 0f;
 
-        public override void OnStartServer()
+        private void Awake() => _proximityAgent = GetComponent<ProximityAgent>();
+
+        private void OnEnable() =>  _proximityAgent.OnProximityDataReceived += OnProximityDataReceived;
+
+        private void OnDisable() => _proximityAgent.OnProximityDataReceived -= OnProximityDataReceived;
+
+        private void OnProximityDataReceived(HashSet<ProximityAgent> nearbyAgents)
         {
-            base.OnStartServer();
-            _boss = GameObject.Find("Boss").transform; // TODO: Replace with a more reliable way to find the boss
+            Debug.LogError("Proximity data received");
+            Debug.LogError(nearbyAgents.Count);
+
+            if (nearbyAgents.Count == 0)
+                return;
+
+            Transform closestAgent = null;
+            float closestDistance = float.MaxValue;
+
+            foreach (ProximityAgent agent in nearbyAgents)
+            {
+                float distance = (agent.transform.position - transform.position).sqrMagnitude;
+
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestAgent = agent.transform;
+                }
+            }
+
+            _boss = closestAgent;
         }
 
         private void FixedUpdate()
@@ -26,10 +54,10 @@ namespace Examen.Structures
             if (!IsServer)
                 return;
 
-            LookAtBoss();
-
-            if ((_boss.position - transform.position).sqrMagnitude > _range * _range)
+            if (_boss == null)
                 return;
+
+            LookAtBoss();
 
             _timer += Time.fixedDeltaTime;
             if (_timer >= _shootInterval)
@@ -42,12 +70,6 @@ namespace Examen.Structures
         [Server]
         private void LookAtBoss()
         {
-            if (!IsServer)
-                return;
-
-            if (_boss == null)
-                return;
-
             Vector3 direction = _boss.position - _barrel.transform.position;
             direction.y = 0;
             _barrel.transform.rotation = Quaternion.LookRotation(direction);
@@ -71,12 +93,6 @@ namespace Examen.Structures
 
             if (projectile.TryGetComponent(out Projectile projectileMotion))
                 projectileMotion.Target = _boss;
-        }
-
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, _range);
         }
     }
 }

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4661868421625354277}
   - component: {fileID: 2556768225675572015}
   - component: {fileID: 2008946782905985116}
+  - component: {fileID: 3622447424651970226}
   m_Layer: 6
   m_Name: Projectile Tower
   m_TagString: Untagged
@@ -128,6 +129,25 @@ MonoBehaviour:
   _componentIndexCache: 1
   _addedNetworkObject: {fileID: 2556768225675572015}
   _networkObjectCache: {fileID: 2556768225675572015}
+--- !u!114 &3622447424651970226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 383376843492830689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 815b2066ae5f6074f9eb80906be8b0a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 2189759296706224930, guid: 7a11b3f18611a6b4e90a1a9c72cb5102, type: 3}
+  _networkObjectCache: {fileID: 2189759296706224930, guid: 7a11b3f18611a6b4e90a1a9c72cb5102, type: 3}
+  _agentType: 2
+  _defaultRange: 250
+  _checkProximity: 1
+  _agentTypesToCheck: 01000000
 --- !u!1 &807205776367393532
 GameObject:
   m_ObjectHideFlags: 0
