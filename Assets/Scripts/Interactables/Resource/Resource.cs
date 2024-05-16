@@ -1,4 +1,3 @@
-using Examen.Inventory;
 using Examen.Items;
 using Examen.Networking;
 using Examen.Pathfinding.Grid;
@@ -8,8 +7,6 @@ using Examen.Spawning.ResourceSpawning;
 using FishNet.Connection;
 using FishNet.Object;
 using MarkUlrich.Health;
-using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Examen.Interactables.Resource
@@ -103,8 +100,6 @@ namespace Examen.Interactables.Resource
 
             p_healthData.TakeDamage(damageAmount);
 
-            Debug.LogError(damageAmount);
-
             ReceiveInteract();
         }
 
@@ -123,7 +118,6 @@ namespace Examen.Interactables.Resource
         public virtual void ReceiveInteract()
         {
             // Todo: Play given animation
-            Debug.Log(InventorySystem.Instance.CurrentItems.Count);
         }
 
         [Server]

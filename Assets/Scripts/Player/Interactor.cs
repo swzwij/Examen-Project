@@ -70,7 +70,7 @@ namespace Examen.Player
         private void SentInteract(Interactable interactable, NetworkConnection connection)
         {
             if (interactable is Resource resource)
-                StartCoroutine(Gathering(resource, _networkManager.ClientManager.Connection));
+                StartCoroutine(Gathering(resource, connection));
             else
                 interactable.Interact(connection, damageAmount);
         }
