@@ -26,9 +26,6 @@ namespace Examen.Inventory
         /// Updates the item with the new amount.
         /// </summary>
         /// <param name="amount">The new amount of the item.</param>
-        public void UpdateItem(int amount)
-        {
-            _text.text = $"{amount}";
-        }
+        public void UpdateItem(int amount) => _text.text = $"{amount}";
     }
 }

@@ -11,9 +11,11 @@ namespace Examen.Items
         
         public Dictionary<ItemInstance, int> Items => _items;
 
-        public InventoryPackage(Dictionary<ItemInstance, int> items)
-        {
-            _items = items;
-        }
+        /// <summary>
+        /// Initializes the inventory package with the items.
+        /// </summary>
+        /// <param name="items">The InventoryPackages</param>
+        public InventoryPackage(Dictionary<ItemInstance, int> items) => _items = items;
+        
     }
 }
