@@ -7,6 +7,10 @@ namespace Examen.Building.BuildingUI
     {
         [SerializeField] private GameObject _inventory;
 
+        /// <summary>
+        /// Toggles the build menu.
+        /// </summary>
+        /// <param name="isActive">Whether the build menu should activate</param>
         public void Toggle(bool isActive)
         {
             _inventory.SetActive(!isActive);

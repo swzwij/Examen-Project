@@ -9,6 +9,10 @@ namespace Examen.Building.BuildingUI
         [SerializeField] private BuildMenu _buildMenu;
         [SerializeField] private GameObject _hotBar;
 
+        /// <summary>
+        /// Toggles the build menu.
+        /// </summary>
+        /// <param name="isActive">Whether the build menu should activate</param>
         public void ToggleBuildMenu(bool isActive)
         {
             _buildMenu.gameObject.SetActive(isActive);
