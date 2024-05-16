@@ -77,6 +77,7 @@ MonoBehaviour:
   _firePoint: {fileID: 2811078705022661301}
   projectilePrefab: {fileID: 2976294549131294637, guid: 96764ff0a03d2bd42be9de5e1d843a55, type: 3}
   _shootInterval: 1
+  _range: 250
 --- !u!114 &2556768225675572015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -342,6 +343,26 @@ PrefabInstance:
       propertyPath: <ParentNetworkObject>k__BackingField
       value: 
       objectReference: {fileID: 2556768225675572015}
+    - target: {fileID: 2189759296706224930, guid: 7a11b3f18611a6b4e90a1a9c72cb5102, type: 3}
+      propertyPath: SerializedTransformProperties.Position.y
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2189759296706224930, guid: 7a11b3f18611a6b4e90a1a9c72cb5102, type: 3}
+      propertyPath: SerializedTransformProperties.Rotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2189759296706224930, guid: 7a11b3f18611a6b4e90a1a9c72cb5102, type: 3}
+      propertyPath: SerializedTransformProperties.LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2189759296706224930, guid: 7a11b3f18611a6b4e90a1a9c72cb5102, type: 3}
+      propertyPath: SerializedTransformProperties.LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2189759296706224930, guid: 7a11b3f18611a6b4e90a1a9c72cb5102, type: 3}
+      propertyPath: SerializedTransformProperties.LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2200755036374779863, guid: 7a11b3f18611a6b4e90a1a9c72cb5102, type: 3}
       propertyPath: m_Layer
       value: 6
