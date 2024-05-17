@@ -8,7 +8,6 @@ namespace Examen.UI
 {
     public class EnemyHealthBar : NetworkBehaviour
     {
-        [SerializeField] private bool _damage;
         [SerializeField] private Slider _healthBar;
 
         public HealthData EnemyHealthData { get; set; }
@@ -18,8 +17,6 @@ namespace Examen.UI
         {
             if (!IsServer)
                 _healthBar.transform.parent.rotation = Quaternion.LookRotation(Vector3.back + Vector3.up);
-
-            if (_damage) EnemyHealthData.TakeDamage(1);
         }
 
         /// <summary>
