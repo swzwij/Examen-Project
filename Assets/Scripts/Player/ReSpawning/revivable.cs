@@ -28,14 +28,6 @@ namespace Examen.Player.ReSpawning
 
             _healthData.onDie.AddListener(OnDie);
             _healthData.onResurrected.AddListener(OnRevive);
-
-            StartCoroutine(TEMP());
-        }
-
-        IEnumerator TEMP()
-        {
-            yield return new WaitForSeconds(2);
-            _healthData.Kill();
         }
 
         private void Update()

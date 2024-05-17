@@ -23,7 +23,7 @@ namespace Examen.Player.ReSpawning
         private void OnEnable() => StartCoroutine(CountDown());
         private void OnDisable() => StopCoroutine(CountDown());
 
-        IEnumerator CountDown()
+        private IEnumerator CountDown()
         {
             _currentCount = _startCount;
 
