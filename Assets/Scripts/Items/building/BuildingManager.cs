@@ -9,6 +9,7 @@ using Examen.Building.BuildingUI;
 using Examen.Structure;
 using System.Collections.Generic;
 using Swzwij.Extensions;
+using Examen.Structures;
 
 namespace Examen.Building
 {
@@ -96,7 +97,7 @@ namespace Examen.Building
         /// </summary>
         /// <param name="structurePreview">The structure preview GameObject to spawn.</param>
         /// <param name="structure">The structure GameObject to place.</param>
-        public void SpawnStructurePreview(GameObject structurePreview, NetworkObject structure)
+        public void SpawnStructurePreview(GameObject structurePreview, NetworkObject structure, List<StructureCost> structureCosts)
         {
             if (_currentPreview != null)
                 Destroy(_currentPreview);
@@ -110,6 +111,7 @@ namespace Examen.Building
             rotationButtons.OwnedBuildingManager = this;
             rotationButtons.Camera = Camera;
             rotationButtons.SetButtonsActive(false);
+            rotationButtons.StructureCost = structureCosts;
 
             _isHolding = true;
         }
