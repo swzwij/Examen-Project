@@ -30,16 +30,16 @@ public class ServerInventory : NetworkedSingletonInstance<ServerInventory>
     [Server]
     public void AddItem(NetworkConnection connection, Item newItem, int itemAmount)
     {
-        ItemInstance itemInstance = new(newItem.Name);
-
         if (!_inventorySystems.ContainsKey(connection.ClientId))
             _inventorySystems.Add(connection.ClientId, new());
-        if (!_inventorySystems[connection.ClientId].ContainsKey(itemInstance))
-            _inventorySystems[connection.ClientId].Add(itemInstance, itemAmount);
+        if (!_inventorySystems[connection.ClientId].ContainsKey(new(newItem.Name)))
+            _inventorySystems[connection.ClientId].Add(new(newItem.Name), itemAmount);
         else
-            _inventorySystems[connection.ClientId][itemInstance] += itemAmount;
+            _inventorySystems[connection.ClientId][new(newItem.Name)] += itemAmount;
 
-        UpdateClientInventory(connection, _inventorySystems[connection.ClientId]);
+        InventoryPackage package = new(_inventorySystems[connection.ClientId]);
+
+        UpdateClientInventory(connection, package);
     }
 
     /// <summary>
@@ -51,22 +51,16 @@ public class ServerInventory : NetworkedSingletonInstance<ServerInventory>
     [Server]
     public void RemoveItem(NetworkConnection connection, Item newItem, int itemAmount)
     {
-        ItemInstance itemInstance = new(newItem.Name);
-
-        if (!_inventorySystems.ContainsKey(connection.ClientId) || _inventorySystems[connection.ClientId][itemInstance] - itemAmount < 0)
+        if (!_inventorySystems.ContainsKey(connection.ClientId) || _inventorySystems[connection.ClientId][new(newItem.Name)] - itemAmount < 0)
             return;
 
-        _inventorySystems[connection.ClientId][itemInstance] -= itemAmount;
+        _inventorySystems[connection.ClientId][new(newItem.Name)] -= itemAmount;
 
-        UpdateClientInventory(connection, _inventorySystems[connection.ClientId]);
+        InventoryPackage package = new(_inventorySystems[connection.ClientId]);
+        UpdateClientInventory(connection, package);
     }
 
-    [ObserversRpc]
-    private void UpdateClientInventory(NetworkConnection connection, Dictionary<ItemInstance, int> _currentItems)
-    {
-        if (_networkManager.ClientManager.Connection.ClientId != connection.ClientId)
-            return;
-
-        InventorySystem.Instance.SetItems(_currentItems);
-    }
+    [ServerRpc(RunLocally = true)]
+    private void UpdateClientInventory(NetworkConnection connection, InventoryPackage package)
+        => InventorySystem.Instance.SetItems(package.Items, package);
 }
