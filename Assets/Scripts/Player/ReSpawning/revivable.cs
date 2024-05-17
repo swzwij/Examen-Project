@@ -10,8 +10,8 @@ namespace Examen.Player.ReSpawning
     [RequireComponent(typeof(HealthData), typeof(Pointer))]
     public class revivable : Interactable
     {
-        public bool isAlive = true;
-        public bool isRevivable;
+        private bool isAlive = true;
+        private bool isRevivable;
 
         [SerializeField] private GameObject _deathScreen;
         [SerializeField] private Vector3 _reSpawnLocation;
@@ -28,6 +28,14 @@ namespace Examen.Player.ReSpawning
 
             _healthData.onDie.AddListener(OnDie);
             _healthData.onResurrected.AddListener(OnRevive);
+
+            StartCoroutine(TEMP());
+        }
+
+        IEnumerator TEMP()
+        {
+            yield return new WaitForSeconds(2);
+            _healthData.Kill();
         }
 
         private void Update()
