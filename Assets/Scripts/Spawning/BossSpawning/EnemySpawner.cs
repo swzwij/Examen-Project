@@ -59,8 +59,6 @@ namespace Examen.Spawning.BossSpawning
             GameObject enemy = PoolSystem.Instance.SpawnObject(_enemyPrefabs[randomEnemyPrefabNumber].name, _enemyPrefabs[randomEnemyPrefabNumber].gameObject);
             InstanceFinder.ServerManager.Spawn(enemy);
 
-            EnableEnemy(enemy);
-
             if (_enemySpawnPoints[randomSpawnPointNumber].Waypoints.Count == 0)
                 _enemySpawnPoints[randomSpawnPointNumber].SetWaypoints();
 
@@ -70,6 +68,8 @@ namespace Examen.Spawning.BossSpawning
             StartCoroutine(StartNextSpawnTimer());
 
             AddSlider(enemy);
+
+            EnableEnemy(enemy);
         }
 
         [ObserversRpc]
@@ -95,14 +95,16 @@ namespace Examen.Spawning.BossSpawning
             EnemyHealthBar healthBar = enemy.GetComponent<EnemyHealthBar>();
             HealthData enemyHealth = enemy.GetComponent<HealthData>();
 
+            float maxEnemyHealth = enemyHealth.MaxHealth == 0 ? enemyHealth.Health : enemyHealth.MaxHealth;
+
             if (enemyHealth.isDead)
-                enemyHealth.Resurrect(enemyHealth.MaxHealth);
+                enemyHealth.Resurrect(maxEnemyHealth);
 
             healthBar.EnemyHealthData = enemyHealth;
             healthBar.ServerInitialize();
-            ReceiveEnemyInfoOnSpawn(healthBar, enemyHealth.MaxHealth);
+            ReceiveEnemyInfoOnSpawn(healthBar, maxEnemyHealth);
 
-            _enemiesHealth.Add(healthBar, enemyHealth.Health);
+            _enemiesHealth.Add(healthBar, maxEnemyHealth);
         }
 
         [ObserversRpc]
