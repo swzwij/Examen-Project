@@ -20,6 +20,9 @@ namespace Examen.Pathfinding
             GenerateCompletePath();
         }
 
+        /// <summary>
+        /// Reset the waypoint index to 0 and Generates a complete path
+        /// </summary>
         [Server]
         public void ResetWaypointIndex()
         {

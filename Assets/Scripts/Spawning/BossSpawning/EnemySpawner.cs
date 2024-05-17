@@ -16,7 +16,7 @@ namespace Examen.Spawning.BossSpawning
     public class EnemySpawner : NetworkedSingletonInstance<EnemySpawner>
     {
         [Header("Boss Spawning")]
-        [SerializeField] private int _enemyDownTimer = 60;
+        [SerializeField] private int _enemyCooldown = 60;
         [SerializeField] private PlayerSpawner _spawner;
         [SerializeField] private List<HealthData> _enemyPrefabs;
         [SerializeField] private List<EnemySpawnPoints> _enemySpawnPoints;
@@ -24,19 +24,25 @@ namespace Examen.Spawning.BossSpawning
         private bool _hasConnected;
         private Dictionary<EnemyHealthBar, float> _enemiesHealth = new();
 
+        private const float DELAY_PATH_TIMER = 0.33f;
+
         private void Start()
         {
             ServerInstance.Instance.OnServerStarted += SpawnEnemy;
             _spawner.OnSpawned += SendEnemyInfoOnConnection;
         }
 
+        /// <summary>
+        /// Despawns the enemy with the help of the poolsystem.
+        /// </summary>
+        /// <param name="enemyHealthBar">The healthbar of the boss that you want to despawn.</param>
         public void DespawnEnemy(EnemyHealthBar enemyHealthBar)
         {
             PoolSystem.Instance.DespawnObject(enemyHealthBar.gameObject.name, enemyHealthBar.gameObject);
             _enemiesHealth.Remove(enemyHealthBar);
         }
 
-        private void SendEnemyInfoOnConnection(NetworkObject obj) => ReceiveEnemyInfoOnConnection(_enemiesHealth);
+        private void SendEnemyInfoOnConnection(NetworkObject networkObject) => ReceiveEnemyInfoOnConnection(_enemiesHealth);
 
         [ObserversRpc]
         private void ReceiveEnemyInfoOnConnection(Dictionary<EnemyHealthBar, float> currentActiveEnemySliders)
@@ -56,7 +62,9 @@ namespace Examen.Spawning.BossSpawning
             int randomSpawnPointNumber = Random.Range(0, _enemySpawnPoints.Count);
             int randomEnemyPrefabNumber = Random.Range(0, _enemyPrefabs.Count);
 
-            GameObject enemy = PoolSystem.Instance.SpawnObject(_enemyPrefabs[randomEnemyPrefabNumber].name, _enemyPrefabs[randomEnemyPrefabNumber].gameObject);
+            GameObject enemy = PoolSystem.Instance.SpawnObject(_enemyPrefabs[randomEnemyPrefabNumber].name, 
+                _enemyPrefabs[randomEnemyPrefabNumber].gameObject);
+
             InstanceFinder.ServerManager.Spawn(enemy);
 
             if (_enemySpawnPoints[randomSpawnPointNumber].Waypoints.Count == 0)
@@ -78,14 +86,14 @@ namespace Examen.Spawning.BossSpawning
 
         private IEnumerator DelayedPathStart(GameObject enemy, int randomSpawnPointNumber)
         {
-            yield return new WaitForSeconds(0.33f);
+            yield return new WaitForSeconds(DELAY_PATH_TIMER);
 
             enemy.TryGetComponent(out WaypointFollower waypointfollower);
             waypointfollower.Waypoints = _enemySpawnPoints[randomSpawnPointNumber].Waypoints;
 
             if (enemy.TryGetComponent(out Pathfinder pathfinder))
             {
-                waypointfollower.MyPathFinder = pathfinder;
+                waypointfollower.PathFinder = pathfinder;
                 waypointfollower.ResetWaypointIndex();
             }
         }
@@ -108,20 +116,21 @@ namespace Examen.Spawning.BossSpawning
         }
 
         [ObserversRpc]
-        private void ReceiveEnemyInfoOnSpawn(EnemyHealthBar healthbar, float healthAmount) => healthbar.ClientInitialize(healthAmount);
+        private void ReceiveEnemyInfoOnSpawn(EnemyHealthBar healthbar, float healthAmount) 
+            => healthbar.ClientInitialize(healthAmount);
 
 
         private void DespawnEnemy()
         {
-            foreach (KeyValuePair<EnemyHealthBar, float> slider in _enemiesHealth)
-                PoolSystem.Instance.DespawnObject(slider.Key.name, slider.Key.gameObject);
+            foreach (EnemyHealthBar slider in _enemiesHealth.Keys)
+                PoolSystem.Instance.DespawnObject(slider.name, slider.gameObject);
 
             _enemiesHealth.Clear();
         }
 
         private IEnumerator StartNextSpawnTimer()
         {
-            yield return new WaitForSeconds(_enemyDownTimer);
+            yield return new WaitForSeconds(_enemyCooldown);
 
             SpawnEnemy();
         }

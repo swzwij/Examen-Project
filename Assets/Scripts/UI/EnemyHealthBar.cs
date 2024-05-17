@@ -11,7 +11,7 @@ namespace Examen.UI
         [SerializeField] private Slider _healthBar;
 
         public HealthData EnemyHealthData { get; set; }
-        public Slider HealthSlider => _healthBar;
+        public Slider HealthBar => _healthBar;
 
         private void Update()
         {
