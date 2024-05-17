@@ -26,8 +26,6 @@ namespace Examen.Structures
 
         private void OnProximityDataReceived(HashSet<ProximityAgent> nearbyAgents)
         {
-            Debug.LogError("Proximity data received");
-            Debug.LogError(nearbyAgents.Count);
 
             if (nearbyAgents.Count == 0)
                 return;
@@ -39,11 +37,11 @@ namespace Examen.Structures
             {
                 float distance = (agent.transform.position - transform.position).sqrMagnitude;
 
-                if (distance < closestDistance)
-                {
-                    closestDistance = distance;
-                    closestAgent = agent.transform;
-                }
+                if (distance >= closestDistance)
+                    continue;
+                    
+                closestDistance = distance;
+                closestAgent = agent.transform;
             }
 
             _boss = closestAgent;
