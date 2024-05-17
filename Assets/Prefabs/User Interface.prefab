@@ -379,7 +379,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 12.7, y: -11}
+  m_AnchoredPosition: {x: 12.700001, y: -11}
   m_SizeDelta: {x: 23.6, y: 14}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &906255894957060717
@@ -789,7 +789,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 708}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &8606455140320738249
 MonoBehaviour:
@@ -1225,12 +1225,12 @@ MonoBehaviour:
   <PredictedSpawn>k__BackingField: {fileID: 0}
   _networkBehaviours:
   - {fileID: 2074856305998336}
-  - {fileID: 7716265589759354692}
+  - {fileID: 0}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
-    Position: {x: 432.6249, y: 243.5, z: 0}
-    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    Position: {x: 452.0249, y: 242.5, z: -15.8}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
     LocalScale: {x: 0.45065096, y: 0.45065096, z: 0.45065096}
   _isNetworked: 1
   _isGlobal: 0
@@ -1378,7 +1378,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fe8904f1e0c6f84f9d9726f9db1aff8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _buildMenu: {fileID: 8667353336501736113}
   _structurePreview: {fileID: 7073603380770555687, guid: 5e8bd8f617f99434ab3cb9180cf3768f, type: 3}
   _structure: {fileID: 474151977902375623, guid: 1d9017d1dacf3d9489b4fc4ed73f08dc, type: 3}
 --- !u!1 &2816504650903526214
@@ -1781,7 +1780,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 163.48001, y: -113}
+  m_AnchoredPosition: {x: 87.98001, y: -113}
   m_SizeDelta: {x: 126, y: 216}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4879853830664809602
@@ -1878,7 +1877,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fe8904f1e0c6f84f9d9726f9db1aff8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _buildMenu: {fileID: 8667353336501736113}
   _structurePreview: {fileID: 383376843492830689, guid: 0f0a994fa67d88344bd3c70ad1812005, type: 3}
   _structure: {fileID: 2556768225675572015, guid: 9820ef89977cccf4e9c28628311ee433, type: 3}
 --- !u!1 &4197359035239606459
@@ -2156,7 +2154,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3233155157129224091
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2461,7 +2459,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -0.0000076293945, y: 0.000030517578}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &8599068206970821608
@@ -2621,7 +2619,6 @@ GameObject:
   - component: {fileID: 1222154713493983790}
   - component: {fileID: 4375336617350657433}
   - component: {fileID: 2828621557387750172}
-  - component: {fileID: 7716265589759354692}
   m_Layer: 5
   m_Name: Inventory Display
   m_TagString: Untagged
@@ -2687,23 +2684,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7716265589759354692
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6041022351761429356}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6766b3a769892954c875be88fc176eed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 1
-  _addedNetworkObject: {fileID: 7451343417797423076}
-  _networkObjectCache: {fileID: 7451343417797423076}
-  _displayItem: {fileID: 5202236290990543716, guid: 85bf008687bfb024490ea5afdc3fccac, type: 3}
-  _contents: []
 --- !u!1 &6129132725688323765
 GameObject:
   m_ObjectHideFlags: 0
@@ -3317,7 +3297,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 12.8, y: -11}
+  m_AnchoredPosition: {x: 12.799999, y: -11}
   m_SizeDelta: {x: 23.6, y: 14}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7294367450865617717
@@ -3900,7 +3880,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fe8904f1e0c6f84f9d9726f9db1aff8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _buildMenu: {fileID: 8667353336501736113}
   _structurePreview: {fileID: 6998917638401128604, guid: 93fdebdf221cbcf41bad9f1cb3193250, type: 3}
   _structure: {fileID: 5837312900677171832, guid: 8e1463d83d997ca41b114744562fd6b0, type: 3}
 --- !u!1 &7529858002970835234
