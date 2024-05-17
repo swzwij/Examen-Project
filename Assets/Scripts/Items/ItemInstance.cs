@@ -1,10 +1,13 @@
+using System;
+
 namespace Examen.Items
 {
-    public readonly struct ItemInstance 
+    [Serializable]
+    public struct ItemInstance 
     {
-        private readonly string _name;
+        private string _name;
 
-        public readonly string Name => _name;
+        public string Name => _name;
 
         public ItemInstance(string name)
         {
