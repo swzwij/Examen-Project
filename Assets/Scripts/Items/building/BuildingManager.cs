@@ -33,8 +33,6 @@ namespace Examen.Building
 
         private InputAction _clickAction;
 
-        private GridSystem _gridSystem;
-
         private Player.Pointer _pointer;
         private Vector3 _pointerLocation;
         private RaycastHit _pointerHitInfo;
@@ -46,8 +44,6 @@ namespace Examen.Building
         {
             InputManager.SubscribeToAction("HoldDown", OnHoldPressed, out _clickAction);
             _clickAction.canceled += OnReleasePressed;
-
-            SetGridSystem();
 
             _pointer = GetComponent<Player.Pointer>();
             _camera = _pointer.Camera;
@@ -127,7 +123,7 @@ namespace Examen.Building
 
             Destroy(_currentPreview);
             UpdateStructurePlacement(structurePrefab, spawnLocation, spawnRotation);
-            UpdateCells(spawnLocation);
+            RequestCellUpdate(spawnLocation);
         }
 
         [ServerRpc]
@@ -144,9 +140,15 @@ namespace Examen.Building
         }
 
         [ServerRpc]
-        private void UpdateCells(Vector3 placedPosition)
+        private void RequestCellUpdate(Vector3 placedPosition)
         {
-            Cell currentCell = _gridSystem.GetCellFromWorldPosition(placedPosition);
+            Updatecell(placedPosition);
+        }
+
+        [Server]
+        private void Updatecell(Vector3 placedPosition)
+        {
+            Cell currentCell = GridSystem.Instance.GetCellFromWorldPosition(placedPosition);
             currentCell.UpdateCell();
         }
 
@@ -214,9 +216,6 @@ namespace Examen.Building
             if (rotationButtons != null)
                 _currentPreview.GetComponentInChildren<StructurePreviewButtons>().SetButtonsActive(true);
         }
-
-        [Server]
-        private void SetGridSystem() => _gridSystem = FindAnyObjectByType<GridSystem>();
 
         private void SetPointerVector(Vector3 pointerLocation) => _pointerLocation = pointerLocation;
 

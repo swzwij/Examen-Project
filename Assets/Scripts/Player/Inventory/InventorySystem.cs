@@ -15,7 +15,6 @@ namespace Examen.Inventory
 
         public Action<Dictionary<string, int>> OnItemsChanged;
 
-
         /// <summary>
         /// Overrides currentItems with the new given items.
         /// </summary>
