@@ -48,6 +48,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PingEnemy
       objectReference: {fileID: 0}
+    - target: {fileID: 6662070825705517700, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 8308045788551920474, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
