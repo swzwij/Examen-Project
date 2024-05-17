@@ -60,6 +60,11 @@ public class ServerInventory : NetworkedSingletonInstance<ServerInventory>
     }
 
     [ObserversRpc]
-    private void UpdateClientInventory(NetworkConnection connection, Dictionary<string, int> _currentItems)
-        => InventorySystem.Instance.SetItems(_currentItems);
+    private void UpdateClientInventory(NetworkConnection connection, Dictionary<string, int> _currentItems) 
+    {
+        if (_networkManager.ClientManager.Connection.ClientId != connection.ClientId)
+                return;
+
+        InventorySystem.Instance.SetItems(_currentItems); 
+    }
 }
