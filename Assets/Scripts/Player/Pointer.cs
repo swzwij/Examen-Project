@@ -3,6 +3,8 @@ using Minoord.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using FishNet.Object;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 namespace Examen.Player
 {
@@ -55,6 +57,17 @@ namespace Examen.Player
                 return;
 
             Vector2 pointerPosition = InputManager.TryGetAction("PointerPosition").ReadValue<Vector2>();
+
+            PointerEventData eventData = new(EventSystem.current) { position = pointerPosition };
+            List<RaycastResult> results = new();
+            EventSystem.current.RaycastAll(eventData, results);
+
+            if (results.Count > 0)
+            {
+                HasClickedUI = true;
+                return;
+            }
+
             Ray pointerRay = _myCamera.ScreenPointToRay(pointerPosition);
 
             ProcessPointerPosition(pointerRay);
