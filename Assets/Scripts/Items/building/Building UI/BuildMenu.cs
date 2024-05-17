@@ -10,7 +10,7 @@ namespace Examen.Building.BuildingUI
         /// <summary>
         /// Toggles the build menu.
         /// </summary>
-        /// <param name="isActive">Whether the build menu should activate</param>
+        /// <param name="isActive">Whether the build menu should activate.</param>
         public void Toggle(bool isActive)
         {
             _inventory.SetActive(!isActive);
