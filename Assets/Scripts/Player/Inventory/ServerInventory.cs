@@ -59,7 +59,7 @@ public class ServerInventory : NetworkedSingletonInstance<ServerInventory>
         UpdateClientInventory(connection, _inventorySystems[connection.ClientId]);
     }
 
-    [ServerRpc(RunLocally = true)]
+    [ObserversRpc]
     private void UpdateClientInventory(NetworkConnection connection, Dictionary<string, int> _currentItems)
         => InventorySystem.Instance.SetItems(_currentItems);
 }

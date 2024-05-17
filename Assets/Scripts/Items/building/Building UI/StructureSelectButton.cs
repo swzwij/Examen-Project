@@ -37,7 +37,7 @@ namespace Examen.Building.BuildingUI
             foreach (StructureCost item in _structureCost)
             {
                 if (InventorySystem.Instance.CurrentItems.ContainsKey(item.ItemName) && 
-                    InventorySystem.Instance.CurrentItems[item.ItemName] > item.Amount)
+                    InventorySystem.Instance.CurrentItems[item.ItemName] >= item.Amount)
                     _currentItems++;
             }
 
@@ -45,7 +45,12 @@ namespace Examen.Building.BuildingUI
         }
 
         public void OnPointerDown(PointerEventData eventData)
-            => _buildingManager.SpawnStructurePreview(_structurePreview, _structure, _structureCost);
+        {
+            if (!_button.interactable)
+                return;
+
+            _buildingManager.SpawnStructurePreview(_structurePreview, _structure, _structureCost);
+        }
 
         private void OnDestroy() => InventorySystem.Instance.OnItemsChanged -= CheckStructureCost;
     }
