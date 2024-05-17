@@ -262,6 +262,7 @@ namespace Examen.NPC
         {
             p_animator.SetTrigger("Die");
             BroadCastAnimation("Die");
+            _waypointFollower.ToggleWaiting(true);
             _waypointFollower.enabled = false;
             _proximityAgent.enabled = false;
         }
