@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace Examen.Proximity
             if (!_checkProximity)
                 return;
 
-            GetProximityData(_defaultRange, _agentTypesToCheck);
+            RequestProximityData(_defaultRange, _agentTypesToCheck);
         }
 
         

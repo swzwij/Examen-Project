@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Exame.Attacks;
@@ -7,6 +8,7 @@ using Examen.Proximity;
 using FishNet.Connection;
 using FishNet.Object;
 using MarkUlrich.Health;
+using Swzwij.Extensions;
 using UnityEngine;
 
 namespace Examen.NPC
@@ -30,11 +32,16 @@ namespace Examen.NPC
         private Dictionary<AttackTypes, BaseAttack> _attackTypes = new();
         private HashSet<ProximityAgent> _nearbyPlayers = new();
         private HashSet<ProximityAgent> _nearbyStructures = new();
+        private HashSet<ProximityAgent> _lastNearbyStructures = new();
         private HealthData _healthData;
         private ProximityAgent _proximityAgent;
         private Coroutine _scanningCoroutine;
+        private Coroutine _attackCoroutine;
+        private Coroutine _lookAtTargetCoroutine;
         private bool _hasClearedPath;
         private bool _canAttack = true;
+
+        public event Action<ProximityAgent> OnNewStructureEncountered;
 
         private void Awake()
         {
@@ -55,10 +62,11 @@ namespace Examen.NPC
 
         private void InitBoss()
         {
-            _waypointFollower.OnStructureEncountered += ProcessStructureEncounter;
             _waypointFollower.OnPathCleared += SetHasClearedPath;
             _waypointFollower.OnPathCompleted += TriggerIdle;
-            _waypointFollower.OnPathBlocked += TriggerIdle;
+            _waypointFollower.OnPathBlocked += ProcessStructureEncounter;
+
+            OnNewStructureEncountered += TryAttackStructure;
 
             foreach (BaseAttack attack in _attacks)
             {
@@ -90,9 +98,13 @@ namespace Examen.NPC
             // Todo: Play given animation
         }
 
-        private void ProcessStructureEncounter(HealthData healthData)
+        private void ProcessStructureEncounter(RaycastHit healthData)
         {
-            StartCoroutine(RepeatingAttack(_attackInterval, AttackTypes.AOE)); // TODO: Add functionality for determining if should use AOE or SPECIAL attack.
+            if (!healthData.collider.TryGetComponent(out HealthData _))
+                return;
+            
+            TriggerIdle();
+            _attackCoroutine = StartCoroutine(RepeatingAttack(_attackInterval, AttackTypes.AOE)); 
         }
 
         private void ProcessAttack(AttackTypes attackType)
@@ -129,12 +141,58 @@ namespace Examen.NPC
         }
 
         [Server]
+        protected IEnumerator AttackUntil(ProximityAgent agent, AttackTypes attackType, float interval = 0f)
+        {
+            BaseAttack attack = _attackTypes[attackType];
+            float totalinterval = interval + attack.Cooldown + attack.PrepareTime;
+            HealthData healthdata = agent.gameObject.TryGetCachedComponent<HealthData>();
+
+            _lookAtTargetCoroutine = StartCoroutine(LookAtTarget(agent.transform));
+            TriggerIdle();
+            while (!healthdata.isDead)
+            {
+                if (!attack.CanAttack)
+                    yield return null;
+
+                ProcessAttack(attackType);
+
+                yield return new WaitForSeconds(totalinterval);
+            }
+
+            _attackCoroutine = null;
+            _lookAtTargetCoroutine = null;
+        }
+
+        [Server]
+        protected IEnumerator LookAtTarget(Transform target)
+        {
+            float angleToTarget = Vector3.Angle(transform.forward, target.position - transform.position);
+            while (angleToTarget > 15f)
+            {
+                Vector3 direction = target.position - transform.position;
+                Quaternion rotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * 5f);
+
+                yield return null;
+            }
+        }
+
+        [Server]
         private void SetHasClearedPath(bool hasClearedPath) => _hasClearedPath = hasClearedPath;
 
+        [Server]
         private void UpdateProximityData()
         {
             _nearbyPlayers = _proximityAgent.RequestProximityData(AgentTypes.PLAYER);
             _nearbyStructures = _proximityAgent.RequestProximityData(AgentTypes.STRUCTURE);
+
+            foreach (ProximityAgent structure in _nearbyStructures)
+            {
+                if (!_lastNearbyStructures.Contains(structure))
+                    OnNewStructureEncountered?.Invoke(structure);
+            }
+
+            _lastNearbyStructures = _nearbyStructures;
         }
 
         [Server]
@@ -142,9 +200,9 @@ namespace Examen.NPC
         {
             UpdateProximityData();
 
-            if (_nearbyPlayers.Count > _nearbyPlayerThreshold)
+            if (_nearbyPlayers.Count >= _nearbyPlayerThreshold)
                 ProcessAttack(AttackTypes.AOE);
-
+            
             if (_scanningCoroutine != null)
                 return;
 
@@ -152,7 +210,7 @@ namespace Examen.NPC
         }
 
         [Server]
-        private bool WillAttack() => Random.Range(0, 100) <= _attackChance;
+        private bool WillAttack() => UnityEngine.Random.Range(0, 100) <= _attackChance;
 
         [Server]
         private IEnumerator ScanInterval(float interval)
@@ -163,6 +221,21 @@ namespace Examen.NPC
                 yield break;
             
             ProcessAttack(AttackTypes.AOE);
+        }
+
+        [Server]
+        private void TryAttackStructure(ProximityAgent structure)
+        {
+            if (_nearbyStructures.Count < _nearbyStructureThreshold)
+                return;
+            
+            if (!WillAttack())
+                return;
+
+            if (_lookAtTargetCoroutine != null || _attackCoroutine != null)
+                return;
+            
+            _attackCoroutine = StartCoroutine(AttackUntil(structure, AttackTypes.AOE, _attackInterval));
         }
 
         [Server]
@@ -195,11 +268,12 @@ namespace Examen.NPC
 
         private void RemoveListeners()
         {
-            _waypointFollower.OnStructureEncountered -= ProcessStructureEncounter;
             _waypointFollower.OnPathCleared -= SetHasClearedPath;
             _waypointFollower.OnPathStarted -= TriggerWalking;
             _waypointFollower.OnPathCompleted -= TriggerIdle;
-            _waypointFollower.OnPathBlocked -= TriggerIdle;
+            _waypointFollower.OnPathBlocked -= ProcessStructureEncounter;
+
+            OnNewStructureEncountered -= TryAttackStructure;
 
             foreach (BaseAttack attack in _attacks)
             {

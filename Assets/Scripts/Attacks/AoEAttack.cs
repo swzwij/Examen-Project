@@ -53,7 +53,6 @@ namespace Exame.Attacks
                 
                 _damagedTargets.Add(collider, healthData);
                 healthData.TakeDamage(p_damage);
-                Debug.LogError($"Damaging {collider.name}");
             }
 
             StartCoroutine(ResetProjector());

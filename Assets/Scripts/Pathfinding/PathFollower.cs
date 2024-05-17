@@ -42,7 +42,7 @@ namespace Examen.Pathfinding
             => Physics.Raycast(transform.position, transform.forward, out p_obstacleHit, p_obstacleCheckDistance, p_obstaclesLayerMask);
 
         public event Action OnPathStarted;
-        public event Action OnPathBlocked;
+        public event Action<RaycastHit> OnPathBlocked;
         public event Action OnPathCompleted;
         public event Action<Interactable> OnInteractableReached;
 
@@ -74,7 +74,7 @@ namespace Examen.Pathfinding
 
             p_hasFoundBlockage = true;
             StartPath(p_currentTarget);
-            OnPathBlocked?.Invoke();
+            OnPathBlocked?.Invoke(p_obstacleHit);
         }
 
         protected void ProcessPointerPosition(Interactable targetInteractable)
@@ -231,21 +231,6 @@ namespace Examen.Pathfinding
                     transform.rotation, Quaternion.LookRotation(targetDirection), p_turnSpeed * Time.deltaTime
                 );
                 BroadcastRotation(transform.rotation);
-            }
-        }
-
-        private IEnumerator TurnToTarget(Vector3 target, float turnSpeed)
-        {
-            Vector3 targetDirection = target - transform.position;
-            float angle = Vector3.Angle(targetDirection, transform.forward);
-
-            while (angle > 0.1f)
-            {
-                targetDirection.y = 0;
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(targetDirection), turnSpeed * Time.deltaTime);
-                angle = Vector3.Angle(targetDirection, transform.forward);
-                BroadcastRotation(transform.rotation);
-                yield return null;
             }
         }
         

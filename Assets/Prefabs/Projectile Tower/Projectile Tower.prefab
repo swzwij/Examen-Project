@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2556768225675572015}
   - component: {fileID: 2008946782905985116}
   - component: {fileID: 8426079236571924867}
+  - component: {fileID: 3807823907030709044}
   m_Layer: 6
   m_Name: Projectile Tower
   m_TagString: Untagged
@@ -96,9 +97,9 @@ MonoBehaviour:
   _networkBehaviours:
   - {fileID: 4661868421625354277}
   - {fileID: 2008946782905985116}
+  - {fileID: 8426079236571924867}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
-  <ChildNetworkObjects>k__BackingField:
-  - {fileID: 0}
+  <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
     Position: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0, w: 1}
@@ -108,7 +109,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 4
+  <PrefabId>k__BackingField: 7
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
@@ -140,13 +141,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 815b2066ae5f6074f9eb80906be8b0a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 2
   _addedNetworkObject: {fileID: 2556768225675572015}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 2556768225675572015}
   _agentType: 2
   _defaultRange: 15
   _checkProximity: 0
   _agentTypesToCheck: 
+--- !u!114 &3807823907030709044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 383376843492830689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 665c672f2e2777c47b3254da291fff52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 40
+  onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onHealthAdded:
+    m_PersistentCalls:
+      m_Calls: []
+  onDamageTaken:
+    m_PersistentCalls:
+      m_Calls: []
+  onDie:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3807823907030709044}
+        m_TargetAssemblyTypeName: MarkUlrich.Health.HealthData, Assembly-CSharp
+        m_MethodName: DestroySelf
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onResurrected:
+    m_PersistentCalls:
+      m_Calls: []
+  isDead: 0
 --- !u!1 &807205776367393532
 GameObject:
   m_ObjectHideFlags: 0

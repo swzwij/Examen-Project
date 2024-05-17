@@ -52,7 +52,6 @@ namespace Exame.Attacks
             PrepareAttack();
             yield return new WaitForSeconds(p_prepareTime);
             yield return new WaitForSeconds(CurrentAnimationTime);
-            Debug.LogError(CurrentAnimationTime);
             Attack();
             OnAttacked?.Invoke(true);
             p_cooldownCoroutine = StartCoroutine(AttackCooldown());
