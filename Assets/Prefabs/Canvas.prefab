@@ -134,9 +134,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fe8904f1e0c6f84f9d9726f9db1aff8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _buildMenu: {fileID: 0}
   _structurePreview: {fileID: 6966241593228306355, guid: 2856522cf10e58f4c97e05f77434c625, type: 3}
   _structure: {fileID: 5323847395226675756, guid: 1d9017d1dacf3d9489b4fc4ed73f08dc, type: 3}
+  _structureCost:
+  - Item: {fileID: 11400000, guid: 25d262743dcf76145860ce1e70a7afff, type: 2}
+    Amount: 4
 --- !u!65 &3106452228515616438
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -243,7 +245,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &230303003319706332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -395,9 +397,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fe8904f1e0c6f84f9d9726f9db1aff8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _buildMenu: {fileID: 0}
   _structurePreview: {fileID: 6966241593228306355, guid: db63c43e7a76c6c4e897546046db036d, type: 3}
   _structure: {fileID: 5323847395226675756, guid: f0d3e1e6334878f45affa9ead7867f5a, type: 3}
+  _structureCost:
+  - Item: {fileID: 11400000, guid: 52d8885bbe883b2428e8e821aaa5c5b7, type: 2}
+    Amount: 2
+  - Item: {fileID: 11400000, guid: 25d262743dcf76145860ce1e70a7afff, type: 2}
+    Amount: 2
 --- !u!65 &1697386919526829877
 BoxCollider:
   m_ObjectHideFlags: 0
