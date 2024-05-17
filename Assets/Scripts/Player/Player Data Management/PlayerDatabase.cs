@@ -2,6 +2,7 @@ using FishNet;
 using FishNet.Connection;
 using FishNet.Object;
 using MarkUlrich.Utils;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +18,8 @@ namespace Examen.Player.PlayerDataManagement
         [SerializeField] private Text _expText;
 
         private readonly Dictionary<int, PlayerDataHandler> _playerData = new();
+
+        public Action<int> OnLevelChanged;
 
         /// <summary>
         /// Initiates a connection with a client using the specified client ID and player data handler.
@@ -44,6 +47,8 @@ namespace Examen.Player.PlayerDataManagement
             _expBar.maxValue = maxNeededExp;
             _expBar.value = remainingExp;
             _expText.text = $"Level: {level} {remainingExp}/{maxNeededExp}";
+
+            OnLevelChanged?.Invoke(level);
         }
 
         /// <summary>
