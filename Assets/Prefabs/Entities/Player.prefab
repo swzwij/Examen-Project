@@ -543,6 +543,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8804211696207266773}
     m_Modifications:
+    - target: {fileID: 2529888600350472541, guid: e85cadf722a753e4d8f28cae9e0d9c35, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2562650139438190038, guid: e85cadf722a753e4d8f28cae9e0d9c35, type: 3}
       propertyPath: m_Name
       value: User Interface

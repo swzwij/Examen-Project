@@ -12,6 +12,16 @@ namespace Examen.Inventory
 
         Dictionary<string, int> _currentItems = new();
 
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
+            if (IsOwner)
+                return;
+
+            transform.parent.gameObject.SetActive(false);
+        }
+
         private void OnEnable() => InventorySystem.Instance.OnItemsChanged += UpdateDisplay;
 
         private void OnDestroy() => InventorySystem.Instance.OnItemsChanged -= UpdateDisplay;
