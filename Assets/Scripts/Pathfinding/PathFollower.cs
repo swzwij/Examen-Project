@@ -113,6 +113,16 @@ namespace Examen.Pathfinding
                 p_followPathCoroutine = StartCoroutine(FollowPath());
         }
 
+        /// <summary>
+        /// Stops the current pathfinding coroutine
+        /// </summary>
+        [Server]
+        public void StopPath()
+        {
+            if (p_followPathCoroutine != null)
+                StopCoroutine(p_followPathCoroutine);
+        }
+
         [Server]
         protected IEnumerator FollowPath()
         {
