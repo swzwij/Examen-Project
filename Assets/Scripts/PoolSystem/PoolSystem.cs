@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Examen.Poolsystem
 {
@@ -31,7 +30,7 @@ namespace Examen.Poolsystem
         /// <param name="nameTag">The name of the category the object is in.</param>
         /// <param name="spawnPrefab">The object you want to spawn in.</param>
         /// <param name="parentTransform">The object you want the spawnobject to be the childobject of.</param>
-        public void SpawnObject(string nameTag, GameObject spawnPrefab, Transform parentTransform = null) 
+        public GameObject SpawnObject(string nameTag, GameObject spawnPrefab, Transform parentTransform = null) 
             => SpawnObject(nameTag, parentTransform, spawnPrefab);
 
         /// <summary>
@@ -40,26 +39,29 @@ namespace Examen.Poolsystem
         /// <param name="nameTag">The name of the category the object is in.</param>
         /// <param name="parentTransform">The object you want the spawnobject to be the childobject of.</param>
         /// <param name="spawnPrefab">The object you want to spawn in.</param>
-        public void SpawnObject(string nameTag, Transform parentTransform = null, GameObject spawnPrefab = null)
+        public GameObject SpawnObject(string nameTag, Transform parentTransform = null, GameObject spawnPrefab = null)
         {
             if (_objectStack?.ContainsKey(nameTag) == true && _objectStack[nameTag].Any())
             {
                 GameObject lastObject = _objectStack[nameTag].LastOrDefault();
                 _objectStack[nameTag].Remove(lastObject);
 
-                MoveObjectToActiveScene(lastObject, parentTransform);
+                MoveObject(lastObject, parentTransform);
                 AddActiveObject(nameTag, lastObject);
 
                 lastObject.SetActive(true);
-                return;
+                return lastObject;
             }
 
             if (spawnPrefab == null) 
-                return;
+                return null;
 
             GameObject newGameObject = Instantiate(spawnPrefab);
-            MoveObjectToActiveScene(newGameObject, parentTransform);
+            newGameObject.name = nameTag;
+            MoveObject(newGameObject, parentTransform);
             AddActiveObject(nameTag, newGameObject);
+
+            return newGameObject;
         }
 
         /// <summary>
@@ -75,7 +77,7 @@ namespace Examen.Poolsystem
                 return;
             }
 
-            MoveObjectToDontDestroyOnLoadScene(despawnObject);
+            MoveObject(despawnObject, transform);
             AddQueuObject(nameTag, despawnObject);
 
             despawnObject.SetActive(false);
@@ -98,16 +100,8 @@ namespace Examen.Poolsystem
             SpawnObject(objectName, previousParentTransform);
         }
 
-        private void MoveObjectToActiveScene(GameObject movingObject, Transform parentTransform)
-        {
-            if (parentTransform == null)
-                SceneManager.MoveGameObjectToScene(movingObject, SceneManager.GetActiveScene());
-            else
-                movingObject.transform.parent = parentTransform;
-        }
-
-        private void MoveObjectToDontDestroyOnLoadScene(GameObject movingObject) 
-            => movingObject.transform.parent = transform;
+        private void MoveObject(GameObject movingObject, Transform parentTransform) 
+            => movingObject.transform.parent = parentTransform;
 
         private void AddQueuObject(string nameTag, GameObject gameObject)
         {

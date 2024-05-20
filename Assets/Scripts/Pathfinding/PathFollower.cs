@@ -32,6 +32,8 @@ namespace Examen.Pathfinding
         protected Coroutine p_followPathCoroutine;
         protected Coroutine p_waitForClearance;
         protected LineRenderer p_pathRenderer;
+
+        public Pathfinder PathFinder { set { p_pathfinder = value; } }
         
         public bool IsPathBlocked 
             => Physics.Raycast(transform.position, transform.forward, p_obstacleCheckDistance, p_obstaclesLayerMask);
