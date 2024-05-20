@@ -50,8 +50,6 @@ namespace Examen.Pathfinding
         public event Action OnPathCompleted;
         public event Action<Interactable> OnInteractableReached;
 
-        public event Action<bool> OnStartMoving;
-
         protected virtual void Start() 
         {
             _baseSpeed = p_speed;
@@ -66,7 +64,7 @@ namespace Examen.Pathfinding
                 p_interactor.OnInteractableFound += ProcessPointerPosition;
 
             if (TryGetComponent(out p_animator))
-                OnStartMoving += SetIsMoving;
+                OnPathStarted += TriggerMove;
 
             OnPathCompleted += RequestDIstanceToTarget;
         }
@@ -87,10 +85,12 @@ namespace Examen.Pathfinding
             OnPathBlocked?.Invoke(p_obstacleHit);
         }
 
-        protected void SetIsMoving(bool isMoving)
+        protected void TriggerMove()
         {
-            p_animator.SetBool("IsMoving", isMoving);
-            p_animator.SetFloat("MoveMultiplier", p_speed);
+            p_animator.SetTrigger("Move");
+            p_animator.SetFloat("MoveMultiplier", 1);
+            BroadcastAnimationTrigger("Move");
+            BroadcastAnimationSpeed(1);
         }
 
         [ServerRpc]
@@ -166,8 +166,6 @@ namespace Examen.Pathfinding
                 adjustedNode.y = transform.localScale.y/2 + 
                 p_currentPath[p_currentNodeIndex].NodeHeightOffset + 
                 p_currentPath[p_currentNodeIndex].Position.y;
-                OnStartMoving?.Invoke(true);
-                BroadcastStartMoving(true);
 
                 Vector3 lookAtVector = adjustedNode;
                 lookAtVector.y = transform.position.y;
@@ -192,13 +190,19 @@ namespace Examen.Pathfinding
             }
             
             p_hasFoundBlockage = false;
-            OnStartMoving?.Invoke(false);
-            BroadcastStartMoving(false);
+            p_animator.SetTrigger("Idle");
+            BroadcastAnimationTrigger("Idle");
             OnPathCompleted?.Invoke();
         }
 
         [ObserversRpc]
-        protected void BroadcastStartMoving(bool isMoving) => OnStartMoving?.Invoke(isMoving);
+        protected void BroadcastAnimationTrigger(string trigger) => p_animator.SetTrigger(trigger);
+
+        [ObserversRpc]
+        protected void BroadcastAnimationBool(string trigger, bool value) => p_animator.SetBool(trigger, value);
+
+        [ObserversRpc]
+        protected void BroadcastAnimationSpeed(float speed) => p_animator.SetFloat("MoveMultiplier", speed);
 
         [ObserversRpc]
         protected void BroadcastRotation(Quaternion rotation) => transform.rotation = rotation;

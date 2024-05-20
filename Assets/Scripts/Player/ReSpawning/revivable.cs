@@ -1,3 +1,4 @@
+using Examen.Interactables;
 using Examen.Pathfinding;
 using FishNet.Connection;
 using FishNet.Object;
@@ -19,6 +20,8 @@ namespace Examen.Player.ReSpawning
         private Pointer _pointer;
         private HealthData _healthData;
         private PathFollower _pathFollower;
+
+        public override InteractableTypes Type => throw new System.NotImplementedException();
 
         private void Start()
         {

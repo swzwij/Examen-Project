@@ -195,6 +195,7 @@ MonoBehaviour:
   _waypointFollower: {fileID: 6810126444432453413}
   p_animator: {fileID: 4057522124301949771}
   _deathDespawnTimer: 30
+  _model: {fileID: 4373595903140660382}
   _attacks:
   - {fileID: 2909072033571877038}
   _attackInterval: 1
@@ -248,7 +249,7 @@ MonoBehaviour:
   <ChildNetworkObjects>k__BackingField:
   - {fileID: 3711931934465838209}
   SerializedTransformProperties:
-    Position: {x: 0, y: 1, z: 0}
+    Position: {x: -17.4, y: 1, z: -84.1}
     Rotation: {x: 0, y: 0, z: 0, w: 1}
     LocalScale: {x: 1, y: 1, z: 1}
   _isNetworked: 1
@@ -750,6 +751,11 @@ PrefabInstance:
 --- !u!4 &4033521992412814884 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: aef42e4b81d2d044ca69aba6d2d673b9, type: 3}
+  m_PrefabInstance: {fileID: 3491217273048316367}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4373595903140660382 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: aef42e4b81d2d044ca69aba6d2d673b9, type: 3}
   m_PrefabInstance: {fileID: 3491217273048316367}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6970892491035397902

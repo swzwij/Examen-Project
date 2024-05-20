@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Exame.Attacks;
 using Examen.Attacks;
+using Examen.Interactables;
 using Examen.Pathfinding;
 using Examen.Proximity;
 using Examen.Spawning.BossSpawning;
@@ -18,9 +19,11 @@ namespace Examen.NPC
     [RequireComponent(typeof(WaypointFollower), typeof(ProximityAgent))]
     public class Boss : Interactable
     {
+        [SerializeField] protected InteractableTypes p_interactableType;
         [SerializeField] private WaypointFollower _waypointFollower;
         [SerializeField] private Animator p_animator;
         [SerializeField] private float _deathDespawnTimer = 30f;
+        [SerializeField] private GameObject _model;
 
         [Header("Attack Settings")]
         [SerializeField] private BaseAttack[] _attacks;
@@ -39,11 +42,14 @@ namespace Examen.NPC
         private HashSet<ProximityAgent> _lastNearbyStructures = new();
         private HealthData _healthData;
         private ProximityAgent _proximityAgent;
+        private Coroutine _hurtCoroutine;
         private Coroutine _scanningCoroutine;
         private Coroutine _attackCoroutine;
         private Coroutine _lookAtTargetCoroutine;
         private bool _hasClearedPath;
         private bool _canAttack = true;
+
+        public override InteractableTypes Type => p_interactableType;
 
         public event Action<ProximityAgent> OnNewStructureEncountered;
 
@@ -52,7 +58,6 @@ namespace Examen.NPC
             _waypointFollower = GetComponent<WaypointFollower>();
             _healthBar = GetComponent<EnemyHealthBar>();
             _waypointFollower.OnFollowerInitialised += InitBoss;
-            _waypointFollower.OnPathStarted += TriggerWalking;
 
             _proximityAgent = GetComponent<ProximityAgent>();
         }
@@ -109,7 +114,15 @@ namespace Examen.NPC
         /// [ObserversRpc]
         public virtual void BroadcastInteract()
         {
+            if (_hurtCoroutine == null)
+                _hurtCoroutine = StartCoroutine(HurtAnimation());
+        }
 
+        private IEnumerator HurtAnimation()
+        {
+            _model.SetActive(false);
+            yield return new WaitForEndOfFrame();
+            _model.SetActive(true);
         }
 
         private void ProcessStructureEncounter(RaycastHit healthData)
@@ -290,13 +303,6 @@ namespace Examen.NPC
             _waypointFollower.ToggleWaiting(true);
         }
 
-        private void TriggerWalking()
-        {
-            p_animator.SetFloat("WalkSpeed", _waypointFollower.Speed);
-            p_animator.SetTrigger("Walk");
-            BroadCastAnimation("Walk");
-        }
-
         private void TriggerDie()
         {
             StartCoroutine(DespawnAfterDeath(_deathDespawnTimer));
@@ -329,7 +335,6 @@ namespace Examen.NPC
         private void RemoveListeners()
         {
             _waypointFollower.OnPathCleared -= SetHasClearedPath;
-            _waypointFollower.OnPathStarted -= TriggerWalking;
             _waypointFollower.OnPathCompleted -= TriggerIdle;
             _waypointFollower.OnPathBlocked -= ProcessStructureEncounter;
 

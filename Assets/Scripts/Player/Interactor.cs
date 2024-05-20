@@ -74,7 +74,7 @@ namespace Examen.Player
             if (_hasInteracted)
                 return;
 
-            _animator.SetTrigger(_interactableTypeToAnimation[interactable.Type]);
+            BroadcastAnimationTrigger(_interactableTypeToAnimation[interactable.Type]);
 
             if (!IsOwner)
                 return; 
@@ -107,12 +107,17 @@ namespace Examen.Player
 
             while (_isGathering && !resource.IsDead)
             {
+                //_animator.SetTrigger(_interactableTypeToAnimation[resource.Type]);
+                BroadcastAnimationTrigger(_interactableTypeToAnimation[resource.Type]);
                 resource.Interact(connection, damageAmount);
-                yield return new WaitForSeconds(6); //TODO: make this timer the timer of the player gather information
+                yield return new WaitForSeconds(_animator.GetCurrentAnimatorClipInfo(0).Length); 
             }
 
             _isGathering = false;
         }
+
+        [ObserversRpc]
+        protected void BroadcastAnimationTrigger(string trigger) => _animator.SetTrigger(trigger);
 
         private void OnDestroy() => _isGathering = false;
 
