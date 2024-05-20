@@ -1,37 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4336860569624057587
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2759117656618676834}
-  m_Layer: 2
-  m_Name: Waypoints
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2759117656618676834
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4336860569624057587}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2652453575789195522}
-  m_Father: {fileID: 1834133555745107547}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5760878545938402771
 GameObject:
   m_ObjectHideFlags: 0
@@ -53,7 +21,7 @@ GameObject:
   - component: {fileID: 7071424768019710682}
   - component: {fileID: 1679997182401382031}
   - component: {fileID: 8047591078371375229}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Boss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,7 +42,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2582802261315992798}
-  - {fileID: 2759117656618676834}
   - {fileID: 1974854227925966216}
   - {fileID: 4033521992412814884}
   m_Father: {fileID: 0}
@@ -208,7 +175,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   p_waitTime: 1
-  _waypointsParent: {fileID: 2759117656618676834}
   _waypoints: []
   _waypointDistanceThreshold: 5
 --- !u!114 &6525617594531759237
@@ -411,7 +377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 665c672f2e2777c47b3254da291fff52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 300
+  health: 1000
   onHealthChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -444,37 +410,6 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 9181585673909579258}
   _networkObjectCache: {fileID: 9181585673909579258}
   _healthBar: {fileID: 2512733453753646736}
---- !u!1 &9005010927722937738
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2652453575789195522}
-  m_Layer: 2
-  m_Name: BossWaypoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2652453575789195522
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9005010927722937738}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2759117656618676834}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &3491217273048316367
 PrefabInstance:
   m_ObjectHideFlags: 0

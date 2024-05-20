@@ -187,6 +187,7 @@ namespace Examen.NPC
 
             _lookAtTargetCoroutine = StartCoroutine(LookAtTarget(agent.transform));
             TriggerIdle();
+            yield return new WaitForSeconds(interval);
             while (!healthdata.isDead)
             {
                 if (!attack.CanAttack)
@@ -298,6 +299,8 @@ namespace Examen.NPC
 
         private void TriggerDie()
         {
+            StartCoroutine(DespawnAfterDeath(_deathDespawnTimer));
+            
             _proximityAgent.SetAgentType(AgentTypes.RESOURCE);
             _waypointFollower.ToggleWaiting(true);
             _waypointFollower.StopPath();
@@ -308,15 +311,17 @@ namespace Examen.NPC
 
             _waypointFollower.enabled = false;
             _proximityAgent.enabled = false;
-
-            StartCoroutine(DespawnAfterDeath(_deathDespawnTimer));
         }
 
         private IEnumerator DespawnAfterDeath(float timer)
         {
             yield return new WaitForSeconds(timer);
             EnemySpawner.Instance.DespawnEnemy(_healthBar);
+            BroadcastDespawn();
         }
+
+        [ObserversRpc]
+        private void BroadcastDespawn() => gameObject.SetActive(false);
 
         private void RemoveListeners()
         {

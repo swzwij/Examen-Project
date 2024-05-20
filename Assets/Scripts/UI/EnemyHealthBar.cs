@@ -26,7 +26,6 @@ namespace Examen.UI
         {
             EnemyHealthData.onDamageTaken.AddListener(CallSetHealth);
             EnemyHealthData.onDie.AddListener(RemoveListeners);
-            EnemyHealthData.onDie.AddListener(BroadcastDespawn);
         }
 
         /// <summary>
@@ -47,10 +46,6 @@ namespace Examen.UI
         {
             EnemyHealthData.onDamageTaken.RemoveListener(CallSetHealth);
             EnemyHealthData.onDie.RemoveListener(RemoveListeners);
-            EnemyHealthData.onDie.RemoveListener(BroadcastDespawn);
         }
-
-        [ObserversRpc]
-        private void BroadcastDespawn() => gameObject.SetActive(false);
     }
 }

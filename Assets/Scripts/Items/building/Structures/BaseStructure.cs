@@ -7,8 +7,6 @@ namespace Examen.Structure
 {
     public class BaseStructure : NetworkBehaviour
     {
-        private GridSystem _gridSystem;
-
         public void Initialze()
         {
             StartCoroutine(WaitBeforeActivate());
@@ -29,9 +27,8 @@ namespace Examen.Structure
             if (!IsServer)
                 return;
 
-            _gridSystem = FindObjectOfType<GridSystem>();
-            Cell cell = _gridSystem.GetCellFromWorldPosition(transform.position);
-            _gridSystem.UpdateCell(cell);
+            Cell cell = GridSystem.Instance.GetCellFromWorldPosition(transform.position);
+            cell.UpdateCell();
         }
     }
 }

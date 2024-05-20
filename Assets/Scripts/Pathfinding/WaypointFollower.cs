@@ -10,7 +10,6 @@ namespace Examen.Pathfinding
 {
     public class WaypointFollower : PathFollower
     {
-        [SerializeField] private Transform _waypointsParent;
         [SerializeField] private List<Transform> _waypoints = new();
         [SerializeField] private float _waypointDistanceThreshold = 5f;
         private List<Node> _completePath = new();
