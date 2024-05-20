@@ -27,8 +27,12 @@ namespace Examen.Pathfinding
         {
             _waypointsParent.name = $"{gameObject.name} - Waypoints";
 
-            for (int i = _waypoints.Count - 1; i >= 0; i--)
-                _waypoints[i].SetParent(_waypointsParent);
+            _waypoints.Clear();
+
+            for (int i = _waypointsParent.childCount - 1; i >= 0; i--)
+                _waypoints.Add(_waypointsParent.GetChild(i));
+
+            _waypointsParent.SetParent(null);
             
             _waypoints.Reverse();
 
@@ -161,6 +165,9 @@ namespace Examen.Pathfinding
         [Server]
         public void ContinuePath()
         {
+            if (p_hasStoppedPath)
+                return;
+
             if (p_followPathCoroutine != null)
                 StopCoroutine(p_followPathCoroutine);
 

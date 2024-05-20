@@ -26,6 +26,7 @@ namespace Examen.Pathfinding
         protected bool p_hasInteracted;
         protected Vector3 p_currentTarget;
         protected bool p_hasFoundBlockage;
+        protected bool p_hasStoppedPath;
         protected Pathfinder p_pathfinder;
         protected Pointer p_pointer;
         protected Interactor p_interactor;
@@ -127,6 +128,7 @@ namespace Examen.Pathfinding
         [Server]
         public void StopPath()
         {
+            p_hasStoppedPath = true;
             if (p_followPathCoroutine != null)
                 StopCoroutine(p_followPathCoroutine);
         }
@@ -134,6 +136,7 @@ namespace Examen.Pathfinding
         [Server]
         protected IEnumerator FollowPath()
         {
+            p_hasStoppedPath = false;
             OnPathStarted?.Invoke();
             while (p_currentNodeIndex < p_currentPath.Count)
             {

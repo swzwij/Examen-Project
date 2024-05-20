@@ -101,7 +101,7 @@ namespace Examen.NPC
         /// <summary>
         /// Broadcasts the interaction event to all observers.
         /// </summary>
-        [ObserversRpc]
+        /// [ObserversRpc]
         public virtual void BroadcastInteract()
         {
 
@@ -269,9 +269,14 @@ namespace Examen.NPC
 
         private void TriggerDie()
         {
+            _proximityAgent.SetAgentType(AgentTypes.RESOURCE);
+            _waypointFollower.ToggleWaiting(true);
+            _waypointFollower.StopPath();
+            StopAllCoroutines();
+
             p_animator.SetTrigger("Die");
             BroadCastAnimation("Die");
-            _waypointFollower.ToggleWaiting(true);
+
             _waypointFollower.enabled = false;
             _proximityAgent.enabled = false;
         }

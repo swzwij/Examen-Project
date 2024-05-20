@@ -36,6 +36,18 @@ namespace Examen.Proximity
             RequestProximityData(_defaultRange, _agentTypesToCheck);
         }
 
+        /// <summary>
+        /// Sets the agent type.
+        /// </summary>
+        /// <param name="agentType">The agent type to set.</param>
+        public void SetAgentType(AgentTypes agentType)
+        {
+            _agentType = agentType;
+            BroadcastAgentType(agentType);
+        }
+
+        [ObserversRpc]
+        private void BroadcastAgentType(AgentTypes agentType) => _agentType = agentType;
         
         /// <summary>
         /// Requests proximity data for the specified range and agent types.
