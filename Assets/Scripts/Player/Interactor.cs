@@ -8,6 +8,7 @@ using FishNet.Connection;
 using System.Collections;
 using System.Collections.Generic;
 using Examen.Interactables;
+using Examen.Interactables.Resource;
 
 namespace Examen.Player
 {
@@ -31,8 +32,11 @@ namespace Examen.Player
             {InteractableTypes.StructureBallistae, "UseBallistae"},
             {InteractableTypes.InteractRepair, "Repair"}
         };
+        private bool _isGathering;
+        private Resource _currentInteractableResource;
 
         public Action<Interactable> OnInteractableFound;
+
 
         private void Start()
         {
@@ -42,6 +46,7 @@ namespace Examen.Player
 
             _pointer.OnPointedAtInteractable += ProcessPointerGameObject;
             _pathFollower.OnInteractableReached += Interact;
+            _pathFollower.OnPathStarted += () => _isGathering = false;
 
             ServerInstance.Instance.TryGetComponent(out _networkManager);
 
@@ -74,6 +79,8 @@ namespace Examen.Player
             if (!IsOwner)
                 return; 
             
+            SentInteract(interactable, _networkManager.ClientManager.Connection);
+
             _hasInteracted = true;
             StartCoroutine(InteractCooldown(interactable, _animator.GetCurrentAnimatorStateInfo(0).length));
         }
@@ -86,7 +93,28 @@ namespace Examen.Player
         }
 
         [ServerRpc]
-        private void SentInteract(Interactable interactable, NetworkConnection connection) 
-            => interactable.Interact(connection, damageAmount);
+        private void SentInteract(Interactable interactable, NetworkConnection connection)
+        {
+            if (interactable is Resource resource)
+                StartCoroutine(Gathering(resource, connection));
+            else
+                interactable.Interact(connection, damageAmount);
+        }
+
+        protected IEnumerator Gathering(Resource resource, NetworkConnection connection)
+        {
+            _isGathering = true;
+
+            while (_isGathering && !resource.IsDead)
+            {
+                resource.Interact(connection, damageAmount);
+                yield return new WaitForSeconds(6); //TODO: make this timer the timer of the player gather information
+            }
+
+            _isGathering = false;
+        }
+
+        private void OnDestroy() => _isGathering = false;
+
     }
 }

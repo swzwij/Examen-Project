@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Examen.Pathfinding.Grid;
 using Examen.Player;
+using FishNet.Component.Spawning;
+using FishNet.Managing.Client;
 using FishNet.Object;
 using UnityEngine;
 
@@ -11,7 +13,11 @@ namespace Examen.Pathfinding
     [RequireComponent(typeof(Pathfinder))]
     public class PathFollower : NetworkBehaviour
     {
+        public float _baseSpeed { get; private set; }
+        public float Speed { get { return p_speed; } set { p_speed = value; } }
+
         [SerializeField] protected float p_speed = 5f;
+        [SerializeField] protected float p_turnSpeed = 15f;
         [SerializeField] protected float p_obstacleCheckDistance = 1f;
         [SerializeField] protected LayerMask p_obstaclesLayerMask;
         [SerializeField] protected float p_waitTime = 1f;
@@ -21,6 +27,7 @@ namespace Examen.Pathfinding
         protected bool p_hasInteracted;
         protected Vector3 p_currentTarget;
         protected bool p_hasFoundBlockage;
+        protected bool p_hasStoppedPath;
         protected Pathfinder p_pathfinder;
         protected Pointer p_pointer;
         protected Interactor p_interactor;
@@ -29,11 +36,17 @@ namespace Examen.Pathfinding
         protected int p_currentNodeIndex = 0;
         protected Coroutine p_followPathCoroutine;
         protected Coroutine p_waitForClearance;
+        protected Coroutine p_turnCoroutine;
         protected LineRenderer p_pathRenderer;
-        
-        public bool IsPathBlocked 
-            => Physics.Raycast(transform.position, transform.forward, p_obstacleCheckDistance, p_obstaclesLayerMask);
 
+        public Pathfinder PathFinder { set { p_pathfinder = value; } }
+        
+        protected RaycastHit p_obstacleHit;
+        public bool IsPathBlocked 
+            => Physics.Raycast(transform.position, transform.forward, out p_obstacleHit, p_obstacleCheckDistance, p_obstaclesLayerMask);
+
+        public event Action OnPathStarted;
+        public event Action<RaycastHit> OnPathBlocked;
         public event Action OnPathCompleted;
         public event Action<Interactable> OnInteractableReached;
 
@@ -41,6 +54,8 @@ namespace Examen.Pathfinding
 
         protected virtual void Start() 
         {
+            _baseSpeed = p_speed;
+
             p_pathfinder = GetComponent<Pathfinder>();
             p_pathRenderer = GetComponent<LineRenderer>();
 
@@ -69,6 +84,7 @@ namespace Examen.Pathfinding
 
             p_hasFoundBlockage = true;
             StartPath(p_currentTarget);
+            OnPathBlocked?.Invoke(p_obstacleHit);
         }
 
         protected void SetIsMoving(bool isMoving)
@@ -121,12 +137,30 @@ namespace Examen.Pathfinding
             p_followPathCoroutine = StartCoroutine(FollowPath());
         }
 
+        /// <summary>
+        /// Stops the current pathfinding coroutine
+        /// </summary>
+        [Server]
+        public void StopPath()
+        {
+            p_hasStoppedPath = true;
+            if (p_followPathCoroutine != null)
+                StopCoroutine(p_followPathCoroutine);
+        }
+
         [Server]
         protected IEnumerator FollowPath()
         {
-            ResetBlockage();
+            p_hasStoppedPath = false;
+            OnPathStarted?.Invoke();
             while (p_currentNodeIndex < p_currentPath.Count)
             {
+                if (p_hasFoundBlockage)
+                {
+                    ResetBlockage();
+                    yield return null;
+                }
+
                 Vector3 currentNode = p_currentPath[p_currentNodeIndex].Position;
                 Vector3 adjustedNode = currentNode;
                 adjustedNode.y = transform.localScale.y/2 + 
@@ -140,12 +174,14 @@ namespace Examen.Pathfinding
                 transform.LookAt(lookAtVector);
                 BroadcastLookDirection(lookAtVector);
 
+                Vector3 nodeDirection = adjustedNode - transform.position;
+
                 while (Vector3.Distance(transform.position, adjustedNode) > 0.1f)
                 {
-                    transform.position = 
-                        Vector3.MoveTowards(transform.position, adjustedNode, p_speed * Time.deltaTime);
-                    BroadcastPosition(transform.position);
-                    
+                    float angleToNode = Vector3.Angle(nodeDirection, transform.forward);
+                    MoveToTarget(adjustedNode, p_speed / (angleToNode / 100 + 1));
+                    TurnToTarget(adjustedNode);
+
                     BroadcastPath(P_CurrentPathPositions);
                     Debug.DrawRay(transform.position, transform.forward * p_obstacleCheckDistance, Color.blue);
                     yield return null;
@@ -165,6 +201,9 @@ namespace Examen.Pathfinding
         protected void BroadcastStartMoving(bool isMoving) => OnStartMoving?.Invoke(isMoving);
 
         [ObserversRpc]
+        protected void BroadcastRotation(Quaternion rotation) => transform.rotation = rotation;
+
+        [ObserversRpc]
         protected void BroadcastPosition(Vector3 position) => transform.position = position;
 
         [ObserversRpc]
@@ -180,7 +219,7 @@ namespace Examen.Pathfinding
         }
 
         [Server]
-        protected void ResetBlockage() => p_hasFoundBlockage = false;
+        protected void ResetBlockage() => p_hasFoundBlockage = IsPathBlocked;
 
         private void RequestDIstanceToTarget()
         {
@@ -213,6 +252,29 @@ namespace Examen.Pathfinding
             {
                 hasInteracted = true;
                 OnInteractableReached?.Invoke(interactable);
+            }
+        }
+
+        [Server]
+        private void MoveToTarget(Vector3 target, float speed)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+            BroadcastPosition(transform.position);
+        }
+
+        [Server]
+        private void TurnToTarget(Vector3 target)
+        {
+            Vector3 targetDirection = target - transform.position;
+            float angle = Vector3.Angle(targetDirection, transform.forward);
+
+            if (angle > 0.1f)
+            {
+                transform.rotation = Quaternion.RotateTowards
+                (
+                    transform.rotation, Quaternion.LookRotation(targetDirection), p_turnSpeed * Time.deltaTime
+                );
+                BroadcastRotation(transform.rotation);
             }
         }
         
