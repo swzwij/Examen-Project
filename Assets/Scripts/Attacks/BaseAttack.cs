@@ -24,12 +24,16 @@ namespace Exame.Attacks
         public float Cooldown => p_cooldown;
         public float PrepareTime => p_prepareTime;
 
+        public event Action OnAttackInterrupted;
         public event Action<bool> OnAttackStarted;
         public event Action<bool> OnAttacked;
         public event Action<bool> OnAttackFinished;
 
         protected virtual void OnEnable() => p_animator = GetComponentInParent<Animator>();
 
+        /// <summary>
+        /// Starts the attack.
+        /// </summary>
         public virtual void StartAttack()
         {
             if (!CanAttack)
@@ -39,6 +43,19 @@ namespace Exame.Attacks
             OnAttackStarted?.Invoke(true);
             OnAttackFinished?.Invoke(false);
             StartCoroutine(AttackPreparation());
+        }
+
+        /// <summary>
+        /// Stops the attack and resets the attack state.
+        /// </summary>
+        public virtual void StopAttack()
+        {
+            StopAllCoroutines();
+            CanAttack = true;
+            OnAttackInterrupted?.Invoke();
+            OnAttackStarted?.Invoke(false);
+            OnAttacked?.Invoke(false);
+            OnAttackFinished?.Invoke(false);
         }
 
         protected virtual void PrepareAttack()

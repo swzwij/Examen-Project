@@ -301,6 +301,9 @@ namespace Examen.NPC
         {
             StartCoroutine(DespawnAfterDeath(_deathDespawnTimer));
             
+            foreach (BaseAttack attack in _attacks)
+                attack.StopAttack();
+            
             _proximityAgent.SetAgentType(AgentTypes.RESOURCE);
             _waypointFollower.ToggleWaiting(true);
             _waypointFollower.StopPath();

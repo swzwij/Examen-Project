@@ -394,7 +394,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 2976294549131294637}
   _networkObjectCache: {fileID: 2976294549131294637}
   _speed: 50
-  _damage: 10
+  _damage: 1
   _maxTravelDistance: 5000
   _castLength: 1
   _layerMask:
@@ -428,7 +428,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 22
+  <PrefabId>k__BackingField: 21
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0

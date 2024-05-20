@@ -29,6 +29,13 @@ namespace Exame.Attacks
             BroadCastProjectorSize(_projector.orthographicSize);
         }
 
+        public override void StopAttack()
+        {
+            base.StopAttack();
+            _projector.orthographicSize = 0;
+            BroadCastProjectorSize(_projector.orthographicSize);
+        }
+
         protected override void PrepareAttack()
         {
             base.PrepareAttack();
