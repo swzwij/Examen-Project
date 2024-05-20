@@ -82,7 +82,7 @@ namespace Examen.Player
             while (_isGathering && !resource.IsDead)
             {
                 resource.Interact(connection, damageAmount);
-                yield return new WaitForSeconds(6);
+                yield return new WaitForSeconds(6); //TODO: make this timer the timer of the player gather information
             }
 
             _isGathering = false;
