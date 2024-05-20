@@ -3,6 +3,8 @@ using Minoord.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using FishNet.Object;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 namespace Examen.Player
 {
@@ -22,8 +24,12 @@ namespace Examen.Player
         public bool HasClickedUI { get; set; }
         public UnityEngine.Camera Camera => _myCamera;
 
+        public bool CanPoint;
+
         private void Start()
         {
+            CanPoint = true;
+
             InputManager.SubscribeToAction("Click", OnPointPerformed, out _clickAction);
             InputManager.TryGetAction("PointerPosition").Enable();
 
@@ -47,7 +53,21 @@ namespace Examen.Player
             if (!IsOwner)
                 return;
 
+            if (!CanPoint)
+                return;
+
             Vector2 pointerPosition = InputManager.TryGetAction("PointerPosition").ReadValue<Vector2>();
+
+            PointerEventData eventData = new(EventSystem.current) { position = pointerPosition };
+            List<RaycastResult> results = new();
+            EventSystem.current.RaycastAll(eventData, results);
+
+            if (results.Count > 0)
+            {
+                HasClickedUI = true;
+                return;
+            }
+
             Ray pointerRay = _myCamera.ScreenPointToRay(pointerPosition);
 
             ProcessPointerPosition(pointerRay);

@@ -1,9 +1,12 @@
 using UnityEngine;
 using FishNet;
 using FishNet.Object;
+using Examen.Proximity;
+using System.Collections.Generic;
 
 namespace Examen.Structures
 {
+    [RequireComponent(typeof(ProximityAgent))]
     public class ProjectileTower : NetworkBehaviour
     {
         [SerializeField] private Transform _barrel;
@@ -11,14 +14,45 @@ namespace Examen.Structures
         [SerializeField] private NetworkObject projectilePrefab;
         [SerializeField] private float _shootInterval;
 
+        private ProximityAgent _proximityAgent;
         private Transform _boss;
         private float _timer = 0f;
 
-        private void Awake() => _boss = GameObject.Find("Boss").transform; // TODO: Replace with a more reliable way to find the boss
+        private void Awake() => _proximityAgent = GetComponent<ProximityAgent>();
+
+        private void OnEnable() =>  _proximityAgent.OnProximityDataReceived += OnProximityDataReceived;
+
+        private void OnDisable() => _proximityAgent.OnProximityDataReceived -= OnProximityDataReceived;
+
+        private void OnProximityDataReceived(HashSet<ProximityAgent> nearbyAgents)
+        {
+
+            if (nearbyAgents.Count == 0)
+                return;
+
+            Transform closestAgent = null;
+            float closestDistance = float.MaxValue;
+
+            foreach (ProximityAgent agent in nearbyAgents)
+            {
+                float distance = (agent.transform.position - transform.position).sqrMagnitude;
+
+                if (distance >= closestDistance)
+                    continue;
+                    
+                closestDistance = distance;
+                closestAgent = agent.transform;
+            }
+
+            _boss = closestAgent;
+        }
 
         private void FixedUpdate()
         {
             if (!IsServer)
+                return;
+
+            if (_boss == null)
                 return;
 
             LookAtBoss();
@@ -34,12 +68,6 @@ namespace Examen.Structures
         [Server]
         private void LookAtBoss()
         {
-            if (!IsServer)
-                return;
-
-            if (_boss == null)
-                return;
-
             Vector3 direction = _boss.position - _barrel.transform.position;
             direction.y = 0;
             _barrel.transform.rotation = Quaternion.LookRotation(direction);
