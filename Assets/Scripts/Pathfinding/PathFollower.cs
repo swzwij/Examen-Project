@@ -38,6 +38,7 @@ namespace Examen.Pathfinding
         public bool IsPathBlocked 
             => Physics.Raycast(transform.position, transform.forward, p_obstacleCheckDistance, p_obstaclesLayerMask);
 
+        public event Action OnPathStarted;
         public event Action OnPathCompleted;
         public event Action<Interactable> OnInteractableReached;
 
@@ -128,6 +129,7 @@ namespace Examen.Pathfinding
         [Server]
         protected IEnumerator FollowPath()
         {
+            OnPathStarted?.Invoke();
             ResetBlockage();
             while (p_currentNodeIndex < p_currentPath.Count)
             {
