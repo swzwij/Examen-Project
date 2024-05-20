@@ -27,12 +27,9 @@ namespace Examen.Pathfinding
         {
             _waypointsParent.name = $"{gameObject.name} - Waypoints";
 
-            _waypoints.Clear();
-
-            for (int i = _waypointsParent.childCount - 1; i >= 0; i--)
-                _waypoints.Add(_waypointsParent.GetChild(i));
-
-            _waypointsParent.SetParent(null);
+            for (int i = _waypoints.Count - 1; i >= 0; i--)
+                _waypoints[i].SetParent(_waypointsParent);
+            
             _waypoints.Reverse();
 
             if (_waypoints.Count == 0)

@@ -19,6 +19,7 @@ namespace Examen.Proximity
         private HashSet<ProximityAgent> _nearbyAgents = new();
         
         public HashSet<ProximityAgent> NearbyAgents => RequestProximityData();
+        public Action<HashSet<ProximityAgent>> OnProximityDataReceived;
 
         private void Awake() => InitProximity();
 
@@ -48,6 +49,7 @@ namespace Examen.Proximity
                 range = _defaultRange;
 
             GetProximityData(range, agentTypesToCheck);
+            OnProximityDataReceived?.Invoke(_nearbyAgents);
             return _nearbyAgents;
         }
 
