@@ -11,24 +11,22 @@ namespace Examen.Pathfinding
         [SerializeField] private List<Transform> _waypoints = new();
         private List<Node> _completePath = new();
         private int _currentWaypointIndex = 0;
-        private Transform _waypointsParent;
-        private bool _hasInitialised;
 
-        protected override void Start() => base.Start();
-
-        private void InitBoss()
+        public List<Transform> Waypoints { get => _waypoints; set { _waypoints = value; } }
+        protected override void Start()
         {
-            _waypointsParent = new GameObject().transform;
-            _waypointsParent.name = $"{gameObject.name} - Waypoints";
+            base.Start();
 
-            for (int i = _waypoints.Count - 1; i >= 0; i--)
-                _waypoints[i].SetParent(_waypointsParent);
-            
-            _waypoints.Reverse();
+            GenerateCompletePath();
+        }
 
-            if (_waypoints.Count == 0)
-                return;
-
+        /// <summary>
+        /// Reset the waypoint index to 0 and Generates a complete path
+        /// </summary>
+        [Server]
+        public void ResetWaypointIndex()
+        {
+            _currentWaypointIndex = 0;
             GenerateCompletePath();
         }
 
@@ -52,16 +50,10 @@ namespace Examen.Pathfinding
             p_currentTarget = p_currentPath[^1].Position;
         }
 
-        protected override void FixedUpdate() 
+        protected override void FixedUpdate()
         {
-            if (!IsServer)
+            if (!IsServer || _waypoints.Count <= 0)
                 return;
-
-            if (!_hasInitialised)
-            {
-                _hasInitialised = true;
-                InitBoss();
-            }
 
             UpdateBoss(_waypoints);
         }
