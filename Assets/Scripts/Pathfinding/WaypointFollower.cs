@@ -15,30 +15,26 @@ namespace Examen.Pathfinding
         [SerializeField] private float _waypointDistanceThreshold = 5f;
         private List<Node> _completePath = new();
         private int _currentWaypointIndex = 0;
-        private bool _hasInitialised;
-
+        
         public event Action OnBossInitialised;
         public event Action<HealthData> OnStructureEncountered;
         public event Action<bool> OnPathCleared;
 
-        protected override void Start() => base.Start();
-
-        protected void InitFollower()
+        public List<Transform> Waypoints { get => _waypoints; set { _waypoints = value; } }
+        protected override void Start()
         {
-            _waypointsParent.name = $"{gameObject.name} - Waypoints";
+            base.Start();
 
-            _waypoints.Clear();
+            GenerateCompletePath();
+        }
 
-            for (int i = _waypointsParent.childCount - 1; i >= 0; i--)
-                _waypoints.Add(_waypointsParent.GetChild(i));
-
-            _waypointsParent.SetParent(null);
-            
-            _waypoints.Reverse();
-
-            if (_waypoints.Count == 0)
-                return;
-
+        /// <summary>
+        /// Reset the waypoint index to 0 and Generates a complete path
+        /// </summary>
+        [Server]
+        public void ResetWaypointIndex()
+        {
+            _currentWaypointIndex = 0;
             GenerateCompletePath();
             OnBossInitialised?.Invoke();
         }
@@ -63,18 +59,12 @@ namespace Examen.Pathfinding
             p_currentTarget = p_currentPath[^1].Position;
         }
 
-        protected override void FixedUpdate() 
+        protected override void FixedUpdate()
         {
-            if (!IsServer)
+            if (!IsServer || _waypoints.Count <= 0)
                 return;
 
-            if (!_hasInitialised)
-            {
-                _hasInitialised = true;
-                InitFollower();
-            }
-
-            UpdateFollower(_waypoints);
+            UpdateBoss(_waypoints);
         }
 
         [Server]

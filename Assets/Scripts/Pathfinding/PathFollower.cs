@@ -37,6 +37,8 @@ namespace Examen.Pathfinding
         protected Coroutine p_waitForClearance;
         protected Coroutine p_turnCoroutine;
         protected LineRenderer p_pathRenderer;
+
+        public Pathfinder PathFinder { set { p_pathfinder = value; } }
         
         protected RaycastHit p_obstacleHit;
         public bool IsPathBlocked 
