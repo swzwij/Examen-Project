@@ -91,9 +91,13 @@ namespace Examen.Player
 
         private void Hover()
         {
-            if (!IsOwner || !Physics.Raycast(PointerRay, out RaycastHit hit, _pointerDistance))
+            if (!IsOwner)
                 return;
-            
+
+            if (!Physics.Raycast(PointerRay, out RaycastHit hit, _pointerDistance))
+                return;
+
+            Debug.LogError(hit.collider.gameObject.name);
             OnHovering?.Invoke(hit);
         }
 
