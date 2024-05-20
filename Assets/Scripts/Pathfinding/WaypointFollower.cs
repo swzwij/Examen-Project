@@ -140,6 +140,10 @@ namespace Examen.Pathfinding
             OnPathCleared?.Invoke(true);
         }
 
+        /// <summary>
+        /// Toggles the waiting state of the waypoint follower.
+        /// </summary>
+        /// <param name="isWaiting">A boolean value indicating whether the follower should wait or continue the path.</param>
         [Server]
         public void ToggleWaiting(bool isWaiting)
         {

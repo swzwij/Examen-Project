@@ -81,21 +81,30 @@ namespace Examen.NPC
             _waypointFollower.OnBossInitialised -= InitBoss;
         }
 
+        /// <summary>
+        /// Overrides the base class method to handle interaction with the boss NPC.
+        /// </summary>
+        /// <param name="connection">The network connection of the interacting player.</param>
+        /// <param name="damageAmount">The amount of damage to be inflicted on the boss.</param>
         [Server]
-        public override void Interact(NetworkConnection connection, float damageAmount = 0)
-        {
-            _healthData.TakeDamage(damageAmount);
-        }
+        public override void Interact(NetworkConnection connection, float damageAmount = 0) 
+            => _healthData.TakeDamage(damageAmount);
 
+        /// <summary>
+        /// Plays the sound when the boss is interacting with something.
+        /// </summary>
         public override void PlayInteractingSound()
         {
             
         }
 
+        /// <summary>
+        /// Broadcasts the interaction event to all observers.
+        /// </summary>
         [ObserversRpc]
         public virtual void BroadcastInteract()
         {
-            // Todo: Play given animation
+
         }
 
         private void ProcessStructureEncounter(RaycastHit healthData)
