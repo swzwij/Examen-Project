@@ -33,7 +33,7 @@ namespace Examen.Player.ReSpawning
         private void Update()
         {
             if (isRevivable)
-                OnRevive();
+                _healthData.onResurrected?.Invoke();
         }
 
         /// <summary>
@@ -66,14 +66,18 @@ namespace Examen.Player.ReSpawning
         public void ForcedRespawn()
         {
             SendPlayerPosition();
-            _healthData.Resurrect(100);
+            _healthData.Resurrect(_healthData.MaxHealth);
 
             isAlive = true;
             SendAliveState(isAlive);
         }
 
+        [ObserversRpc]
         private void OnDie()
         {
+            if (!IsOwner)
+                return;
+
             _pointer.CanPoint = false;
             _pathFollower.StopPath();
 

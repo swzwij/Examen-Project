@@ -25,8 +25,7 @@ namespace Examen.UI
         public void ServerInitialize()
         {
             EnemyHealthData.onDamageTaken.AddListener(CallSetHealth);
-            EnemyHealthData.onDie.AddListener(Despawn);
-            EnemyHealthData.onDie.AddListener(BroadcastDespawn);
+            EnemyHealthData.onDie.AddListener(RemoveListeners);
         }
 
         /// <summary>
@@ -43,16 +42,10 @@ namespace Examen.UI
         [ObserversRpc]
         private void SetUIHealth(float enemyHealth) => _healthBar.value = enemyHealth;
 
-        private void Despawn()
+        private void RemoveListeners()
         {
             EnemyHealthData.onDamageTaken.RemoveListener(CallSetHealth);
-            EnemyHealthData.onDie.RemoveListener(Despawn);
-            EnemyHealthData.onDie.RemoveListener(BroadcastDespawn);
-
-            EnemySpawner.Instance.DespawnEnemy(this);
+            EnemyHealthData.onDie.RemoveListener(RemoveListeners);
         }
-
-        [ObserversRpc]
-        private void BroadcastDespawn() => gameObject.SetActive(false);
     }
 }

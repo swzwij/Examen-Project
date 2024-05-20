@@ -35,6 +35,9 @@ namespace Examen.Structures
 
             foreach (ProximityAgent agent in nearbyAgents)
             {
+                if (!agent.isActiveAndEnabled)
+                    continue;
+
                 float distance = (agent.transform.position - transform.position).sqrMagnitude;
 
                 if (distance >= closestDistance || !agent.gameObject.activeSelf)
