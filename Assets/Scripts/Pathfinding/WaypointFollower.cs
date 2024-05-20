@@ -21,12 +21,6 @@ namespace Examen.Pathfinding
         public event Action<bool> OnPathCleared;
 
         public List<Transform> Waypoints { get => _waypoints; set { _waypoints = value; } }
-        protected override void Start()
-        {
-            base.Start();
-
-            GenerateCompletePath();
-        }
 
         /// <summary>
         /// Reset the waypoint index to 0 and Generates a complete path

@@ -68,7 +68,7 @@ namespace Examen.NPC
         private void InitBoss()
         {
             _waypointFollower.OnPathCleared += SetHasClearedPath;
-            _waypointFollower.OnPathCompleted += TriggerIdle;
+            _waypointFollower.OnPathCompleted += ProcessFinishedPath;
             _waypointFollower.OnPathBlocked += ProcessStructureEncounter;
 
             OnNewStructureEncountered += TryAttackStructure;
@@ -138,17 +138,41 @@ namespace Examen.NPC
             return false;
         }
 
+        protected void ProcessFinishedPath()
+        {
+            if (_attackCoroutine != null)
+                _attackCoroutine = null;
+
+            _attackCoroutine = StartCoroutine(AttackLoop());
+        }
+
         protected IEnumerator RepeatingAttack(float interval, AttackTypes attackType)
         {
             BaseAttack attack = _attackTypes[attackType];
             float totalinterval = interval + attack.Cooldown + attack.PrepareTime;
 
-            while (!_hasClearedPath) // TODO replace with a condition (such as the path no longer being blocked)
+            while (!_hasClearedPath)
             {
                 if (!attack.CanAttack)
                     yield return null;
 
                 ProcessAttack(attackType);
+
+                yield return new WaitForSeconds(totalinterval);                
+            }
+        }
+
+        protected IEnumerator AttackLoop()
+        {
+            BaseAttack attack = _attackTypes[AttackTypes.AOE];
+            float totalinterval = _attackInterval + attack.Cooldown + attack.PrepareTime;
+
+            while (!_healthData.isDead) 
+            {
+                if (!attack.CanAttack)
+                    yield return null;
+
+                ProcessAttack(AttackTypes.AOE);
 
                 yield return new WaitForSeconds(totalinterval);                
             }
