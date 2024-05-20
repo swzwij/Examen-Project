@@ -16,7 +16,7 @@ namespace Examen.Pathfinding
         private List<Node> _completePath = new();
         private int _currentWaypointIndex = 0;
         
-        public event Action OnBossInitialised;
+        public event Action OnFollowerInitialised;
         public event Action<HealthData> OnStructureEncountered;
         public event Action<bool> OnPathCleared;
 
@@ -36,7 +36,7 @@ namespace Examen.Pathfinding
         {
             _currentWaypointIndex = 0;
             GenerateCompletePath();
-            OnBossInitialised?.Invoke();
+            OnFollowerInitialised?.Invoke();
         }
 
         [Server]
@@ -64,7 +64,7 @@ namespace Examen.Pathfinding
             if (!IsServer || _waypoints.Count <= 0)
                 return;
 
-            UpdateBoss(_waypoints);
+            UpdateFollower(_waypoints);
         }
 
         [Server]

@@ -5,6 +5,8 @@ using Exame.Attacks;
 using Examen.Attacks;
 using Examen.Pathfinding;
 using Examen.Proximity;
+using Examen.Spawning.BossSpawning;
+using Examen.UI;
 using FishNet.Connection;
 using FishNet.Object;
 using MarkUlrich.Health;
@@ -18,6 +20,7 @@ namespace Examen.NPC
     {
         [SerializeField] private WaypointFollower _waypointFollower;
         [SerializeField] private Animator p_animator;
+        [SerializeField] private float _deathDespawnTimer = 30f;
 
         [Header("Attack Settings")]
         [SerializeField] private BaseAttack[] _attacks;
@@ -29,6 +32,7 @@ namespace Examen.NPC
         [SerializeField] private int _nearbyPlayerThreshold = 2;
         [SerializeField] private int _nearbyStructureThreshold = 1;
         
+        private EnemyHealthBar _healthBar;
         private Dictionary<AttackTypes, BaseAttack> _attackTypes = new();
         private HashSet<ProximityAgent> _nearbyPlayers = new();
         private HashSet<ProximityAgent> _nearbyStructures = new();
@@ -46,7 +50,8 @@ namespace Examen.NPC
         private void Awake()
         {
             _waypointFollower = GetComponent<WaypointFollower>();
-            _waypointFollower.OnBossInitialised += InitBoss;
+            _healthBar = GetComponent<EnemyHealthBar>();
+            _waypointFollower.OnFollowerInitialised += InitBoss;
             _waypointFollower.OnPathStarted += TriggerWalking;
 
             _proximityAgent = GetComponent<ProximityAgent>();
@@ -78,7 +83,7 @@ namespace Examen.NPC
             if (TryGetComponent(out _healthData))
                 _healthData.onDie.AddListener(TriggerDie);
 
-            _waypointFollower.OnBossInitialised -= InitBoss;
+            _waypointFollower.OnFollowerInitialised -= InitBoss;
         }
 
         /// <summary>
@@ -279,6 +284,14 @@ namespace Examen.NPC
 
             _waypointFollower.enabled = false;
             _proximityAgent.enabled = false;
+
+            StartCoroutine(DespawnAfterDeath(_deathDespawnTimer));
+        }
+
+        private IEnumerator DespawnAfterDeath(float timer)
+        {
+            yield return new WaitForSeconds(timer);
+            EnemySpawner.Instance.DespawnEnemy(_healthBar);
         }
 
         private void RemoveListeners()
