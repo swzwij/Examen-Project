@@ -125,6 +125,12 @@ namespace Examen.Interactables.Resource
             // Todo: Play interacting sound
         }
 
+        [Server]
+        public void ProcessHover()
+        {
+            LerpOutline();
+        }
+
         public void LerpOutline()
         {
             if (_highlightRoutine != null)

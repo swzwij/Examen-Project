@@ -3,6 +3,8 @@ using Minoord.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using FishNet.Object;
+using Swzwij.Extensions;
+using Examen.Interactables.Resource;
 
 namespace Examen.Player
 {
@@ -97,8 +99,17 @@ namespace Examen.Player
             if (!Physics.Raycast(PointerRay, out RaycastHit hit, _pointerDistance))
                 return;
 
-            Debug.LogError(hit.collider.gameObject.name);
+            if (!hit.collider.gameObject.TryGetCachedComponent<Resource>())
+                return;
+
+            ProcessHover(hit.collider.gameObject.TryGetCachedComponent<Resource>());
             OnHovering?.Invoke(hit);
+        }
+
+        [ServerRpc]
+        private void ProcessHover(Resource resource)
+        {         
+            resource.ProcessHover();
         }
 
         private void OnPointPerformed(InputAction.CallbackContext context)
