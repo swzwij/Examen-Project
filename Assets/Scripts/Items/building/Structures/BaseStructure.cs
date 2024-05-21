@@ -1,3 +1,4 @@
+using Examen.Pathfinding.Grid;
 using FishNet.Object;
 using System.Collections;
 using UnityEngine;
@@ -20,5 +21,14 @@ namespace Examen.Structure
 
         [ObserversRpc]
         private void ActivateStructure() => gameObject.SetActive(true);
+
+        private void OnDestroy() 
+        {
+            if (!IsServer)
+                return;
+
+            Cell cell = GridSystem.Instance.GetCellFromWorldPosition(transform.position);
+            cell.UpdateCell();
+        }
     }
 }

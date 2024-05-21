@@ -36,6 +36,18 @@ namespace Examen.Proximity
             RequestProximityData(_defaultRange, _agentTypesToCheck);
         }
 
+        /// <summary>
+        /// Sets the agent type.
+        /// </summary>
+        /// <param name="agentType">The agent type to set.</param>
+        public void SetAgentType(AgentTypes agentType)
+        {
+            _agentType = agentType;
+            BroadcastAgentType(agentType);
+        }
+
+        [ObserversRpc]
+        private void BroadcastAgentType(AgentTypes agentType) => _agentType = agentType;
         
         /// <summary>
         /// Requests proximity data for the specified range and agent types.
@@ -50,6 +62,18 @@ namespace Examen.Proximity
 
             GetProximityData(range, agentTypesToCheck);
             OnProximityDataReceived?.Invoke(_nearbyAgents);
+            return _nearbyAgents;
+        }
+
+        /// <summary>
+        /// Requests proximity data for the specified range and agent types.
+        /// </summary>
+        /// <param name="range">The range within which to search for nearby agents. If set to 0 or less, the default range will be used.</param>
+        /// <param name="agentTypesToCheck">The agent types to check for proximity.</param>
+        /// <returns>A HashSet containing the nearby ProximityAgent instances.</returns>
+        public HashSet<ProximityAgent> RequestProximityData(params AgentTypes[] agentTypesToCheck)
+        {
+            RequestProximityData(_defaultRange, agentTypesToCheck);
             return _nearbyAgents;
         }
 

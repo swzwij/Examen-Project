@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using FishNet.Object;
 using MarkUlrich.Utils;
 using UnityEngine;
 
@@ -188,6 +189,14 @@ namespace Examen.Pathfinding.Grid
         /// <param name="cellY">The y-coordinate of the cell.</param>
         public void UpdateCell(int cellX, int cellY) => StartCoroutine(UpdateCellDelayed(cellX, cellY));
 
+        /// <summary>
+        /// Updates the specified cell in the grid system.
+        /// </summary>
+        /// <param name="cell">The cell to update.</param>
+        [Server]
+        public void UpdateCell(Cell cell) => UpdateCell(cell.CellX, cell.CellY);
+
+        [Server]
         private IEnumerator UpdateCellDelayed(int cellX, int cellY)
         {
             yield return new WaitForEndOfFrame();
@@ -315,19 +324,33 @@ namespace Examen.Pathfinding.Grid
         /// <returns>The closest walkable node to the specified position.</returns>
         public Node GetClosestWalkableNode(Vector3 position)
         {
-            Node closestNode = null;
             float closestDistance = float.MaxValue;
+            closestDistance *= closestDistance;
 
-            foreach (Node node in _nodes)
+            Node closestNode = GetNodeFromWorldPosition(position);
+            if (closestNode.IsWalkable)
+                return closestNode;
+            
+            for (int x = -1; x <= 1; x++)
             {
-                if (!node.IsWalkable)
-                    continue;
-
-                float distance = Vector3.Distance(node.Position, position);
-                if (distance < closestDistance)
+                for (int y = -1; y <= 1; y++)
                 {
-                    closestNode = node;
-                    closestDistance = distance;
+                    int checkX = closestNode.GridPosition.x + x;
+                    int checkY = closestNode.GridPosition.y + y;
+
+                    if (checkX >= 0 && checkX < _gridSize.x && checkY >= 0 && checkY < _gridSize.y)
+                    {
+                        Node node = _nodes[checkX, checkY];
+                        if (!node.IsWalkable)
+                            continue;
+
+                        float distance = (node.Position - position).sqrMagnitude;
+                        if (distance < closestDistance)
+                        {
+                            closestNode = node;
+                            closestDistance = distance;
+                        }
+                    }
                 }
             }
 
