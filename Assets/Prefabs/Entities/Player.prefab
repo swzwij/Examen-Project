@@ -255,7 +255,7 @@ MonoBehaviour:
   _componentIndexCache: 1
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
-  p_speed: 25
+  p_speed: 15
   p_turnSpeed: 600
   p_obstacleCheckDistance: 3
   p_obstaclesLayerMask:

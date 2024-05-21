@@ -35,8 +35,6 @@ namespace Examen.Player
             {InteractableTypes.InteractRepair, "Repair"}
         };
         private bool _isGathering;
-        private Resource _currentInteractableResource;
-
         public Action<Interactable> OnInteractableFound;
 
 
@@ -66,10 +64,8 @@ namespace Examen.Player
 
         private void PreProcessPointerObject(Interactable pointedObject) => CheckForInteractable(pointedObject);
 
-        private void CheckForInteractable(Interactable currentInteractable)
-        {
-            OnInteractableFound?.Invoke(currentInteractable);
-        }
+        private void CheckForInteractable(Interactable currentInteractable) 
+            => OnInteractableFound?.Invoke(currentInteractable);
 
         private void Interact(Interactable interactable)
         {
@@ -115,17 +111,18 @@ namespace Examen.Player
         {
             _isGathering = true;
 
-            while (_isGathering && !resource.IsDead)
+            while (_isGathering && !resource.HealthData.isDead)
             {
-                // if (!_isGathering || resource.IsDead)
-                //     break;
-
+                resource.Interact(connection, damageAmount);
                 _animator.SetTrigger(_interactableTypeToAnimation[resource.Type]);
                 BroadcastAnimationTrigger(_interactableTypeToAnimation[resource.Type]);
-                resource.Interact(connection, damageAmount);
                 yield return new WaitForSeconds(_animator.GetCurrentAnimatorClipInfo(0).Length);
+                if (!_isGathering || resource.HealthData.isDead)
+                    break;
             }
 
+            _animator.SetTrigger("Idle");
+            BroadcastAnimationTrigger("Idle");
             _isGathering = false;
             _gatheringCoroutine = null;
         }

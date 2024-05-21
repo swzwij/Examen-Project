@@ -26,6 +26,7 @@ namespace Examen.Interactables.Resource
         public bool IsDead => p_healthData.isDead; 
         public Item ResourceItem => p_resourceItem;
         public SpawnArea SpawnArea { get; set; }
+        public HealthData HealthData => p_healthData;
         public Cell Cell { get => p_cell; set => p_cell = value; }
 
         public override InteractableTypes Type => p_interactableType;

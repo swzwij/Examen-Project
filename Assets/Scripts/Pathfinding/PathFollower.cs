@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Examen.Interactables.Resource;
 using Examen.Pathfinding.Grid;
 using Examen.Player;
 using FishNet.Component.Spawning;
@@ -93,13 +94,16 @@ namespace Examen.Pathfinding
             p_animator.SetTrigger("Move");
             BroadcastAnimationTrigger("Move");
 
-            p_animator.SetFloat("MoveMultiplier", 1);
-            BroadcastAnimationSpeed(1);
+            p_animator.SetFloat("MoveMultiplier", p_speed / 10);
+            BroadcastAnimationSpeed(p_speed / 10);
         }
 
         [ServerRpc]
         protected void ProcessPointerPosition(Interactable targetInteractable)
         {
+            if (targetInteractable is Resource resource && resource.IsDead)
+                return;
+
             p_hasInteracted = false;
             p_targetInteractable = targetInteractable;
             PreProcessPointerPosition(p_targetInteractable.transform.position);

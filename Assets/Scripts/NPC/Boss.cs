@@ -42,7 +42,6 @@ namespace Examen.NPC
         private HashSet<ProximityAgent> _lastNearbyStructures = new();
         private HealthData _healthData;
         private ProximityAgent _proximityAgent;
-        private Coroutine _hurtCoroutine;
         private Coroutine _scanningCoroutine;
         private Coroutine _attackCoroutine;
         private Coroutine _lookAtTargetCoroutine;
@@ -114,15 +113,7 @@ namespace Examen.NPC
         /// [ObserversRpc]
         public virtual void BroadcastInteract()
         {
-            if (_hurtCoroutine == null)
-                _hurtCoroutine = StartCoroutine(HurtAnimation());
-        }
 
-        private IEnumerator HurtAnimation()
-        {
-            _model.SetActive(false);
-            yield return new WaitForEndOfFrame();
-            _model.SetActive(true);
         }
 
         private void ProcessStructureEncounter(RaycastHit healthData)
