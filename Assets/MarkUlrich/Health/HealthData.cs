@@ -32,14 +32,25 @@ namespace MarkUlrich.Health
             _maxHealth = health;
         }
 
+        [ServerRpc(RequireOwnership = false, RunLocally = true)]
         public void AddHealth(float healthAmount)
         {
             if (isDead || HasMaxHealth) return;
 
             health += healthAmount;
+            BroadcastAddHealth(healthAmount);
 
             onHealthAdded?.Invoke();
             TriggerChangedEvent(HealthEventTypes.AddHealth, healthAmount);
+        }
+
+        [ObserversRpc]
+        private void BroadcastAddHealth(float healthAmount)
+        {
+            if (!IsOwner)
+                return;
+
+            health += healthAmount;
         }
 
         private void TriggerChangedEvent(HealthEventTypes type, float healthDelta = 0)
@@ -55,6 +66,7 @@ namespace MarkUlrich.Health
             onHealthChanged?.Invoke(healthEvent);
         }
 
+        [ServerRpc(RequireOwnership = false, RunLocally = true)]
         public void Resurrect(float newHealth)
         {
             isDead = false;
@@ -63,28 +75,32 @@ namespace MarkUlrich.Health
 
             TriggerChangedEvent(HealthEventTypes.Resurrect, newHealth);
 
-            BroadcastResurrect(newHealth);
+            BroadcastResurrect(newHealth, isDead);
         }
 
-        private void BroadcastResurrect(float newHealth)
+        [ObserversRpc]
+        private void BroadcastResurrect(float newHealth, bool newIsDead)
         {
             if (!IsOwner)
                 return;
 
-            Resurrect(newHealth);
+            isDead = newIsDead;
+            health = newHealth;
         }
 
+        [ServerRpc(RequireOwnership = false, RunLocally = true)]
         public void TakeDamage(float damage)
         {
             if (isDead || _isHit) return;
 
             _isHit = true;
+            BroadcastHit(_isHit);
             health -= damage;
+            BroadcastTakeDamage(damage);
             onDamageTaken?.Invoke();
             TriggerChangedEvent(HealthEventTypes.TakeDamage, damage);
             _isHit = false;
-
-            BroadcastTakeDamage(damage);
+            BroadcastHit(_isHit);
 
             if (health <= 0) Die();
         }
@@ -95,9 +111,19 @@ namespace MarkUlrich.Health
             if (!IsOwner)
                 return;
 
-            TakeDamage(damage);
+            health -= damage;
         }
 
+        [ObserversRpc]
+        private void BroadcastHit(bool isHit)
+        {
+            if (!IsOwner)
+                return;
+
+            _isHit = isHit;
+        }
+
+        [Server]
         private void Die()
         {
             health = 0;
@@ -105,16 +131,17 @@ namespace MarkUlrich.Health
             onDie?.Invoke();
             TriggerChangedEvent(HealthEventTypes.Die);
 
-            BroadcastDie();
+            BroadcastDie(health, isDead);
         }
 
         [ObserversRpc]
-        private void BroadcastDie()
+        private void BroadcastDie(float newHealth, bool newIsDead)
         {
             if (!IsOwner)
                 return;
 
-            Die();
+            health = newHealth;
+            isDead = newIsDead;
         }
 
         public void Kill()
