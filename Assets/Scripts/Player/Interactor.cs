@@ -128,7 +128,13 @@ namespace Examen.Player
         }
 
         [ObserversRpc]
-        protected void BroadcastAnimationTrigger(string trigger) => _animator.SetTrigger(trigger);
+        protected void BroadcastAnimationTrigger(string trigger)
+        {
+            if (!IsOwner)
+                return;
+
+            _animator.SetTrigger(trigger);
+        }
 
         private void OnDestroy() => _isGathering = false;
 
