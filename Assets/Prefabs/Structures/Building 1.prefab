@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 991412542245657844}
   - component: {fileID: 1119005027504526450}
   - component: {fileID: -7242907768338654577}
+  - component: {fileID: 7455445306224842603}
   - component: {fileID: -2538938568926392539}
   - component: {fileID: -6904678304933058215}
   m_Layer: 6
@@ -73,6 +74,47 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: -2538938568926392539}
   _networkObjectCache: {fileID: -2538938568926392539}
+--- !u!114 &7455445306224842603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5323847395226675756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 665c672f2e2777c47b3254da291fff52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 20
+  onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onHealthAdded:
+    m_PersistentCalls:
+      m_Calls: []
+  onDamageTaken:
+    m_PersistentCalls:
+      m_Calls: []
+  onDie:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7455445306224842603}
+        m_TargetAssemblyTypeName: MarkUlrich.Health.HealthData, Assembly-CSharp
+        m_MethodName: DestroySelf
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onResurrected:
+    m_PersistentCalls:
+      m_Calls: []
+  isDead: 0
 --- !u!114 &-2538938568926392539
 MonoBehaviour:
   m_ObjectHideFlags: 0
