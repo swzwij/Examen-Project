@@ -22,6 +22,8 @@ namespace Examen.Player
         private PathFollower _pathFollower;
         private bool _hasInteracted;
         private Animator _animator;
+        private Coroutine _interactCooldown;
+        private Coroutine _gatheringCoroutine;
 
         private Dictionary<InteractableTypes, string> _interactableTypeToAnimation = new()
         {
@@ -71,9 +73,10 @@ namespace Examen.Player
 
         private void Interact(Interactable interactable)
         {
-            if (_hasInteracted)
+            if (_hasInteracted || _isGathering || _interactCooldown != null)
                 return;
 
+            _animator.SetTrigger(_interactableTypeToAnimation[interactable.Type]);
             BroadcastAnimationTrigger(_interactableTypeToAnimation[interactable.Type]);
 
             if (!IsOwner)
@@ -82,21 +85,28 @@ namespace Examen.Player
             SentInteract(interactable, _networkManager.ClientManager.Connection);
 
             _hasInteracted = true;
-            StartCoroutine(InteractCooldown(interactable, _animator.GetCurrentAnimatorStateInfo(0).length));
+            _interactCooldown = 
+                StartCoroutine(InteractCooldown(interactable, _animator.GetCurrentAnimatorStateInfo(0).length));
         }
 
         private IEnumerator InteractCooldown(Interactable interactable, float cooldownTime)
         {
-            yield return new WaitForSeconds(cooldownTime);
             SentInteract(interactable, _networkManager.ClientManager.Connection);
             _hasInteracted = false;
+            yield return new WaitForSeconds(cooldownTime);
+            _interactCooldown = null;
         }
 
         [ServerRpc]
         private void SentInteract(Interactable interactable, NetworkConnection connection)
         {
             if (interactable is Resource resource)
-                StartCoroutine(Gathering(resource, connection));
+            {
+                if (_gatheringCoroutine != null)
+                    return;
+                
+                _gatheringCoroutine = StartCoroutine(Gathering(resource, connection));
+            }
             else
                 interactable.Interact(connection, damageAmount);
         }
@@ -107,13 +117,17 @@ namespace Examen.Player
 
             while (_isGathering && !resource.IsDead)
             {
-                //_animator.SetTrigger(_interactableTypeToAnimation[resource.Type]);
+                // if (!_isGathering || resource.IsDead)
+                //     break;
+
+                _animator.SetTrigger(_interactableTypeToAnimation[resource.Type]);
                 BroadcastAnimationTrigger(_interactableTypeToAnimation[resource.Type]);
                 resource.Interact(connection, damageAmount);
-                yield return new WaitForSeconds(_animator.GetCurrentAnimatorClipInfo(0).Length); 
+                yield return new WaitForSeconds(_animator.GetCurrentAnimatorClipInfo(0).Length);
             }
 
             _isGathering = false;
+            _gatheringCoroutine = null;
         }
 
         [ObserversRpc]

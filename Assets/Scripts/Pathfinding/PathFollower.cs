@@ -46,6 +46,7 @@ namespace Examen.Pathfinding
             => Physics.Raycast(transform.position, transform.forward, out p_obstacleHit, p_obstacleCheckDistance, p_obstaclesLayerMask);
 
         public event Action OnPathStarted;
+        public event Action<bool> OnFollowingPath;
         public event Action<RaycastHit> OnPathBlocked;
         public event Action OnPathCompleted;
         public event Action<Interactable> OnInteractableReached;
@@ -66,6 +67,7 @@ namespace Examen.Pathfinding
             if (TryGetComponent(out p_animator))
                 OnPathStarted += TriggerMove;
 
+            
             OnPathCompleted += RequestDIstanceToTarget;
         }
 
@@ -85,11 +87,13 @@ namespace Examen.Pathfinding
             OnPathBlocked?.Invoke(p_obstacleHit);
         }
 
+        [Server]
         protected void TriggerMove()
         {
             p_animator.SetTrigger("Move");
-            p_animator.SetFloat("MoveMultiplier", 1);
             BroadcastAnimationTrigger("Move");
+
+            p_animator.SetFloat("MoveMultiplier", 1);
             BroadcastAnimationSpeed(1);
         }
 
@@ -146,11 +150,17 @@ namespace Examen.Pathfinding
             p_hasStoppedPath = true;
             if (p_followPathCoroutine != null)
                 StopCoroutine(p_followPathCoroutine);
+            
+            OnFollowingPath?.Invoke(false);
         }
 
         [Server]
         protected IEnumerator FollowPath()
         {
+            RequestDIstanceToTarget();
+            if (p_currentPath.Count == 0)
+                yield break;
+
             p_hasStoppedPath = false;
             OnPathStarted?.Invoke();
             while (p_currentNodeIndex < p_currentPath.Count)
@@ -160,6 +170,10 @@ namespace Examen.Pathfinding
                     ResetBlockage();
                     yield return null;
                 }
+
+                OnFollowingPath?.Invoke(true);
+                // p_animator.SetBool("HasStopped", false);
+                // BroadcastAnimationBool("HasStopped", false);
 
                 Vector3 currentNode = p_currentPath[p_currentNodeIndex].Position;
                 Vector3 adjustedNode = currentNode;
@@ -192,6 +206,9 @@ namespace Examen.Pathfinding
             p_hasFoundBlockage = false;
             p_animator.SetTrigger("Idle");
             BroadcastAnimationTrigger("Idle");
+            // p_animator.SetBool("HasStopped", true);
+            // BroadcastAnimationBool("HasStopped", true);
+            OnFollowingPath?.Invoke(false);
             OnPathCompleted?.Invoke();
         }
 

@@ -192,6 +192,7 @@ MonoBehaviour:
   _componentIndexCache: 3
   _addedNetworkObject: {fileID: 9181585673909579258}
   _networkObjectCache: {fileID: 9181585673909579258}
+  p_interactableType: 1
   _waypointFollower: {fileID: 6810126444432453413}
   p_animator: {fileID: 4057522124301949771}
   _deathDespawnTimer: 30
