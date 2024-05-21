@@ -1,78 +1,143 @@
 using Examen.Networking;
+using Examen.Pathfinding;
 using Examen.Poolsystem;
 using Examen.UI;
 using FishNet;
 using FishNet.Component.Spawning;
 using FishNet.Object;
 using MarkUlrich.Health;
+using MarkUlrich.Utils;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Examen.Spawning.BossSpawning
 {
-    public class EnemySpawner : NetworkBehaviour
+    public class EnemySpawner : NetworkedSingletonInstance<EnemySpawner>
     {
-        [SerializeField] private int _enemyDownTimer = 60;
-        [SerializeField] private HealthData _enemyPrefab;
+        [Header("Boss Spawning")]
+        [SerializeField] private int _enemyCooldown = 60;
         [SerializeField] private PlayerSpawner _spawner;
+        [SerializeField] private List<HealthData> _enemyPrefabs;
+        [SerializeField] private List<EnemySpawnPoints> _enemySpawnPoints;
 
         private bool _hasConnected;
-        private readonly Dictionary<GameObject, EnemyHealthBar> _currentActiveEnemySliders = new();
+        private Dictionary<EnemyHealthBar, float> _enemiesHealth = new();
+
+        private const float DELAY_PATH_TIMER = 0.33f;
 
         private void Start()
         {
-            ServerInstance.Instance.OnServerStarted += CreateEnemy;
+            ServerInstance.Instance.OnServerStarted += SpawnEnemy;
             _spawner.OnSpawned += SendEnemyInfoOnConnection;
         }
 
-        private void CreateEnemy()
+        /// <summary>
+        /// Despawns the enemy with the help of the poolsystem.
+        /// </summary>
+        /// <param name="enemyHealthBar">The healthbar of the boss that you want to despawn.</param>
+        public void DespawnEnemy(EnemyHealthBar enemyHealthBar)
         {
-            HealthData healthData = Instantiate(_enemyPrefab);
-            InstanceFinder.ServerManager.Spawn(healthData.gameObject);
-
-            PoolSystem.Instance.AddActiveObject(healthData.name, healthData.gameObject);
-            healthData.onDie.AddListener(() => StartNextSpawnTimer(healthData.gameObject));
-
-            AddSlider(healthData);
+            PoolSystem.Instance.DespawnObject(enemyHealthBar.gameObject.name, enemyHealthBar.gameObject);
+            _enemiesHealth.Remove(enemyHealthBar);
         }
 
-        private void SendEnemyInfoOnConnection(NetworkObject obj) => ReceiveEnemyInfoOnConnection(_currentActiveEnemySliders);
+        private void SendEnemyInfoOnConnection(NetworkObject networkObject) => ReceiveEnemyInfoOnConnection(_enemiesHealth);
 
         [ObserversRpc]
-        private void ReceiveEnemyInfoOnConnection(Dictionary<GameObject, EnemyHealthBar> currentActiveBossSliders)
+        private void ReceiveEnemyInfoOnConnection(Dictionary<EnemyHealthBar, float> currentActiveEnemySliders)
         {
             if (_hasConnected)
                 return;
 
-            foreach (KeyValuePair<GameObject, EnemyHealthBar> sliders in currentActiveBossSliders)
-                sliders.Value.ClientInitialize(1000);
+            foreach (KeyValuePair<EnemyHealthBar, float> sliders in currentActiveEnemySliders)
+                sliders.Key.ClientInitialize(sliders.Value);
 
             _hasConnected = true;
         }
 
-        private void AddSlider(HealthData enemyHealth)
+        [Server]
+        private void SpawnEnemy()
         {
-            EnemyHealthBar healthBar = enemyHealth.gameObject.GetComponent<EnemyHealthBar>();
+            int randomSpawnPointNumber = Random.Range(0, _enemySpawnPoints.Count);
+            int randomEnemyPrefabNumber = Random.Range(0, _enemyPrefabs.Count);
+
+            GameObject enemy = PoolSystem.Instance.SpawnObject(_enemyPrefabs[randomEnemyPrefabNumber].name, 
+                _enemyPrefabs[randomEnemyPrefabNumber].gameObject);
+
+            InstanceFinder.ServerManager.Spawn(enemy);
+
+            if (_enemySpawnPoints[randomSpawnPointNumber].Waypoints.Count == 0)
+                _enemySpawnPoints[randomSpawnPointNumber].SetWaypoints();
+
+            enemy.transform.position = _enemySpawnPoints[randomSpawnPointNumber].Spawnpoint.position;
+            StartCoroutine(DelayedPathStart(enemy, randomSpawnPointNumber));
+
+            StartCoroutine(StartNextSpawnTimer());
+
+            AddSlider(enemy);
+
+            EnableEnemy(enemy);
+        }
+
+        [ObserversRpc]
+        private void EnableEnemy(GameObject enemy) => enemy.SetActive(true);
+
+
+        private IEnumerator DelayedPathStart(GameObject enemy, int randomSpawnPointNumber)
+        {
+            yield return new WaitForSeconds(DELAY_PATH_TIMER);
+
+            enemy.TryGetComponent(out WaypointFollower waypointfollower);
+            waypointfollower.Waypoints = _enemySpawnPoints[randomSpawnPointNumber].Waypoints;
+
+            if (enemy.TryGetComponent(out Pathfinder pathfinder))
+            {
+                waypointfollower.PathFinder = pathfinder;
+                waypointfollower.ResetWaypointIndex();
+            }
+        }
+
+        private void AddSlider(GameObject enemy)
+        {
+            EnemyHealthBar healthBar = enemy.GetComponent<EnemyHealthBar>();
+            HealthData enemyHealth = enemy.GetComponent<HealthData>();
+
+            float maxEnemyHealth = enemyHealth.MaxHealth == 0 ? enemyHealth.Health : enemyHealth.MaxHealth;
+
+            if (enemyHealth.isDead)
+                enemyHealth.Resurrect(maxEnemyHealth);
 
             healthBar.EnemyHealthData = enemyHealth;
             healthBar.ServerInitialize();
+            ReceiveEnemyInfoOnSpawn(healthBar, maxEnemyHealth);
 
-            if (IsServer)
-                _currentActiveEnemySliders.Add(enemyHealth.gameObject, healthBar);
+            _enemiesHealth.Add(healthBar, maxEnemyHealth);
         }
 
-        private void StartNextSpawnTimer(GameObject enemyObject)
-        {
-            if (_currentActiveEnemySliders.TryGetValue(enemyObject, out EnemyHealthBar healthBar))
-                _currentActiveEnemySliders.Remove(enemyObject);
+        [ObserversRpc]
+        private void ReceiveEnemyInfoOnSpawn(EnemyHealthBar healthbar, float healthAmount) 
+            => healthbar.ClientInitialize(healthAmount);
 
-            PoolSystem.Instance.StartRespawnTimer(_enemyDownTimer, enemyObject.name, enemyObject.transform.parent); // todo: remove this line when we have more bosses
-            PoolSystem.Instance.DespawnObject(enemyObject.name, enemyObject);
+
+        private void DespawnEnemy()
+        {
+            foreach (EnemyHealthBar slider in _enemiesHealth.Keys)
+                PoolSystem.Instance.DespawnObject(slider.name, slider.gameObject);
+
+            _enemiesHealth.Clear();
+        }
+
+        private IEnumerator StartNextSpawnTimer()
+        {
+            yield return new WaitForSeconds(_enemyCooldown);
+
+            SpawnEnemy();
         }
 
         private void OnDestroy()
         {
-            ServerInstance.Instance.OnServerStarted -= CreateEnemy;
+            ServerInstance.Instance.OnServerStarted -= SpawnEnemy;
             _spawner.OnSpawned -= SendEnemyInfoOnConnection;
         }
     }

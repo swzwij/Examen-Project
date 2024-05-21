@@ -33,7 +33,7 @@ public class Projectile : NetworkBehaviour
             Destroy(gameObject);
         }
 
-        if ((_distanceTraveled * _distanceTraveled) >= _maxTravelDistance)
+        if ((_distanceTraveled * _distanceTraveled) >= _maxTravelDistance * _maxTravelDistance)
             Destroy(gameObject);
     }
 

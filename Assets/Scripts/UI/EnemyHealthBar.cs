@@ -1,3 +1,4 @@
+using Examen.Spawning.BossSpawning;
 using FishNet.Object;
 using MarkUlrich.Health;
 using UnityEngine;
@@ -7,25 +8,25 @@ namespace Examen.UI
 {
     public class EnemyHealthBar : NetworkBehaviour
     {
-        [SerializeField] private bool _damage;
         [SerializeField] private Slider _healthBar;
 
         public HealthData EnemyHealthData { get; set; }
-        public Slider HealthSlider => _healthBar;
+        public Slider HealthBar => _healthBar;
 
         private void Update()
         {
             if (!IsServer)
                 _healthBar.transform.parent.rotation = Quaternion.LookRotation(Vector3.back + Vector3.up);
-
-            if (_damage)
-                EnemyHealthData.TakeDamage(1);
         }
 
         /// <summary>
         /// Sets up the health on the server side
         /// </summary>
-        public void ServerInitialize() => EnemyHealthData.onDamageTaken.AddListener(CallSetHealth);
+        public void ServerInitialize()
+        {
+            EnemyHealthData.onDamageTaken.AddListener(CallSetHealth);
+            EnemyHealthData.onDie.AddListener(RemoveListeners);
+        }
 
         /// <summary>
         /// Sets up the health on the client side
@@ -41,5 +42,10 @@ namespace Examen.UI
         [ObserversRpc]
         private void SetUIHealth(float enemyHealth) => _healthBar.value = enemyHealth;
 
+        private void RemoveListeners()
+        {
+            EnemyHealthData.onDamageTaken.RemoveListener(CallSetHealth);
+            EnemyHealthData.onDie.RemoveListener(RemoveListeners);
+        }
     }
 }
