@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using FishNet.Object;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using Examen.Interactables;
 
 namespace Examen.Player
 {
