@@ -107,10 +107,7 @@ namespace Examen.Player
         }
 
         [ServerRpc]
-        private void ProcessHover(Resource resource)
-        {         
-            resource.ProcessHover();
-        }
+        private void ProcessHover(Resource resource) => resource.ProcessHover();
 
         private void OnPointPerformed(InputAction.CallbackContext context)
         {
