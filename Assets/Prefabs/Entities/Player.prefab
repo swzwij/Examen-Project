@@ -119,7 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13e3e38fcf685dc40aa88bebdeec26b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 8
+  _componentIndexCache: 9
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
 --- !u!114 &3713117069067843006
@@ -279,6 +279,7 @@ GameObject:
   - component: {fileID: 7793903992176499921}
   - component: {fileID: 5753039320300628313}
   - component: {fileID: 3474068315095792362}
+  - component: {fileID: 6225571067555343528}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -476,6 +477,7 @@ MonoBehaviour:
   - {fileID: 7692977816705919355}
   - {fileID: 3694398312710353908}
   - {fileID: 2256975833209865345}
+  - {fileID: 7793903992176499921}
   - {fileID: 5753039320300628313}
   - {fileID: 7296310588199703723}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
@@ -659,6 +661,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 665c672f2e2777c47b3254da291fff52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 7
+  _addedNetworkObject: {fileID: 3679868855582776512}
+  _networkObjectCache: {fileID: 3679868855582776512}
   health: 100
   onHealthChanged:
     m_PersistentCalls:
@@ -688,7 +693,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5e6a50da3ac9ec4eab39645623096a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 7
+  _componentIndexCache: 8
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
   _deathScreen: {fileID: 4582928381352031558}
@@ -711,6 +716,21 @@ MonoBehaviour:
   _knockbackDistance: 0
   _midPointOffset: 0
   _rayDistance: 2
+--- !u!114 &6225571067555343528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6297853107807436002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c71fd7f855ec523429999fc4e14a1928, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _overrideType: 3
+  _updateHostVisibility: 1
+  _observerConditions: []
 --- !u!1001 &1029299542441008425
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -813,6 +833,10 @@ PrefabInstance:
       objectReference: {fileID: 5753039320300628313}
     - target: {fileID: 7451343417797423076, guid: e85cadf722a753e4d8f28cae9e0d9c35, type: 3}
       propertyPath: <IsNested>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7451343417797423076, guid: e85cadf722a753e4d8f28cae9e0d9c35, type: 3}
+      propertyPath: <ComponentIndex>k__BackingField
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7451343417797423076, guid: e85cadf722a753e4d8f28cae9e0d9c35, type: 3}
