@@ -16,7 +16,7 @@ namespace Examen.Player.Health
 
         private void UpdateHealthDisplay()
         {
-            int heartsToShow = Mathf.CeilToInt(_health.Health / 33.4f);
+            int heartsToShow = Mathf.CeilToInt(_health.Health / (_health.MaxHealth / _hearts.Length));
 
             for (int i = 0; i < _hearts.Length; i++)
             {
