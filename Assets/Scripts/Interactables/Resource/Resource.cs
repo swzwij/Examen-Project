@@ -125,6 +125,9 @@ namespace Examen.Interactables.Resource
             // Todo: Play interacting sound
         }
 
+        /// <summary>
+        /// Lerps the outline of the resource.
+        /// </summary>
         public void LerpOutline()
         {
             if (_highlightRoutine != null)
