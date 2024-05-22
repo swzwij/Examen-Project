@@ -34,6 +34,7 @@ namespace Exame.Attacks
         /// <summary>
         /// Starts the attack.
         /// </summary>
+        [Server]
         public virtual void StartAttack()
         {
             if (!CanAttack)
@@ -71,6 +72,9 @@ namespace Exame.Attacks
             yield return new WaitForSeconds(CurrentAnimationTime);
             Attack();
             OnAttacked?.Invoke(true);
+
+            if (!isActiveAndEnabled)
+                yield break;
             p_cooldownCoroutine = StartCoroutine(AttackCooldown());
         }
 

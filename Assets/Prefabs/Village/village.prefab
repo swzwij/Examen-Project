@@ -3397,6 +3397,9 @@ PrefabInstance:
       addedObject: {fileID: 4143926955682763348}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: aa5f27179215e3f4a81293f44a4cb149, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 5657953475460439171}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: aa5f27179215e3f4a81293f44a4cb149, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 8436119326101729486}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: aa5f27179215e3f4a81293f44a4cb149, type: 3}
       insertIndex: -1
@@ -3445,6 +3448,24 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   isDead: 0
+--- !u!114 &5657953475460439171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5386086164161359242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08eddbfe57e2e424b8eb94bbbe50a5ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 1
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
+  _cristalMaterial: {fileID: 2100000, guid: 6b4e444b4ad00db48a7b99c36dfce7c4, type: 2}
+  _damageColor: {r: 1, g: 0, b: 0, a: 1}
+  _regenTimer: 2
 --- !u!114 &8436119326101729486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3457,7 +3478,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 815b2066ae5f6074f9eb80906be8b0a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 1
+  _componentIndexCache: 2
   _addedNetworkObject: {fileID: 0}
   _networkObjectCache: {fileID: 0}
   _agentType: 2

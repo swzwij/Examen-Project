@@ -10,7 +10,7 @@ public class HeartOfTheVillage : NetworkBehaviour
 {
     [SerializeField] private Material _cristalMaterial;
     [SerializeField] private Color _damageColor;
-    [SerializeField] private float _regenTimer = 0.1f;
+    [SerializeField] private float _regenTimer = 1f;
 
     private Color _originalColor;
     private HealthData _healthData;
@@ -41,7 +41,7 @@ public class HeartOfTheVillage : NetworkBehaviour
         while (time < _regenTimer)
         {
             time += Time.deltaTime;
-            _cristalMaterial.color = Color.Lerp(_cristalMaterial.color, _originalColor, time / _regenTimer);
+            _cristalMaterial.color = Color.Lerp(_damageColor, _originalColor, time / _regenTimer);
             yield return null;
         }
 

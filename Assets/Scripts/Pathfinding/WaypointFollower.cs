@@ -151,7 +151,7 @@ namespace Examen.Pathfinding
         [Server]
         public void ContinuePath()
         {
-            if (p_hasStoppedPath)
+            if (p_hasStoppedPath || !isActiveAndEnabled)
                 return;
 
             if (p_followPathCoroutine != null)

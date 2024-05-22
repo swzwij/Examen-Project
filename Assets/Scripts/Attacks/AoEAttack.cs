@@ -39,6 +39,10 @@ namespace Exame.Attacks
         protected override void PrepareAttack()
         {
             base.PrepareAttack();
+
+            if (!isActiveAndEnabled)
+                return;
+            
             StartCoroutine(PrepareProjector());
         }
 
@@ -61,6 +65,9 @@ namespace Exame.Attacks
                 _damagedTargets.Add(collider, healthData);
                 healthData.TakeDamage(p_damage);
             }
+
+            if (!isActiveAndEnabled)
+                return;
 
             StartCoroutine(ResetProjector());
         }
