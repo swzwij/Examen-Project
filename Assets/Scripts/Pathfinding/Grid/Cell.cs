@@ -13,6 +13,7 @@ namespace Examen.Pathfinding.Grid
         public GridSystem GridSystem { private get; set; }
         public int CellX { get; set; }
         public int CellY { get; set; }
+
         public HashSet<Node> ActiveNodes { get => _activeNodes; set => _activeNodes = value; }
         public HashSet<Node> Nodes => _nodes;
         public HashSet<Cell> Neighbours { get; set; } = new();

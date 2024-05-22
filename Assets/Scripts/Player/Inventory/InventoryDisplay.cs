@@ -1,5 +1,6 @@
 using Examen.Items;
 using FishNet.Object;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Examen.Inventory
@@ -9,28 +10,38 @@ namespace Examen.Inventory
         [SerializeField] private InventoryDisplayItem _displayItem;
         [SerializeField] private Transform[] _contents;
 
-        private InventoryPackage _currentPackage;
+        Dictionary<string, int> _currentItems = new();
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
+            if (IsOwner)
+                return;
+
+            transform.parent.gameObject.SetActive(false);
+        }
 
         private void OnEnable() => InventorySystem.Instance.OnItemsChanged += UpdateDisplay;
 
-        private void OnDisable() => InventorySystem.Instance.OnItemsChanged -= UpdateDisplay;
+        private void OnDestroy() => InventorySystem.Instance.OnItemsChanged -= UpdateDisplay;
         
         /// <summary>
         /// Updates the display with the current package.
         /// </summary>
-        public void UpdateDisplay() => UpdateDisplay(_currentPackage);
+        public void UpdateDisplay() => UpdateDisplay(_currentItems);
         
-        private void UpdateDisplay(InventoryPackage package)
+        private void UpdateDisplay(Dictionary<string, int> currentItems)
         {            
             ClearDisplay();
 
-            _currentPackage = package;
+            _currentItems = currentItems;
 
-            foreach (ItemInstance item in package.Items.Keys)
-                UpdateDisplayItem(item.Name, package.Items[item]);
+            foreach (string itemName in currentItems.Keys)
+                UpdateDisplayItem(itemName, currentItems[itemName]);
         }
 
-        [ObserversRpc]
+        
         private void ClearDisplay()
         {
             if (!IsOwner)
@@ -43,7 +54,6 @@ namespace Examen.Inventory
             }
         }
 
-        [ObserversRpc]
         private void UpdateDisplayItem(string item, int itemAmount)
         {
             if (!IsOwner)
