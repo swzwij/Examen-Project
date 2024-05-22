@@ -130,6 +130,7 @@ namespace Examen.Pathfinding.Grid
             cell.gameObject.layer = 2; // Ignore raycast
             cell.transform.SetParent(transform);
             cell.transform.position = GetCellPosition(x, y);
+            cell.transform.localScale = CellSize;
             cell.GridSystem = this;
             cell.CellX = x;
             cell.CellY = y;
@@ -196,7 +197,6 @@ namespace Examen.Pathfinding.Grid
         [Server]
         public void UpdateCell(Cell cell) => UpdateCell(cell.CellX, cell.CellY);
 
-        [Server]
         private IEnumerator UpdateCellDelayed(int cellX, int cellY)
         {
             yield return new WaitForEndOfFrame();
