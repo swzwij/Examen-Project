@@ -185,7 +185,6 @@ namespace Examen.NPC
             float totalinterval = interval + attack.Cooldown + attack.PrepareTime;
             HealthData healthdata = agent.gameObject.TryGetCachedComponent<HealthData>();
 
-            _lookAtTargetCoroutine = StartCoroutine(LookAtTarget(agent.transform));
             TriggerIdle();
             yield return new WaitForSeconds(interval);
             while (!healthdata.isDead)
@@ -200,20 +199,6 @@ namespace Examen.NPC
 
             _attackCoroutine = null;
             _lookAtTargetCoroutine = null;
-        }
-
-        [Server]
-        protected IEnumerator LookAtTarget(Transform target)
-        {
-            float angleToTarget = Vector3.Angle(transform.forward, target.position - transform.position);
-            while (angleToTarget > 15f)
-            {
-                Vector3 direction = target.position - transform.position;
-                Quaternion rotation = Quaternion.LookRotation(direction);
-                transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * 5f);
-
-                yield return null;
-            }
         }
 
         [Server]
