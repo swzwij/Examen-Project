@@ -876,6 +876,10 @@ PrefabInstance:
       propertyPath: <ChildNetworkObjects>k__BackingField.Array.size
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8667353336501736113, guid: e85cadf722a753e4d8f28cae9e0d9c35, type: 3}
+      propertyPath: _playerDataHandler
+      value: 
+      objectReference: {fileID: 2256975833209865345}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

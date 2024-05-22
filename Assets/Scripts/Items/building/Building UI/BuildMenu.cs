@@ -8,11 +8,14 @@ namespace Examen.Building.BuildingUI
     {
         [SerializeField] private BuildItem[] _buildItems;
         [SerializeField] private GameObject _inventory;
+        [SerializeField] private PlayerDataHandler _playerDataHandler;
 
         private void Awake()
         {
             foreach (BuildItem buildItem in _buildItems)
                 buildItem.gameObject.SetActive(false);
+
+            UpdateBuildMenu(_playerDataHandler.Exp);
         }
 
         private void OnEnable() => PlayerDatabase.Instance.OnLevelChanged += UpdateBuildMenu;
