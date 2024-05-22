@@ -63,6 +63,9 @@ namespace Examen.Pathfinding
         [Server]
         private void UpdateFollower(List<Transform> waypoints)
         {
+            if (_currentWaypointIndex > _waypoints.Count)
+                return;
+
             float sqrDistanceToTarget = (transform.position - waypoints[_currentWaypointIndex].position).sqrMagnitude;
             float sqrDistanceThreshold = _waypointDistanceThreshold * _waypointDistanceThreshold;
             if (sqrDistanceToTarget < sqrDistanceThreshold && _currentWaypointIndex < waypoints.Count - 1)
