@@ -126,7 +126,7 @@ namespace Examen.Interactables.Resource
         }
 
         [Server]
-        public void ProcessHover() LerpOutline();
+        public void ProcessHover() => LerpOutline();
 
         /// <summary>
         /// Lerps the outline of the resource.
