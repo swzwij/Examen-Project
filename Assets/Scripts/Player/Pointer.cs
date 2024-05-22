@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 using FishNet.Object;
 using Swzwij.Extensions;
 using Examen.Interactables.Resource;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 namespace Examen.Player
 {
@@ -34,8 +36,12 @@ namespace Examen.Player
         }
         
 
+        public bool CanPoint;
+
         private void Start()
         {
+            CanPoint = true;
+
             InputManager.SubscribeToAction("Click", OnPointPerformed, out _clickAction);
             InputManager.TryGetAction("PointerPosition").Enable();
 
@@ -61,7 +67,24 @@ namespace Examen.Player
             if (!IsOwner)
                 return;
 
-            ProcessPointerPosition(PointerRay);
+            if (!CanPoint)
+                return;
+
+            Vector2 pointerPosition = InputManager.TryGetAction("PointerPosition").ReadValue<Vector2>();
+
+            PointerEventData eventData = new(EventSystem.current) { position = pointerPosition };
+            List<RaycastResult> results = new();
+            EventSystem.current.RaycastAll(eventData, results);
+
+            if (results.Count > 0)
+            {
+                HasClickedUI = true;
+                return;
+            }
+
+            Ray pointerRay = _myCamera.ScreenPointToRay(pointerPosition);
+
+            ProcessPointerPosition(pointerRay);
         }
 
         private void ProcessPointerPosition(Ray pointerRay)

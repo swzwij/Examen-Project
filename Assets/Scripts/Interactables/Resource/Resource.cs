@@ -30,6 +30,7 @@ namespace Examen.Interactables.Resource
         protected bool p_hasServerStarted;
         protected Cell p_cell;
 
+        public bool IsDead => p_healthData.isDead; 
         public Item ResourceItem => p_resourceItem;
         public SpawnArea SpawnArea { get; set; }
         public Cell Cell { get => p_cell; set => p_cell = value; }
@@ -42,7 +43,7 @@ namespace Examen.Interactables.Resource
             RespawnResource();
         }
 
-        private void Start() => ServerInstance.Instance.OnServerStarted += InitResource; 
+        private void Start() => ServerInstance.Instance.OnServerStarted += InitResource;
 
         private void Awake()
         {

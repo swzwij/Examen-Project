@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using FishNet.Object;
 using MarkUlrich.Utils;
 using UnityEngine;
 
@@ -60,6 +61,7 @@ namespace Examen.Pathfinding.Grid
             InitializeGrid(_gridSize, InitializeNode);
             ConnectNodes();
             InitializeCells();
+            ConnectCells();
             OnGridCreated?.Invoke();
         }
 
@@ -128,7 +130,7 @@ namespace Examen.Pathfinding.Grid
             cell.gameObject.layer = 2; // Ignore raycast
             cell.transform.SetParent(transform);
             cell.transform.position = GetCellPosition(x, y);
-            cell.Collider.size = CellSize;
+            cell.transform.localScale = CellSize;
             cell.GridSystem = this;
             cell.CellX = x;
             cell.CellY = y;
@@ -187,6 +189,13 @@ namespace Examen.Pathfinding.Grid
         /// <param name="cellX">The x-coordinate of the cell.</param>
         /// <param name="cellY">The y-coordinate of the cell.</param>
         public void UpdateCell(int cellX, int cellY) => StartCoroutine(UpdateCellDelayed(cellX, cellY));
+
+        /// <summary>
+        /// Updates the specified cell in the grid system.
+        /// </summary>
+        /// <param name="cell">The cell to update.</param>
+        [Server]
+        public void UpdateCell(Cell cell) => UpdateCell(cell.CellX, cell.CellY);
 
         private IEnumerator UpdateCellDelayed(int cellX, int cellY)
         {
@@ -251,6 +260,27 @@ namespace Examen.Pathfinding.Grid
             }
         }
 
+        private void ConnectCells()
+        {
+            foreach (Cell cell in _cells)
+                ConnectCell(cell);
+        }
+
+        private void ConnectCell(Cell cell)
+        {
+            for (int i = cell.CellX - 1; i <= cell.CellX + 1; i++)
+            {
+                for (int j = cell.CellY - 1; j <= cell.CellY + 1; j++)
+                {
+                    if (i == cell.CellX && j == cell.CellY || i < 0 || i >= _cells.GetLength(0) || j < 0 || j >= _cells.GetLength(1))
+                        continue;
+
+                    Cell neighbour = _cells[i, j];
+                    cell.Neighbours.Add(neighbour);
+                }
+            }
+        }
+
         /// <summary>
         /// Clears the grid by resetting the nodes and cells, and destroying any existing cells.
         /// </summary>
@@ -294,19 +324,33 @@ namespace Examen.Pathfinding.Grid
         /// <returns>The closest walkable node to the specified position.</returns>
         public Node GetClosestWalkableNode(Vector3 position)
         {
-            Node closestNode = null;
             float closestDistance = float.MaxValue;
+            closestDistance *= closestDistance;
 
-            foreach (Node node in _nodes)
+            Node closestNode = GetNodeFromWorldPosition(position);
+            if (closestNode.IsWalkable)
+                return closestNode;
+            
+            for (int x = -1; x <= 1; x++)
             {
-                if (!node.IsWalkable)
-                    continue;
-
-                float distance = Vector3.Distance(node.Position, position);
-                if (distance < closestDistance)
+                for (int y = -1; y <= 1; y++)
                 {
-                    closestNode = node;
-                    closestDistance = distance;
+                    int checkX = closestNode.GridPosition.x + x;
+                    int checkY = closestNode.GridPosition.y + y;
+
+                    if (checkX >= 0 && checkX < _gridSize.x && checkY >= 0 && checkY < _gridSize.y)
+                    {
+                        Node node = _nodes[checkX, checkY];
+                        if (!node.IsWalkable)
+                            continue;
+
+                        float distance = (node.Position - position).sqrMagnitude;
+                        if (distance < closestDistance)
+                        {
+                            closestNode = node;
+                            closestDistance = distance;
+                        }
+                    }
                 }
             }
 

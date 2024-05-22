@@ -10,13 +10,10 @@ namespace Examen.Pathfinding
         [SerializeField] private int _diagonalCost = 14;
         [SerializeField] private int _straightCost = 10;
 
-        private GridSystem _gridSystem;
         private HashSet<Node> _openSet = new();
         private HashSet<Node> _closedSet = new();
         private List<Node> _path = new();
         private List<Node> _retracedPath = new();
-
-        private void OnEnable() => _gridSystem = FindObjectOfType<GridSystem>();
 
         /// <summary>
         /// Finds a path from the specified start position to the target position using the A* pathfinding algorithm.

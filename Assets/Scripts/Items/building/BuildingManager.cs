@@ -9,6 +9,7 @@ using Examen.Building.BuildingUI;
 using Examen.Structure;
 using System.Collections.Generic;
 using Swzwij.Extensions;
+using Examen.Structures;
 
 namespace Examen.Building
 {
@@ -32,8 +33,6 @@ namespace Examen.Building
 
         private InputAction _clickAction;
 
-        private GridSystem _gridSystem;
-
         private Player.Pointer _pointer;
         private Vector3 _pointerLocation;
         private RaycastHit _pointerHitInfo;
@@ -45,8 +44,6 @@ namespace Examen.Building
         {
             InputManager.SubscribeToAction("HoldDown", OnHoldPressed, out _clickAction);
             _clickAction.canceled += OnReleasePressed;
-
-            SetGridSystem();
 
             _pointer = GetComponent<Player.Pointer>();
             _camera = _pointer.Camera;
@@ -100,7 +97,7 @@ namespace Examen.Building
         /// </summary>
         /// <param name="structurePreview">The structure preview GameObject to spawn.</param>
         /// <param name="structure">The structure GameObject to place.</param>
-        public void SpawnStructurePreview(GameObject structurePreview, NetworkObject structure)
+        public void SpawnStructurePreview(GameObject structurePreview, NetworkObject structure, List<StructureCost> structureCosts)
         {
             if (_currentPreview != null)
                 Destroy(_currentPreview);
@@ -114,6 +111,7 @@ namespace Examen.Building
             rotationButtons.OwnedBuildingManager = this;
             rotationButtons.Camera = Camera;
             rotationButtons.SetButtonsActive(false);
+            rotationButtons.StructureCost = structureCosts;
 
             _isHolding = true;
         }
@@ -125,7 +123,7 @@ namespace Examen.Building
 
             Destroy(_currentPreview);
             UpdateStructurePlacement(structurePrefab, spawnLocation, spawnRotation);
-            UpdateCells(spawnLocation);
+            RequestCellUpdate(spawnLocation);
         }
 
         [ServerRpc]
@@ -142,9 +140,15 @@ namespace Examen.Building
         }
 
         [ServerRpc]
-        private void UpdateCells(Vector3 placedPosition)
+        private void RequestCellUpdate(Vector3 placedPosition)
         {
-            Cell currentCell = _gridSystem.GetCellFromWorldPosition(placedPosition);
+            Updatecell(placedPosition);
+        }
+
+        [Server]
+        private void Updatecell(Vector3 placedPosition)
+        {
+            Cell currentCell = GridSystem.Instance.GetCellFromWorldPosition(placedPosition);
             currentCell.UpdateCell();
         }
 
@@ -212,9 +216,6 @@ namespace Examen.Building
             if (rotationButtons != null)
                 _currentPreview.GetComponentInChildren<StructurePreviewButtons>().SetButtonsActive(true);
         }
-
-        [Server]
-        private void SetGridSystem() => _gridSystem = FindAnyObjectByType<GridSystem>();
 
         private void SetPointerVector(Vector3 pointerLocation) => _pointerLocation = pointerLocation;
 
