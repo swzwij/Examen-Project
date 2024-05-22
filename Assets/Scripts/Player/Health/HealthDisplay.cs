@@ -7,9 +7,17 @@ namespace Examen.Player.Health
         [SerializeField] private GameObject[] _hearts;
 
         private float _maxHealth;
-
+        
+        /// <summary>
+        /// Initializes the health display with the maximum health.
+        /// </summary>
+        /// <param name="maxHealth">The max health.</param>
         public void InitHealthDisplay(float maxHealth) => _maxHealth = maxHealth;
 
+        /// <summary>
+        /// Updates the health display based on the current health.
+        /// </summary>
+        /// <param name="health">The updated health.</param>
         public void UpdateHealthDisplay(float health)
         {
             int heartsToShow = Mathf.CeilToInt(health / (_maxHealth / _hearts.Length));
