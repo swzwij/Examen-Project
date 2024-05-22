@@ -1,3 +1,4 @@
+using System.Collections;
 using Examen.Items;
 using Examen.Networking;
 using Examen.Pathfinding.Grid;
@@ -11,12 +12,19 @@ using UnityEngine;
 
 namespace Examen.Interactables.Resource
 {
-    [RequireComponent(typeof(HealthData))]
+    [RequireComponent(typeof(HealthData), typeof(Outline))]
     public class Resource : Interactable
     {
         [SerializeField] protected Item p_resourceItem;
         [SerializeField] protected int p_supplyAmount = 1;
         [SerializeField] protected int p_respawnTime;
+        [SerializeField] private float _highlightDuration = 0.25f;
+
+        private const float START_WIDTH = 0;
+        private const float END_WIDTH = 10;
+
+        private Outline _outline;
+        private Coroutine _highlightRoutine;
 
         protected HealthData p_healthData;
         protected bool p_hasServerStarted;
@@ -36,6 +44,12 @@ namespace Examen.Interactables.Resource
         }
 
         private void Start() => ServerInstance.Instance.OnServerStarted += InitResource;
+
+        private void Awake()
+        {
+            _outline = GetComponent<Outline>();
+            _outline.OutlineWidth = 0;
+        }
 
         /// <summary>
         /// If object isServer, it resurrects this gameobject and calls for the clients to mimic its position and active state.
@@ -94,6 +108,7 @@ namespace Examen.Interactables.Resource
         public override void Interact(NetworkConnection connection, float damageAmount = 0)
         {
             PlayInteractingSound();
+            LerpOutline();
 
             ServerInventory.Instance.AddItem(connection, p_resourceItem, p_supplyAmount);
             PlayerDatabase.Instance.AddExp(connection, 1);
@@ -110,6 +125,46 @@ namespace Examen.Interactables.Resource
         {
             // Todo: Play interacting sound
         }
+
+        /// <summary>
+        /// Lerps the outline of the resource.
+        /// </summary>
+        public void LerpOutline()
+        {
+            if (_highlightRoutine != null)
+                return;
+            _highlightRoutine = StartCoroutine(LerpOutlineCoroutine());
+        }
+
+        private IEnumerator LerpOutlineCoroutine()
+        {
+            float elapsedTime = 0;
+
+            while (elapsedTime < _highlightDuration)
+            {
+                float width = Mathf.Lerp(START_WIDTH, END_WIDTH, elapsedTime / _highlightDuration);
+                SetOutlineWidth(width);
+
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            elapsedTime = 0;
+            while (elapsedTime < _highlightDuration)
+            {
+                float width = Mathf.Lerp(END_WIDTH, START_WIDTH, elapsedTime / _highlightDuration);
+                SetOutlineWidth(width);
+
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            _outline.OutlineWidth = 0;
+            _highlightRoutine = null;
+        }
+
+        [ObserversRpc]
+        private void SetOutlineWidth(float width) => _outline.OutlineWidth = width;
 
         /// <summary>
         /// Calls all functionalities that need to happen when someone else is interacting with this Resource.
