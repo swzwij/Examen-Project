@@ -664,7 +664,7 @@ MonoBehaviour:
   _componentIndexCache: 7
   _addedNetworkObject: {fileID: 3679868855582776512}
   _networkObjectCache: {fileID: 3679868855582776512}
-  health: 100
+  health: 90
   _healthDisplay: {fileID: 3280301885108455870}
   onHealthChanged:
     m_PersistentCalls:
