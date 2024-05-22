@@ -119,8 +119,10 @@ namespace Examen.Spawning.BossSpawning
         private void ReceiveEnemyInfoOnSpawn(EnemyHealthBar healthbar, float healthAmount) 
             => healthbar.ClientInitialize(healthAmount);
 
-
-        private void DespawnEnemy()
+        /// <summary>
+        /// Despawn all enemies on the field.
+        /// </summary>
+        public void DespawnEnemies()
         {
             foreach (EnemyHealthBar slider in _enemiesHealth.Keys)
                 PoolSystem.Instance.DespawnObject(slider.name, slider.gameObject);

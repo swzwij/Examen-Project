@@ -854,7 +854,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5251914405801197472, guid: 28d726fdb663eff4abb97d064dd90c4a, type: 3}
       propertyPath: _layerMask.m_Bits
-      value: 76
+      value: 2124
       objectReference: {fileID: 0}
     - target: {fileID: 5998508435628983183, guid: 28d726fdb663eff4abb97d064dd90c4a, type: 3}
       propertyPath: <IsNested>k__BackingField
