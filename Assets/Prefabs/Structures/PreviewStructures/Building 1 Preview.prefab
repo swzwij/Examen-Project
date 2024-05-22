@@ -793,6 +793,18 @@ PrefabInstance:
       propertyPath: <AssetPathHash>k__BackingField
       value: 17374994774272723651
       objectReference: {fileID: 0}
+    - target: {fileID: 7455445306224842603, guid: 2a0dbf9a5e060b64b9d34ed827308044, type: 3}
+      propertyPath: _addedNetworkObject
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7455445306224842603, guid: 2a0dbf9a5e060b64b9d34ed827308044, type: 3}
+      propertyPath: _networkObjectCache
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7455445306224842603, guid: 2a0dbf9a5e060b64b9d34ed827308044, type: 3}
+      propertyPath: _componentIndexCache
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8650352496261290047, guid: 2a0dbf9a5e060b64b9d34ed827308044, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -806,7 +818,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 991412542245657844, guid: 2a0dbf9a5e060b64b9d34ed827308044, type: 3}
       insertIndex: 0
       addedObject: {fileID: 5155244899554404533}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5323847395226675756, guid: 2a0dbf9a5e060b64b9d34ed827308044, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 2a0dbf9a5e060b64b9d34ed827308044, type: 3}
 --- !u!4 &5612900750312453100 stripped
 Transform:
