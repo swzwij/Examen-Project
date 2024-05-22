@@ -1,23 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
-using MarkUlrich.Health;
 using UnityEngine;
 
 namespace Examen.Player.Health
 {
     public class HealthDisplay : MonoBehaviour
     {
-        [SerializeField] private HealthData _health;
         [SerializeField] private GameObject[] _hearts;
 
-        private void OnEnable() => _health.onDamageTaken.AddListener(UpdateHealthDisplay);
+        private float _maxHealth;
 
-        private void OnDisable() => _health.onDamageTaken.RemoveListener(UpdateHealthDisplay);
+        public void InitHealthDisplay(int maxHealth) => _maxHealth = maxHealth;
 
-        private void UpdateHealthDisplay()
+        public void UpdateHealthDisplay(float health)
         {
-            int heartsToShow = Mathf.CeilToInt(_health.Health / (_health.MaxHealth / _hearts.Length));
-
+            int heartsToShow = Mathf.CeilToInt(health / (_maxHealth / _hearts.Length));
             for (int i = 0; i < _hearts.Length; i++)
             {
                 if (i < heartsToShow)
