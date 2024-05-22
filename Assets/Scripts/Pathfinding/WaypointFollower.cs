@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Examen.Pathfinding.Grid;
 using FishNet.Object;
+using MarkUlrich.Health;
 using UnityEngine;
 
 namespace Examen.Pathfinding
@@ -9,32 +11,25 @@ namespace Examen.Pathfinding
     public class WaypointFollower : PathFollower
     {
         [SerializeField] private List<Transform> _waypoints = new();
+        [SerializeField] private float _waypointDistanceThreshold = 5f;
         private List<Node> _completePath = new();
         private int _currentWaypointIndex = 0;
-        private Transform _waypointsParent;
-        private bool _hasInitialised;
+        
+        public event Action OnFollowerInitialised;
+        public event Action<HealthData> OnStructureEncountered;
+        public event Action<bool> OnPathCleared;
 
-        protected override void Start() => base.Start();
+        public List<Transform> Waypoints { get => _waypoints; set { _waypoints = value; } }
 
-        private void InitBoss()
+        /// <summary>
+        /// Reset the waypoint index to 0 and Generates a complete path
+        /// </summary>
+        [Server]
+        public void ResetWaypointIndex()
         {
-            _waypointsParent = new GameObject().transform;
-            _waypointsParent.name = $"{gameObject.name} - Waypoints";
-
-            _waypoints.Clear();
-
-            for (int i = transform.childCount - 1; i >= 0; i--)
-            {
-                _waypoints.Add(transform.GetChild(i));
-                transform.GetChild(i).SetParent(_waypointsParent);
-            }
-
-            _waypoints.Reverse();
-
-            if (_waypoints.Count == 0)
-                return;
-
+            _currentWaypointIndex = 0;
             GenerateCompletePath();
+            OnFollowerInitialised?.Invoke();
         }
 
         [Server]
@@ -57,40 +52,61 @@ namespace Examen.Pathfinding
             p_currentTarget = p_currentPath[^1].Position;
         }
 
-        protected override void FixedUpdate() 
+        protected override void FixedUpdate()
         {
-            if (!IsServer)
+            if (!IsServer || _waypoints.Count <= 0)
                 return;
 
-            if (!_hasInitialised)
-            {
-                _hasInitialised = true;
-                InitBoss();
-            }
-
-            UpdateBoss(_waypoints);
+            UpdateFollower(_waypoints);
         }
 
         [Server]
-        private void UpdateBoss(List<Transform> waypoints)
+        private void UpdateFollower(List<Transform> waypoints)
         {
-            if (Vector3.Distance(transform.position, waypoints[_currentWaypointIndex].position) < 5f 
-            && _currentWaypointIndex < waypoints.Count-1)
+            float sqrDistanceToTarget = (transform.position - waypoints[_currentWaypointIndex].position).sqrMagnitude;
+            float sqrDistanceThreshold = _waypointDistanceThreshold * _waypointDistanceThreshold;
+            if (sqrDistanceToTarget < sqrDistanceThreshold && _currentWaypointIndex < waypoints.Count - 1)
                 _currentWaypointIndex++;
 
-            if (IsPathBlocked && !p_hasFoundBlockage)
-            {
-                p_hasFoundBlockage = true;
-                List<Node> newPath = p_pathfinder.FindPath(transform.position, p_currentTarget);
+            if (!IsPathBlocked || p_hasFoundBlockage)
+                return;
+            
+            p_hasFoundBlockage = true;
 
-                if (newPath.Count == 0)
-                {
-                    p_waitForClearance = StartCoroutine(WaitForPathClearance());
-                    return;
-                }
-                
-                GenerateCompletePath();
-            }
+            GenerateCompletePath();
+            if (IsNewPathBlocked())
+                return;
+
+            if (IsNextWaypointCloser())
+                _currentWaypointIndex++;
+        }
+
+        [Server]
+        protected bool IsNewPathBlocked()
+        {
+            if (p_currentPath.Count > 0)
+                return false;
+            
+            p_waitForClearance = StartCoroutine(WaitForPathClearance());
+
+            if (p_obstacleHit.collider.TryGetComponent(out HealthData healthData))
+                OnStructureEncountered?.Invoke(healthData);
+
+            return true;
+        }
+
+        [Server]
+        protected bool IsNextWaypointCloser()
+        {
+            if (_currentWaypointIndex >= _waypoints.Count)
+                return false;
+
+            float sqrDistanceToTarget = (transform.position - _waypoints[_currentWaypointIndex].position).sqrMagnitude;
+            float sqrDistanceThreshold = _waypointDistanceThreshold * _waypointDistanceThreshold;
+            if (sqrDistanceToTarget >= sqrDistanceThreshold)
+                return false;
+            
+            return true;
         }
 
         [Server]
@@ -99,10 +115,31 @@ namespace Examen.Pathfinding
             if (p_followPathCoroutine != null)
                 StopCoroutine(p_followPathCoroutine);
 
+            OnPathCleared?.Invoke(false);
+
             yield return new WaitUntil(() => !IsPathBlocked);
 
             yield return new WaitForSeconds(p_waitTime);
             ContinuePath();
+            OnPathCleared?.Invoke(true);
+        }
+
+        /// <summary>
+        /// Toggles the waiting state of the waypoint follower.
+        /// </summary>
+        /// <param name="isWaiting">A boolean value indicating whether the follower should wait or continue the path.</param>
+        [Server]
+        public void ToggleWaiting(bool isWaiting)
+        {
+            if (isWaiting)
+            {
+                if (p_followPathCoroutine != null)
+                    StopCoroutine(p_followPathCoroutine);
+            }
+            else
+            {
+                ContinuePath();
+            }
         }
 
         /// <summary>
@@ -111,6 +148,9 @@ namespace Examen.Pathfinding
         [Server]
         public void ContinuePath()
         {
+            if (p_hasStoppedPath)
+                return;
+
             if (p_followPathCoroutine != null)
                 StopCoroutine(p_followPathCoroutine);
 
