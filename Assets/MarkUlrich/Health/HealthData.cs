@@ -32,6 +32,8 @@ namespace MarkUlrich.Health
         private void InitHealth()
         {
             _maxHealth = health;
+            if (_healthDisplay != null)
+                _healthDisplay.InitHealthDisplay((int)_maxHealth);
         }
 
         [ServerRpc(RequireOwnership = false, RunLocally = true)]

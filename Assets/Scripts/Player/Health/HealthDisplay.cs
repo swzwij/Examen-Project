@@ -8,7 +8,7 @@ namespace Examen.Player.Health
 
         private float _maxHealth;
 
-        public void InitHealthDisplay(int maxHealth) => _maxHealth = maxHealth;
+        public void InitHealthDisplay(float maxHealth) => _maxHealth = maxHealth;
 
         public void UpdateHealthDisplay(float health)
         {
