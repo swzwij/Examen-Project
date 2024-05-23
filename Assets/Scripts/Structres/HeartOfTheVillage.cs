@@ -8,7 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(HealthData))]
 public class HeartOfTheVillage : NetworkBehaviour
 {
-    [SerializeField] private Material _cristalMaterial;
+    [SerializeField] private Material _crystalMaterial;
     [SerializeField] private Color _damageColor;
     [SerializeField] private float _regenTimer = 1f;
 
@@ -24,7 +24,7 @@ public class HeartOfTheVillage : NetworkBehaviour
 
     private void InitialiseHeart()
     {
-        _originalColor = _cristalMaterial.color;
+        _originalColor = _crystalMaterial.color;
         _healthData.onDie.AddListener(ResetLevel);
         _healthData.onDamageTaken.AddListener(GetDamaged);
 
@@ -44,8 +44,8 @@ public class HeartOfTheVillage : NetworkBehaviour
         while (time < _regenTimer)
         {
             time += Time.deltaTime;
-            _cristalMaterial.color = Color.Lerp(_damageColor, _originalColor, time / _regenTimer);
-            BroadcastNewColor(_cristalMaterial.color);
+            _crystalMaterial.color = Color.Lerp(_damageColor, _originalColor, time / _regenTimer);
+            BroadcastNewColor(_crystalMaterial.color);
             yield return null;
         }
 
@@ -55,17 +55,17 @@ public class HeartOfTheVillage : NetworkBehaviour
     private void GetDamaged()
     {
         float multiplier = 1 - _healthData.Health / _healthData.MaxHealth;
-        _cristalMaterial.color = Color.Lerp(_cristalMaterial.color, _damageColor, multiplier);
-        BroadcastNewColor(_cristalMaterial.color);
+        _crystalMaterial.color = Color.Lerp(_crystalMaterial.color, _damageColor, multiplier);
+        BroadcastNewColor(_crystalMaterial.color);
     }
 
     [ObserversRpc]
-    private void BroadcastNewColor(Color newColor) => _cristalMaterial.color = newColor;
+    private void BroadcastNewColor(Color newColor) => _crystalMaterial.color = newColor;
 
 
     private void OnDestroy()
     {
-        _cristalMaterial.color = _originalColor;
+        _crystalMaterial.color = _originalColor;
     }
 
 }

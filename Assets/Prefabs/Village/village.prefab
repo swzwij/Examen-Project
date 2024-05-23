@@ -3463,7 +3463,7 @@ MonoBehaviour:
   _componentIndexCache: 1
   _addedNetworkObject: {fileID: 0}
   _networkObjectCache: {fileID: 0}
-  _cristalMaterial: {fileID: 2100000, guid: 6b4e444b4ad00db48a7b99c36dfce7c4, type: 2}
+  _crystalMaterial: {fileID: 2100000, guid: 6b4e444b4ad00db48a7b99c36dfce7c4, type: 2}
   _damageColor: {r: 1, g: 0, b: 0, a: 1}
   _regenTimer: 2
 --- !u!114 &8436119326101729486
