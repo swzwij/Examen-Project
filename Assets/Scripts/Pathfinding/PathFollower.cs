@@ -98,7 +98,7 @@ namespace Examen.Pathfinding
             BroadcastAnimationTrigger("Move");
 
             p_animator.SetFloat("MoveMultiplier", 1);
-            BroadcastAnimationSpeed(p_speed / 10);
+            BroadcastAnimationSpeed(1);
         }
 
         [ServerRpc]
