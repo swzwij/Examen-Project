@@ -74,6 +74,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 7801039295282643422}
   _networkObjectCache: {fileID: 7801039295282643422}
+  p_interactableType: 1
   p_resourceItem: {fileID: 11400000, guid: 25d262743dcf76145860ce1e70a7afff, type: 2}
   p_supplyAmount: 1
   p_respawnTime: 5

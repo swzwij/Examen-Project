@@ -7,6 +7,7 @@ using FishNet.Component.Spawning;
 using FishNet.Object;
 using MarkUlrich.Health;
 using MarkUlrich.Utils;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,6 +26,8 @@ namespace Examen.Spawning.BossSpawning
         private Dictionary<EnemyHealthBar, float> _enemiesHealth = new();
 
         private const float DELAY_PATH_TIMER = 0.33f;
+
+        public Action OnEnemyDefeated;
 
         private void Start()
         {
@@ -59,8 +62,8 @@ namespace Examen.Spawning.BossSpawning
         [Server]
         private void SpawnEnemy()
         {
-            int randomSpawnPointNumber = Random.Range(0, _enemySpawnPoints.Count);
-            int randomEnemyPrefabNumber = Random.Range(0, _enemyPrefabs.Count);
+            int randomSpawnPointNumber = UnityEngine.Random.Range(0, _enemySpawnPoints.Count);
+            int randomEnemyPrefabNumber = UnityEngine.Random.Range(0, _enemyPrefabs.Count);
 
             GameObject enemy = PoolSystem.Instance.SpawnObject(_enemyPrefabs[randomEnemyPrefabNumber].name, 
                 _enemyPrefabs[randomEnemyPrefabNumber].gameObject);
@@ -77,11 +80,11 @@ namespace Examen.Spawning.BossSpawning
 
             AddSlider(enemy);
 
-            EnableEnemy(enemy);
+            ToggleEnemy(enemy, true);
         }
 
         [ObserversRpc]
-        private void EnableEnemy(GameObject enemy) => enemy.SetActive(true);
+        private void ToggleEnemy(GameObject enemy, bool isActive) => enemy.SetActive(isActive);
 
 
         private IEnumerator DelayedPathStart(GameObject enemy, int randomSpawnPointNumber)
@@ -112,18 +115,28 @@ namespace Examen.Spawning.BossSpawning
             healthBar.ServerInitialize();
             ReceiveEnemyInfoOnSpawn(healthBar, maxEnemyHealth);
 
+            enemyHealth.onDie.AddListener(() => OnEnemyDefeatedHandler());
+
             _enemiesHealth.Add(healthBar, maxEnemyHealth);
         }
+
+        [ObserversRpc]
+        private void OnEnemyDefeatedHandler() => OnEnemyDefeated?.Invoke();
 
         [ObserversRpc]
         private void ReceiveEnemyInfoOnSpawn(EnemyHealthBar healthbar, float healthAmount) 
             => healthbar.ClientInitialize(healthAmount);
 
-
-        private void DespawnEnemy()
+        /// <summary>
+        /// Despawn all enemies on the field.
+        /// </summary>
+        public void DespawnEnemies()
         {
             foreach (EnemyHealthBar slider in _enemiesHealth.Keys)
+            {
+                ToggleEnemy(slider.gameObject, false);
                 PoolSystem.Instance.DespawnObject(slider.name, slider.gameObject);
+            }
 
             _enemiesHealth.Clear();
         }

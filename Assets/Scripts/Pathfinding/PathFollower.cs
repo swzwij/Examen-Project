@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Examen.Interactables;
+using Examen.Interactables.Resource;
 using Examen.Pathfinding.Grid;
 using Examen.Player;
 using FishNet.Component.Spawning;
@@ -22,6 +24,7 @@ namespace Examen.Pathfinding
         [SerializeField] protected LayerMask p_obstaclesLayerMask;
         [SerializeField] protected float p_waitTime = 1f;
 
+        protected Animator p_animator;
         protected Interactable p_targetInteractable;
         protected bool p_hasInteracted;
         protected Vector3 p_currentTarget;
@@ -45,9 +48,12 @@ namespace Examen.Pathfinding
             => Physics.Raycast(transform.position, transform.forward, out p_obstacleHit, p_obstacleCheckDistance, p_obstaclesLayerMask);
 
         public event Action OnPathStarted;
+        public event Action<bool> OnFollowingPath;
         public event Action<RaycastHit> OnPathBlocked;
         public event Action OnPathCompleted;
         public event Action<Interactable> OnInteractableReached;
+
+        protected virtual void OnEnable() => p_hasStoppedPath = false;
 
         protected virtual void Start() 
         {
@@ -61,6 +67,12 @@ namespace Examen.Pathfinding
 
             if (TryGetComponent(out p_interactor))
                 p_interactor.OnInteractableFound += ProcessPointerPosition;
+
+            if (TryGetComponent(out p_animator))
+                OnPathStarted += TriggerMove;
+
+            
+            OnPathCompleted += RequestDIstanceToTarget;
         }
 
         protected virtual void FixedUpdate()
@@ -68,7 +80,6 @@ namespace Examen.Pathfinding
             if (!IsOwner)
                 return;
 
-            RequestDIstanceToTarget();
             if (p_hasInteracted)
                 return;
 
@@ -80,8 +91,22 @@ namespace Examen.Pathfinding
             OnPathBlocked?.Invoke(p_obstacleHit);
         }
 
+        [Server]
+        protected void TriggerMove()
+        {
+            p_animator.SetTrigger("Move");
+            BroadcastAnimationTrigger("Move");
+
+            p_animator.SetFloat("MoveMultiplier", 1);
+            BroadcastAnimationSpeed(p_speed / 10);
+        }
+
+        [ServerRpc]
         protected void ProcessPointerPosition(Interactable targetInteractable)
         {
+            if (targetInteractable is Resource resource && resource.IsDead)
+                return;
+
             p_hasInteracted = false;
             p_targetInteractable = targetInteractable;
             PreProcessPointerPosition(p_targetInteractable.transform.position);
@@ -120,8 +145,7 @@ namespace Examen.Pathfinding
             p_currentPath = p_pathfinder.FindPath(transform.position, target);
             p_currentNodeIndex = 0;
 
-            if (p_currentPath.Count > 0)
-                p_followPathCoroutine = StartCoroutine(FollowPath());
+            p_followPathCoroutine = StartCoroutine(FollowPath());
         }
 
         /// <summary>
@@ -133,11 +157,17 @@ namespace Examen.Pathfinding
             p_hasStoppedPath = true;
             if (p_followPathCoroutine != null)
                 StopCoroutine(p_followPathCoroutine);
+            
+            OnFollowingPath?.Invoke(false);
         }
 
         [Server]
         protected IEnumerator FollowPath()
         {
+            RequestDIstanceToTarget();
+            if (p_currentPath.Count == 0)
+                yield break;
+
             p_hasStoppedPath = false;
             OnPathStarted?.Invoke();
             while (p_currentNodeIndex < p_currentPath.Count)
@@ -148,11 +178,18 @@ namespace Examen.Pathfinding
                     yield return null;
                 }
 
+                OnFollowingPath?.Invoke(true);
+
                 Vector3 currentNode = p_currentPath[p_currentNodeIndex].Position;
                 Vector3 adjustedNode = currentNode;
                 adjustedNode.y = transform.localScale.y/2 + 
                 p_currentPath[p_currentNodeIndex].NodeHeightOffset + 
                 p_currentPath[p_currentNodeIndex].Position.y;
+
+                Vector3 lookAtVector = adjustedNode;
+                lookAtVector.y = transform.position.y;
+                transform.LookAt(lookAtVector);
+                BroadcastLookDirection(lookAtVector);
 
                 Vector3 nodeDirection = adjustedNode - transform.position;
 
@@ -172,14 +209,29 @@ namespace Examen.Pathfinding
             }
             
             p_hasFoundBlockage = false;
+            p_animator.SetTrigger("Idle");
+            BroadcastAnimationTrigger("Idle");
+            OnFollowingPath?.Invoke(false);
             OnPathCompleted?.Invoke();
         }
+
+        [ObserversRpc]
+        protected void BroadcastAnimationTrigger(string trigger) => p_animator.SetTrigger(trigger);
+
+        [ObserversRpc]
+        protected void BroadcastAnimationBool(string trigger, bool value) => p_animator.SetBool(trigger, value);
+
+        [ObserversRpc]
+        protected void BroadcastAnimationSpeed(float speed) => p_animator.SetFloat("MoveMultiplier", speed);
 
         [ObserversRpc]
         protected void BroadcastRotation(Quaternion rotation) => transform.rotation = rotation;
 
         [ObserversRpc]
         protected void BroadcastPosition(Vector3 position) => transform.position = position;
+
+        [ObserversRpc]
+        protected void BroadcastLookDirection(Vector3 direction) => transform.LookAt(direction);
 
         [ObserversRpc]
         protected void BroadcastPath(List<Vector3> path)
@@ -200,8 +252,8 @@ namespace Examen.Pathfinding
 
             if (DistanceToTarget(p_targetInteractable.transform.position) >= p_obstacleCheckDistance)
                 return;
-            
-            BroadcastInteractableReached();
+
+            BroadcastInteractableReached(p_targetInteractable, p_hasInteracted);
         }
 
         private float DistanceToTarget(Vector3 target)
@@ -213,16 +265,17 @@ namespace Examen.Pathfinding
             return distance;
         }
 
-        private void BroadcastInteractableReached()
+        [ObserversRpc]
+        private void BroadcastInteractableReached(Interactable interactable, bool hasInteracted)
         {
-            Vector3 targetPosition = p_targetInteractable.transform.position;
+            Vector3 targetPosition = interactable.transform.position;
             targetPosition.y = transform.position.y;
             transform.LookAt(targetPosition);
 
-            if (!p_hasInteracted)
+            if (!hasInteracted)
             {
-                p_hasInteracted = true;
-                OnInteractableReached?.Invoke(p_targetInteractable);
+                hasInteracted = true;
+                OnInteractableReached?.Invoke(interactable);
             }
         }
 

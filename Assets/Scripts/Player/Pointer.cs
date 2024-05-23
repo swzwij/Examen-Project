@@ -7,6 +7,7 @@ using Swzwij.Extensions;
 using Examen.Interactables.Resource;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using Examen.Interactables;
 
 namespace Examen.Player
 {

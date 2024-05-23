@@ -97,9 +97,9 @@ MonoBehaviour:
   _networkBehaviours:
   - {fileID: 4661868421625354277}
   - {fileID: 2008946782905985116}
+  - {fileID: 3622447424651970226}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
-  <ChildNetworkObjects>k__BackingField:
-  - {fileID: 0}
+  <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
     Position: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0, w: 1}
@@ -141,11 +141,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 815b2066ae5f6074f9eb80906be8b0a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 0
+  _componentIndexCache: 2
   _addedNetworkObject: {fileID: 2556768225675572015}
-  _networkObjectCache: {fileID: 2189759296706224930, guid: 7a11b3f18611a6b4e90a1a9c72cb5102, type: 3}
+  _networkObjectCache: {fileID: 2556768225675572015}
   _agentType: 2
-  _defaultRange: 250
+  _defaultRange: 75
   _checkProximity: 1
   _agentTypesToCheck: 01000000
 --- !u!114 &1099014511526077661

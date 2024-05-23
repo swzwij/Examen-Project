@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Exame.Attacks;
 using Examen.Attacks;
+using Examen.Interactables;
 using Examen.Pathfinding;
 using Examen.Proximity;
 using Examen.Spawning.BossSpawning;
@@ -18,9 +19,11 @@ namespace Examen.NPC
     [RequireComponent(typeof(WaypointFollower), typeof(ProximityAgent))]
     public class Boss : Interactable
     {
+        [SerializeField] protected InteractableTypes p_interactableType;
         [SerializeField] private WaypointFollower _waypointFollower;
         [SerializeField] private Animator p_animator;
         [SerializeField] private float _deathDespawnTimer = 30f;
+        [SerializeField] private GameObject _model;
 
         [Header("Attack Settings")]
         [SerializeField] private BaseAttack[] _attacks;
@@ -44,15 +47,26 @@ namespace Examen.NPC
         private Coroutine _lookAtTargetCoroutine;
         private bool _hasClearedPath;
         private bool _canAttack = true;
+        private bool _hasReset;
+
+        public override InteractableTypes Type => p_interactableType;
 
         public event Action<ProximityAgent> OnNewStructureEncountered;
+
+        private void OnEnable() 
+        {
+            if (!_hasReset)
+                return;
+            
+            _waypointFollower.enabled = true;
+            _proximityAgent.enabled = true;
+        }
 
         private void Awake()
         {
             _waypointFollower = GetComponent<WaypointFollower>();
             _healthBar = GetComponent<EnemyHealthBar>();
             _waypointFollower.OnFollowerInitialised += InitBoss;
-            _waypointFollower.OnPathStarted += TriggerWalking;
 
             _proximityAgent = GetComponent<ProximityAgent>();
         }
@@ -185,7 +199,6 @@ namespace Examen.NPC
             float totalinterval = interval + attack.Cooldown + attack.PrepareTime;
             HealthData healthdata = agent.gameObject.TryGetCachedComponent<HealthData>();
 
-            _lookAtTargetCoroutine = StartCoroutine(LookAtTarget(agent.transform));
             TriggerIdle();
             yield return new WaitForSeconds(interval);
             while (!healthdata.isDead)
@@ -200,20 +213,6 @@ namespace Examen.NPC
 
             _attackCoroutine = null;
             _lookAtTargetCoroutine = null;
-        }
-
-        [Server]
-        protected IEnumerator LookAtTarget(Transform target)
-        {
-            float angleToTarget = Vector3.Angle(transform.forward, target.position - transform.position);
-            while (angleToTarget > 15f)
-            {
-                Vector3 direction = target.position - transform.position;
-                Quaternion rotation = Quaternion.LookRotation(direction);
-                transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * 5f);
-
-                yield return null;
-            }
         }
 
         [Server]
@@ -290,13 +289,6 @@ namespace Examen.NPC
             _waypointFollower.ToggleWaiting(true);
         }
 
-        private void TriggerWalking()
-        {
-            p_animator.SetFloat("WalkSpeed", _waypointFollower.Speed);
-            p_animator.SetTrigger("Walk");
-            BroadCastAnimation("Walk");
-        }
-
         private void TriggerDie()
         {
             StartCoroutine(DespawnAfterDeath(_deathDespawnTimer));
@@ -316,6 +308,19 @@ namespace Examen.NPC
             _proximityAgent.enabled = false;
         }
 
+        private void ResetBoss()
+        {
+            foreach (BaseAttack attack in _attacks)
+                attack.StopAttack();
+
+            _proximityAgent.SetAgentType(AgentTypes.NPC);
+            _waypointFollower.enabled = false;
+            _proximityAgent.enabled = false;
+            StopAllCoroutines();
+
+            _hasReset = true;
+        }
+
         private IEnumerator DespawnAfterDeath(float timer)
         {
             yield return new WaitForSeconds(timer);
@@ -329,7 +334,6 @@ namespace Examen.NPC
         private void RemoveListeners()
         {
             _waypointFollower.OnPathCleared -= SetHasClearedPath;
-            _waypointFollower.OnPathStarted -= TriggerWalking;
             _waypointFollower.OnPathCompleted -= TriggerIdle;
             _waypointFollower.OnPathBlocked -= ProcessStructureEncounter;
 
@@ -346,5 +350,7 @@ namespace Examen.NPC
         }
 
         private void OnDestroy() => RemoveListeners();
+
+        private void OnDisable() => ResetBoss();
     }
 }

@@ -58,7 +58,7 @@ MonoBehaviour:
     m_Bits: 129
   _obstacleLayerMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 2112
   _cellPrefab: {fileID: 6240166786542947317, guid: 16fc201a78392d74bb4502a776621619, type: 3}
   _cellSize: 8
   _gridSize: {x: 54, y: 126}
@@ -93,7 +93,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 10
+  <PrefabId>k__BackingField: 18
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
