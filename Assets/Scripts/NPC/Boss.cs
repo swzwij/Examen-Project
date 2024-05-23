@@ -20,6 +20,7 @@ namespace Examen.NPC
     {
         [SerializeField] private WaypointFollower _waypointFollower;
         [SerializeField] private Animator p_animator;
+        [SerializeField] private GameObject _miniMapIcon;
         [SerializeField] private float _deathDespawnTimer = 30f;
 
         [Header("Attack Settings")]
@@ -55,6 +56,8 @@ namespace Examen.NPC
             
             _waypointFollower.enabled = true;
             _proximityAgent.enabled = true;
+            _miniMapIcon.SetActive(true);
+            BroadcastMiniMap(true);
         }
 
         private void Awake()
@@ -309,6 +312,8 @@ namespace Examen.NPC
 
             _waypointFollower.enabled = false;
             _proximityAgent.enabled = false;
+            _miniMapIcon.SetActive(false);
+            BroadcastMiniMap(false);
         }
 
         private void ResetBoss()
@@ -333,6 +338,9 @@ namespace Examen.NPC
 
         [ObserversRpc]
         private void BroadcastDespawn() => gameObject.SetActive(false);
+
+        [ObserversRpc]
+        private void BroadcastMiniMap(bool isActive) => _miniMapIcon.SetActive(isActive);
 
         private void RemoveListeners()
         {
