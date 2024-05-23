@@ -14,9 +14,9 @@ TagManager:
   - Obstacles
   - Ground
   - Structure
-  - 
-  - 
-  - 
+  - Enemy
+  - MiniMap
+  - Heart
   - 
   - 
   - 

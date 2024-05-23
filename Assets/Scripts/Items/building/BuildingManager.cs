@@ -9,6 +9,7 @@ using Examen.Building.BuildingUI;
 using Examen.Structure;
 using System.Collections.Generic;
 using Swzwij.Extensions;
+using Examen.Structures;
 
 namespace Examen.Building
 {
@@ -96,7 +97,7 @@ namespace Examen.Building
         /// </summary>
         /// <param name="structurePreview">The structure preview GameObject to spawn.</param>
         /// <param name="structure">The structure GameObject to place.</param>
-        public void SpawnStructurePreview(GameObject structurePreview, NetworkObject structure)
+        public void SpawnStructurePreview(GameObject structurePreview, NetworkObject structure, List<StructureCost> structureCosts)
         {
             if (_currentPreview != null)
                 Destroy(_currentPreview);
@@ -110,6 +111,7 @@ namespace Examen.Building
             rotationButtons.OwnedBuildingManager = this;
             rotationButtons.Camera = Camera;
             rotationButtons.SetButtonsActive(false);
+            rotationButtons.StructureCost = structureCosts;
 
             _isHolding = true;
         }
@@ -163,16 +165,15 @@ namespace Examen.Building
             
             PreviewStructure previewStructure = _currentPreview.TryGetCachedComponent<PreviewStructure>();
 
-            Debug.Log(previewStructure);
+            if(previewStructure != null)
+            {
+                List<MeshRenderer> meshRenderers = previewStructure.MeshRenderers;
 
-            List<MeshRenderer> meshRenderers = previewStructure.MeshRenderers;
+                foreach (MeshRenderer meshRenderer in meshRenderers)
+                    meshRenderer.material = dotProduct > 0.5 && _canPlace ? _placeAllowed : _placeDisallowed;
 
-            Debug.Log(meshRenderers);
-
-            foreach (MeshRenderer meshRenderer in meshRenderers)
-                meshRenderer.material = dotProduct > 0.5 && _canPlace ? _placeAllowed : _placeDisallowed;
-            
-            _canPlace = dotProduct > 0.5 && _canPlace;
+                _canPlace = dotProduct > 0.5 && _canPlace;
+            }
         }
 
         private void CheckPlaceable()
@@ -213,6 +214,12 @@ namespace Examen.Building
 
             if (rotationButtons != null)
                 _currentPreview.GetComponentInChildren<StructurePreviewButtons>().SetButtonsActive(true);
+
+            if (_currentPreview == null)
+                return;
+
+            if (_currentPreview.layer == 9) //Ping Layer
+                SetStructure();
         }
 
         private void SetPointerVector(Vector3 pointerLocation) => _pointerLocation = pointerLocation;

@@ -3,6 +3,8 @@ using Minoord.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using FishNet.Object;
+using Swzwij.Extensions;
+using Examen.Interactables.Resource;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
@@ -15,6 +17,7 @@ namespace Examen.Player
         private Vector3 _pointerWorldPosition;
         private InputAction _clickAction;
 
+        public Action<RaycastHit> OnHovering;
         public Action<Vector3> OnPointedAtPosition;
         public Action<Vector3> OnPointedUIInteraction;
         public Action<GameObject> OnPointedGameobject;
@@ -23,14 +26,29 @@ namespace Examen.Player
 
         public bool HasClickedUI { get; set; }
         public UnityEngine.Camera Camera => _myCamera;
+        public Ray PointerRay 
+        {
+            get
+            {
+                Vector2 pointerPosition = InputManager.TryGetAction("PointerPosition").ReadValue<Vector2>();
+                return _myCamera.ScreenPointToRay(pointerPosition);
+            }
+        }
+        
+
+        public bool CanPoint;
 
         private void Start()
         {
+            CanPoint = true;
+
             InputManager.SubscribeToAction("Click", OnPointPerformed, out _clickAction);
             InputManager.TryGetAction("PointerPosition").Enable();
 
             InitCamera();
         }
+
+        private void FixedUpdate() => Hover();
 
         private void InitCamera()
         {
@@ -47,6 +65,9 @@ namespace Examen.Player
         public void PointAtPosition()
         {
             if (!IsOwner)
+                return;
+
+            if (!CanPoint)
                 return;
 
             Vector2 pointerPosition = InputManager.TryGetAction("PointerPosition").ReadValue<Vector2>();
@@ -92,6 +113,24 @@ namespace Examen.Player
                     OnPointedAtInteractable?.Invoke(interactable);
             }
         }
+
+        private void Hover()
+        {
+            if (!IsOwner)
+                return;
+
+            if (!Physics.Raycast(PointerRay, out RaycastHit hit, _pointerDistance))
+                return;
+
+            if (!hit.collider.gameObject.TryGetCachedComponent<Resource>())
+                return;
+
+            ProcessHover(hit.collider.gameObject.TryGetCachedComponent<Resource>());
+            OnHovering?.Invoke(hit);
+        }
+
+        [ServerRpc]
+        private void ProcessHover(Resource resource) => resource.ProcessHover();
 
         private void OnPointPerformed(InputAction.CallbackContext context)
         {
