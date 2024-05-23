@@ -1,4 +1,3 @@
-using System.Collections;
 using Examen.Items;
 using Examen.Networking;
 using Examen.Pathfinding.Grid;
@@ -8,6 +7,7 @@ using Examen.Spawning.ResourceSpawning;
 using FishNet.Connection;
 using FishNet.Object;
 using MarkUlrich.Health;
+using System.Collections;
 using UnityEngine;
 
 namespace Examen.Interactables.Resource
@@ -31,7 +31,7 @@ namespace Examen.Interactables.Resource
         protected bool p_hasServerStarted;
         protected Cell p_cell;
 
-        public bool IsDead => p_healthData.isDead; 
+        public bool IsDead => p_healthData.isDead;
         public Item ResourceItem => p_resourceItem;
         public SpawnArea SpawnArea { get; set; }
         public HealthData HealthData => p_healthData;
@@ -45,6 +45,8 @@ namespace Examen.Interactables.Resource
                 return;
 
             RespawnResource();
+
+            _outline.OutlineWidth = START_WIDTH;
         }
 
         private void Start() => ServerInstance.Instance.OnServerStarted += InitResource;
@@ -63,7 +65,7 @@ namespace Examen.Interactables.Resource
             if (!IsServer)
                 return;
 
-            p_hasServerStarted = true;   
+            p_hasServerStarted = true;
             p_healthData = GetComponent<HealthData>();
 
             p_healthData.onDie.AddListener(StartRespawnTimer);
@@ -88,7 +90,11 @@ namespace Examen.Interactables.Resource
         /// Set the object Active.
         /// </summary>
         [ObserversRpc]
-        public void EnableObject() => gameObject.SetActive(true);
+        public void EnableObject()
+        {
+            gameObject.SetActive(true);
+            _outline.OutlineWidth = START_WIDTH;
+        }
 
         /// <summary>
         /// Disables the object.
