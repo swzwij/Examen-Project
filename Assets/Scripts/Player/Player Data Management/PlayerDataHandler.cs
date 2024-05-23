@@ -1,5 +1,5 @@
-using Examen.UI;
 using FishNet.Object;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,8 +7,8 @@ namespace Examen.Player.PlayerDataManagement
 {
     public class PlayerDataHandler : NetworkBehaviour
     {
-        [SerializeField] private Slider _slider;
-        [SerializeField] private Text _text;
+        [SerializeField] private List<Slider> _slider;
+        [SerializeField] private List<Text> _text;
         private int _exp;
 
         private const string PLAYER_PREF_EXP_KEY = "PlayerExp";

@@ -18,8 +18,8 @@ namespace Examen.Player.PlayerDataManagement
 
         public Action<int> OnLevelChanged;
 
-        public Slider ExpBar { private get; set; }
-        public Text ExpText { private get; set; }
+        public List<Slider> ExpBar { private get; set; }
+        public List<Text> ExpText { private get; set; }
 
 
         /// <summary>
@@ -41,14 +41,17 @@ namespace Examen.Player.PlayerDataManagement
         /// <param name="exp">The new experience points to display.</param>
         public void UpdateDisplay(int exp)
         {
+
             (int level, int remainingExp, int neededExp) = CalculateLevel(exp);
 
             int maxNeededExp = remainingExp + neededExp;
 
-            ExpBar.maxValue = maxNeededExp;
-            ExpBar.value = remainingExp;
-            ExpText.text = level.ToString();
-
+            for (int i = 0; i < ExpBar.Count; i++)
+            {
+                ExpBar[i].maxValue = maxNeededExp;
+                ExpBar[i].value = remainingExp;
+                ExpText[i].text = level.ToString();
+            }
             OnLevelChanged?.Invoke(level);
         }
 
@@ -74,7 +77,7 @@ namespace Examen.Player.PlayerDataManagement
 
             handler.AddExp(exp);
         }
-        
+
         /// <summary>
         /// Retrieves the experience points of the player associated with the specified network connection.
         /// </summary>
@@ -90,7 +93,7 @@ namespace Examen.Player.PlayerDataManagement
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void SendClientConnection(int clientId, PlayerDataHandler handler) 
+        private void SendClientConnection(int clientId, PlayerDataHandler handler)
             => ProcessClientConnection(clientId, handler);
 
         [ServerRpc(RequireOwnership = false)]
