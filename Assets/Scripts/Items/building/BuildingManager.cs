@@ -108,10 +108,13 @@ namespace Examen.Building
             _currentPreview.gameObject.SetActive(true);
 
             rotationButtons = _currentPreview.GetComponentInChildren<StructurePreviewButtons>();
-            rotationButtons.OwnedBuildingManager = this;
-            rotationButtons.Camera = Camera;
-            rotationButtons.SetButtonsActive(false);
-            rotationButtons.StructureCost = structureCosts;
+            if (rotationButtons != null)
+            {
+                rotationButtons.OwnedBuildingManager = this;
+                rotationButtons.Camera = Camera;
+                rotationButtons.SetButtonsActive(false);
+                rotationButtons.StructureCost = structureCosts;
+            }
 
             _isHolding = true;
         }

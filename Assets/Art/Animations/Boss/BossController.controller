@@ -34,7 +34,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Walk
+    m_ConditionEvent: Move
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 7842911557509899683}
@@ -132,7 +132,7 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: WalkSpeed
+  - m_Name: MoveMultiplier
     m_Type: 1
     m_DefaultFloat: 1
     m_DefaultInt: 0
@@ -144,7 +144,7 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: Walk
+  - m_Name: Move
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -427,7 +427,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: -2216932102997941408, guid: aef42e4b81d2d044ca69aba6d2d673b9, type: 3}
   m_Tag: 
-  m_SpeedParameter: WalkSpeed
+  m_SpeedParameter: MoveMultiplier
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
