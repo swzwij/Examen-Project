@@ -25,6 +25,7 @@ namespace Examen.Structures
         {
             ServerInstance.Instance.OnServerStarted += InitialiseHeart;
             _healthData = GetComponent<HealthData>();
+            _crystalMaterial.color = Color.white;
         }
 
         private void InitialiseHeart()
