@@ -833,6 +833,10 @@ PrefabInstance:
       propertyPath: _player
       value: 
       objectReference: {fileID: 6297853107807436002}
+    - target: {fileID: 6153351604762119786, guid: e85cadf722a753e4d8f28cae9e0d9c35, type: 3}
+      propertyPath: _playerDataHandler
+      value: 
+      objectReference: {fileID: 2256975833209865345}
     - target: {fileID: 6850010264471956358, guid: e85cadf722a753e4d8f28cae9e0d9c35, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
