@@ -1,3 +1,4 @@
+using Examen.Player.Health;
 using FishNet.Object;
 using UnityEngine;
 using UnityEngine.Events;
@@ -7,6 +8,7 @@ namespace MarkUlrich.Health
     public class HealthData : NetworkBehaviour
     {
         [SerializeField] private float health = 100f;
+        [SerializeField] private HealthDisplay _healthDisplay;
         private float _maxHealth;
 
         public UnityEvent<HealthEvent> onHealthChanged = new UnityEvent<HealthEvent>();
@@ -30,6 +32,8 @@ namespace MarkUlrich.Health
         private void InitHealth()
         {
             _maxHealth = health;
+            if (_healthDisplay != null)
+                _healthDisplay.InitHealthDisplay((int)_maxHealth);
         }
 
         [ServerRpc(RequireOwnership = false, RunLocally = true)]
@@ -41,6 +45,7 @@ namespace MarkUlrich.Health
             BroadcastAddHealth(healthAmount);
 
             onHealthAdded?.Invoke();
+
             TriggerChangedEvent(HealthEventTypes.AddHealth, healthAmount);
         }
 
@@ -51,6 +56,9 @@ namespace MarkUlrich.Health
                 return;
 
             health += healthAmount;
+
+            if (_healthDisplay != null)
+                _healthDisplay.UpdateHealthDisplay(health);
         }
 
         private void TriggerChangedEvent(HealthEventTypes type, float healthDelta = 0)
@@ -86,6 +94,9 @@ namespace MarkUlrich.Health
 
             isDead = newIsDead;
             health = newHealth;
+            
+            if (_healthDisplay != null)
+                _healthDisplay.UpdateHealthDisplay(health);
         }
 
         [ServerRpc(RequireOwnership = false, RunLocally = true)]
@@ -112,6 +123,10 @@ namespace MarkUlrich.Health
                 return;
 
             health -= damage;
+
+            
+            if (_healthDisplay != null)
+                _healthDisplay.UpdateHealthDisplay(health);
         }
 
         [ObserversRpc]
