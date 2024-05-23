@@ -193,10 +193,12 @@ MonoBehaviour:
   _componentIndexCache: 3
   _addedNetworkObject: {fileID: 9181585673909579258}
   _networkObjectCache: {fileID: 9181585673909579258}
+  p_interactableType: 1
   _waypointFollower: {fileID: 6810126444432453413}
   p_animator: {fileID: 4057522124301949771}
   _miniMapIcon: {fileID: 5045994975932349697}
   _deathDespawnTimer: 30
+  _model: {fileID: 4373595903140660382}
   _attacks:
   - {fileID: 2909072033571877038}
   _attackInterval: 1
@@ -840,6 +842,11 @@ PrefabInstance:
 --- !u!4 &4033521992412814884 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: aef42e4b81d2d044ca69aba6d2d673b9, type: 3}
+  m_PrefabInstance: {fileID: 3491217273048316367}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4373595903140660382 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: aef42e4b81d2d044ca69aba6d2d673b9, type: 3}
   m_PrefabInstance: {fileID: 3491217273048316367}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6970892491035397902

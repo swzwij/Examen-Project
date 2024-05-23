@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Exame.Attacks;
 using Examen.Attacks;
+using Examen.Interactables;
 using Examen.Pathfinding;
 using Examen.Proximity;
 using Examen.Spawning.BossSpawning;
@@ -18,10 +19,12 @@ namespace Examen.NPC
     [RequireComponent(typeof(WaypointFollower), typeof(ProximityAgent))]
     public class Boss : Interactable
     {
+        [SerializeField] protected InteractableTypes p_interactableType;
         [SerializeField] private WaypointFollower _waypointFollower;
         [SerializeField] private Animator p_animator;
         [SerializeField] private GameObject _miniMapIcon;
         [SerializeField] private float _deathDespawnTimer = 30f;
+        [SerializeField] private GameObject _model;
 
         [Header("Attack Settings")]
         [SerializeField] private BaseAttack[] _attacks;
@@ -47,6 +50,8 @@ namespace Examen.NPC
         private bool _canAttack = true;
         private bool _hasReset;
 
+        public override InteractableTypes Type => p_interactableType;
+
         public event Action<ProximityAgent> OnNewStructureEncountered;
 
         private void OnEnable() 
@@ -65,7 +70,6 @@ namespace Examen.NPC
             _waypointFollower = GetComponent<WaypointFollower>();
             _healthBar = GetComponent<EnemyHealthBar>();
             _waypointFollower.OnFollowerInitialised += InitBoss;
-            _waypointFollower.OnPathStarted += TriggerWalking;
 
             _proximityAgent = GetComponent<ProximityAgent>();
         }
@@ -288,13 +292,6 @@ namespace Examen.NPC
             _waypointFollower.ToggleWaiting(true);
         }
 
-        private void TriggerWalking()
-        {
-            p_animator.SetFloat("WalkSpeed", _waypointFollower.Speed);
-            p_animator.SetTrigger("Walk");
-            BroadCastAnimation("Walk");
-        }
-
         private void TriggerDie()
         {
             StartCoroutine(DespawnAfterDeath(_deathDespawnTimer));
@@ -345,7 +342,6 @@ namespace Examen.NPC
         private void RemoveListeners()
         {
             _waypointFollower.OnPathCleared -= SetHasClearedPath;
-            _waypointFollower.OnPathStarted -= TriggerWalking;
             _waypointFollower.OnPathCompleted -= TriggerIdle;
             _waypointFollower.OnPathBlocked -= ProcessStructureEncounter;
 

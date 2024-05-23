@@ -5,12 +5,14 @@ using Examen.Pathfinding;
 using Examen.Networking;
 using FishNet.Managing;
 using FishNet.Connection;
-using Examen.Interactables.Resource;
 using System.Collections;
+using System.Collections.Generic;
+using Examen.Interactables;
+using Examen.Interactables.Resource;
 
 namespace Examen.Player
 {
-    [RequireComponent(typeof(Pointer), typeof(PathFollower))]
+    [RequireComponent(typeof(Pointer), typeof(PathFollower), typeof(Animator))]
     public class Interactor : NetworkBehaviour
     {
         [SerializeField] private float damageAmount = 1;
@@ -19,9 +21,20 @@ namespace Examen.Player
         private Pointer _pointer;
         private PathFollower _pathFollower;
         private bool _hasInteracted;
-        private bool _isGathering;
-        private Resource _currentInteractableResource;
+        private Animator _animator;
+        private Coroutine _interactCooldown;
+        private Coroutine _gatheringCoroutine;
 
+        private Dictionary<InteractableTypes, string> _interactableTypeToAnimation = new()
+        {
+            {InteractableTypes.ResourceUnknown, "Interact"},
+            {InteractableTypes.ResourceWood, "Chop"},
+            {InteractableTypes.ResourceStone, "Mine"},
+            {InteractableTypes.ResourceSpecial, "Special"},
+            {InteractableTypes.StructureBallistae, "UseBallistae"},
+            {InteractableTypes.InteractRepair, "Repair"}
+        };
+        private bool _isGathering;
         public Action<Interactable> OnInteractableFound;
 
 
@@ -29,6 +42,7 @@ namespace Examen.Player
         {
             _pointer = GetComponent<Pointer>();
             _pathFollower = GetComponent<PathFollower>();
+            _animator = GetComponent<Animator>();
 
             _pointer.OnPointedAtInteractable += ProcessPointerGameObject;
             _pathFollower.OnInteractableReached += Interact;
@@ -50,27 +64,45 @@ namespace Examen.Player
 
         private void PreProcessPointerObject(Interactable pointedObject) => CheckForInteractable(pointedObject);
 
-        private void CheckForInteractable(Interactable currentInteractable)
-        {
-            _hasInteracted = false;
-            OnInteractableFound?.Invoke(currentInteractable);
-        }
+        private void CheckForInteractable(Interactable currentInteractable) 
+            => OnInteractableFound?.Invoke(currentInteractable);
 
         private void Interact(Interactable interactable)
         {
-            if (_hasInteracted)
+            if (_hasInteracted || _isGathering || _interactCooldown != null)
                 return;
 
+            _animator.SetTrigger(_interactableTypeToAnimation[interactable.Type]);
+            BroadcastAnimationTrigger(_interactableTypeToAnimation[interactable.Type]);
+
+            if (!IsOwner)
+                return; 
+            
             SentInteract(interactable, _networkManager.ClientManager.Connection);
 
             _hasInteracted = true;
+            _interactCooldown = 
+                StartCoroutine(InteractCooldown(interactable, _animator.GetCurrentAnimatorStateInfo(0).length));
+        }
+
+        private IEnumerator InteractCooldown(Interactable interactable, float cooldownTime)
+        {
+            SentInteract(interactable, _networkManager.ClientManager.Connection);
+            _hasInteracted = false;
+            yield return new WaitForSeconds(cooldownTime);
+            _interactCooldown = null;
         }
 
         [ServerRpc]
         private void SentInteract(Interactable interactable, NetworkConnection connection)
         {
             if (interactable is Resource resource)
-                StartCoroutine(Gathering(resource, connection));
+            {
+                if (_gatheringCoroutine != null)
+                    return;
+                
+                _gatheringCoroutine = StartCoroutine(Gathering(resource, connection));
+            }
             else
                 interactable.Interact(connection, damageAmount);
         }
@@ -79,13 +111,29 @@ namespace Examen.Player
         {
             _isGathering = true;
 
-            while (_isGathering && !resource.IsDead)
+            while (_isGathering && !resource.HealthData.isDead)
             {
                 resource.Interact(connection, damageAmount);
-                yield return new WaitForSeconds(6); //TODO: make this timer the timer of the player gather information
+                _animator.SetTrigger(_interactableTypeToAnimation[resource.Type]);
+                BroadcastAnimationTrigger(_interactableTypeToAnimation[resource.Type]);
+                yield return new WaitForSeconds(_animator.GetCurrentAnimatorClipInfo(0).Length);
+                if (!_isGathering || resource.HealthData.isDead)
+                    break;
             }
 
+            _animator.SetTrigger("Idle");
+            BroadcastAnimationTrigger("Idle");
             _isGathering = false;
+            _gatheringCoroutine = null;
+        }
+
+        [ObserversRpc]
+        protected void BroadcastAnimationTrigger(string trigger)
+        {
+            if (!IsOwner)
+                return;
+
+            _animator.SetTrigger(trigger);
         }
 
         private void OnDestroy() => _isGathering = false;

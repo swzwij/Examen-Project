@@ -15,6 +15,7 @@ namespace Examen.Interactables.Resource
     [RequireComponent(typeof(HealthData), typeof(Outline))]
     public class Resource : Interactable
     {
+        [SerializeField] protected InteractableTypes p_interactableType;
         [SerializeField] protected Item p_resourceItem;
         [SerializeField] protected int p_supplyAmount = 1;
         [SerializeField] protected int p_respawnTime;
@@ -33,7 +34,10 @@ namespace Examen.Interactables.Resource
         public bool IsDead => p_healthData.isDead; 
         public Item ResourceItem => p_resourceItem;
         public SpawnArea SpawnArea { get; set; }
+        public HealthData HealthData => p_healthData;
         public Cell Cell { get => p_cell; set => p_cell = value; }
+
+        public override InteractableTypes Type => p_interactableType;
 
         private void OnEnable()
         {
