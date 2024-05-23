@@ -97,7 +97,7 @@ namespace Examen.Pathfinding
             p_animator.SetTrigger("Move");
             BroadcastAnimationTrigger("Move");
 
-            p_animator.SetFloat("MoveMultiplier", p_speed / 10);
+            p_animator.SetFloat("MoveMultiplier", 1);
             BroadcastAnimationSpeed(p_speed / 10);
         }
 

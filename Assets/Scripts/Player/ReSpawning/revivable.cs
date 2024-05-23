@@ -21,7 +21,7 @@ namespace Examen.Player.ReSpawning
         private HealthData _healthData;
         private PathFollower _pathFollower;
 
-        public override InteractableTypes Type => throw new System.NotImplementedException();
+        public override InteractableTypes Type => InteractableTypes.ResourceUnknown;
 
         private void Start()
         {
