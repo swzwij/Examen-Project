@@ -14,12 +14,13 @@ namespace Examen.Player.PlayerDataManagement
         [SerializeField] private float _requiredExp = 100f;
         [SerializeField] private float _expIncreaseFactor = 1.2f;
 
-        [SerializeField] private Slider _expBar;
-        [SerializeField] private Text _expText;
-
         private readonly Dictionary<int, PlayerDataHandler> _playerData = new();
 
         public Action<int> OnLevelChanged;
+
+        public Slider ExpBar { private get; set; }
+        public Text ExpText { private get; set; }
+
 
         /// <summary>
         /// Initiates a connection with a client using the specified client ID and player data handler.
@@ -44,9 +45,9 @@ namespace Examen.Player.PlayerDataManagement
 
             int maxNeededExp = remainingExp + neededExp;
 
-            _expBar.maxValue = maxNeededExp;
-            _expBar.value = remainingExp;
-            _expText.text = $"Level: {level} {remainingExp}/{maxNeededExp}";
+            ExpBar.maxValue = maxNeededExp;
+            ExpBar.value = remainingExp;
+            ExpText.text = level.ToString();
 
             OnLevelChanged?.Invoke(level);
         }
