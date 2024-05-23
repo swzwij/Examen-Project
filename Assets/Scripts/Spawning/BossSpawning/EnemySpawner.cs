@@ -77,11 +77,11 @@ namespace Examen.Spawning.BossSpawning
 
             AddSlider(enemy);
 
-            EnableEnemy(enemy);
+            ToggleEnemy(enemy, true);
         }
 
         [ObserversRpc]
-        private void EnableEnemy(GameObject enemy) => enemy.SetActive(true);
+        private void ToggleEnemy(GameObject enemy, bool isActive) => enemy.SetActive(isActive);
 
 
         private IEnumerator DelayedPathStart(GameObject enemy, int randomSpawnPointNumber)
@@ -125,7 +125,10 @@ namespace Examen.Spawning.BossSpawning
         public void DespawnEnemies()
         {
             foreach (EnemyHealthBar slider in _enemiesHealth.Keys)
+            {
+                ToggleEnemy(slider.gameObject, false);
                 PoolSystem.Instance.DespawnObject(slider.name, slider.gameObject);
+            }
 
             _enemiesHealth.Clear();
         }

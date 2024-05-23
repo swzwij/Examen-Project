@@ -16,12 +16,15 @@ public class HeartOfTheVillage : NetworkBehaviour
     private HealthData _healthData;
     private float _maxHealth;
 
-    private void Start() => ServerInstance.Instance.OnServerStarted += InitialiseHeart;
+    private void Start()
+    {
+        ServerInstance.Instance.OnServerStarted += InitialiseHeart;
+        _healthData = GetComponent<HealthData>();
+    }
 
     private void InitialiseHeart()
     {
         _originalColor = _cristalMaterial.color;
-        _healthData = GetComponent<HealthData>();
         _healthData.onDie.AddListener(ResetLevel);
         _healthData.onDamageTaken.AddListener(GetDamaged);
 
@@ -42,6 +45,7 @@ public class HeartOfTheVillage : NetworkBehaviour
         {
             time += Time.deltaTime;
             _cristalMaterial.color = Color.Lerp(_damageColor, _originalColor, time / _regenTimer);
+            BroadcastNewColor(_cristalMaterial.color);
             yield return null;
         }
 
@@ -52,7 +56,12 @@ public class HeartOfTheVillage : NetworkBehaviour
     {
         float multiplier = 1 - _healthData.Health / _healthData.MaxHealth;
         _cristalMaterial.color = Color.Lerp(_cristalMaterial.color, _damageColor, multiplier);
+        BroadcastNewColor(_cristalMaterial.color);
     }
+
+    [ObserversRpc]
+    private void BroadcastNewColor(Color newColor) => _cristalMaterial.color = newColor;
+
 
     private void OnDestroy()
     {
