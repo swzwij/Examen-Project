@@ -49,6 +49,8 @@ namespace Examen.Pathfinding
         public event Action OnPathCompleted;
         public event Action<Interactable> OnInteractableReached;
 
+        protected virtual void OnEnable() => p_hasStoppedPath = false;
+
         protected virtual void Start() 
         {
             _baseSpeed = p_speed;

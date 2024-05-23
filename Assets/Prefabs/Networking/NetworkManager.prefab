@@ -696,8 +696,8 @@ GameObject:
   - component: {fileID: 7890953761736754471}
   - component: {fileID: 2422130988488462587}
   - component: {fileID: 8055427934339130085}
-  - component: {fileID: 3467295558819507615}
   - component: {fileID: 8802304354035136665}
+  - component: {fileID: 2777942901608682646}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -829,18 +829,6 @@ MonoBehaviour:
   _tickRate: 50
   _pingInterval: 1
   _physicsMode: 0
---- !u!114 &3467295558819507615
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8094575235105439866}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 876818378b39eaa469747ead21fb7fee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &8802304354035136665
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -857,6 +845,18 @@ MonoBehaviour:
   _consoleToggle: {fileID: 9043801533898192553}
   _consoleCallback: {fileID: 6579992177557076996}
   _consoleWindow: {fileID: 8554214463576261812}
+--- !u!114 &2777942901608682646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8094575235105439866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 876818378b39eaa469747ead21fb7fee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8554214463576261812
 GameObject:
   m_ObjectHideFlags: 0
