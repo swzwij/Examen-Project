@@ -44,8 +44,18 @@ namespace Examen.NPC
         private Coroutine _lookAtTargetCoroutine;
         private bool _hasClearedPath;
         private bool _canAttack = true;
+        private bool _hasReset;
 
         public event Action<ProximityAgent> OnNewStructureEncountered;
+
+        private void OnEnable() 
+        {
+            if (!_hasReset)
+                return;
+            
+            _waypointFollower.enabled = true;
+            _proximityAgent.enabled = true;
+        }
 
         private void Awake()
         {
@@ -316,6 +326,19 @@ namespace Examen.NPC
             _proximityAgent.enabled = false;
         }
 
+        private void ResetBoss()
+        {
+            foreach (BaseAttack attack in _attacks)
+                attack.StopAttack();
+
+            _proximityAgent.SetAgentType(AgentTypes.NPC);
+            _waypointFollower.enabled = false;
+            _proximityAgent.enabled = false;
+            StopAllCoroutines();
+
+            _hasReset = true;
+        }
+
         private IEnumerator DespawnAfterDeath(float timer)
         {
             yield return new WaitForSeconds(timer);
@@ -346,5 +369,7 @@ namespace Examen.NPC
         }
 
         private void OnDestroy() => RemoveListeners();
+
+        private void OnDisable() => ResetBoss();
     }
 }

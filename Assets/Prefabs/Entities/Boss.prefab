@@ -170,7 +170,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 9181585673909579258}
   _networkObjectCache: {fileID: 9181585673909579258}
   p_speed: 2
-  p_turnSpeed: 10
+  p_turnSpeed: 20
   p_obstacleCheckDistance: 4
   p_obstaclesLayerMask:
     serializedVersion: 2
@@ -250,7 +250,7 @@ MonoBehaviour:
   <ChildNetworkObjects>k__BackingField:
   - {fileID: 3711931934465838209}
   SerializedTransformProperties:
-    Position: {x: 0, y: 1, z: 0}
+    Position: {x: -17.4, y: 1, z: -84.1}
     Rotation: {x: 0, y: 0, z: 0, w: 1}
     LocalScale: {x: 1, y: 1, z: 1}
   _isNetworked: 1
@@ -383,6 +383,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 9181585673909579258}
   _networkObjectCache: {fileID: 9181585673909579258}
   health: 300
+  _healthDisplay: {fileID: 0}
   onHealthChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -853,7 +854,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5251914405801197472, guid: 28d726fdb663eff4abb97d064dd90c4a, type: 3}
       propertyPath: _layerMask.m_Bits
-      value: 76
+      value: 2124
       objectReference: {fileID: 0}
     - target: {fileID: 5998508435628983183, guid: 28d726fdb663eff4abb97d064dd90c4a, type: 3}
       propertyPath: <IsNested>k__BackingField
