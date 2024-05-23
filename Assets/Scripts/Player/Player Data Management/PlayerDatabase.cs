@@ -14,12 +14,13 @@ namespace Examen.Player.PlayerDataManagement
         [SerializeField] private float _requiredExp = 100f;
         [SerializeField] private float _expIncreaseFactor = 1.2f;
 
-        [SerializeField] private Slider _expBar;
-        [SerializeField] private Text _expText;
-
         private readonly Dictionary<int, PlayerDataHandler> _playerData = new();
 
         public Action<int> OnLevelChanged;
+
+        public List<Slider> ExpBar { private get; set; }
+        public List<Text> ExpText { private get; set; }
+
 
         /// <summary>
         /// Initiates a connection with a client using the specified client ID and player data handler.
@@ -40,14 +41,17 @@ namespace Examen.Player.PlayerDataManagement
         /// <param name="exp">The new experience points to display.</param>
         public void UpdateDisplay(int exp)
         {
+
             (int level, int remainingExp, int neededExp) = CalculateLevel(exp);
 
             int maxNeededExp = remainingExp + neededExp;
 
-            _expBar.maxValue = maxNeededExp;
-            _expBar.value = remainingExp;
-            _expText.text = $"Level: {level} {remainingExp}/{maxNeededExp}";
-
+            for (int i = 0; i < ExpBar.Count; i++)
+            {
+                ExpBar[i].maxValue = maxNeededExp;
+                ExpBar[i].value = remainingExp;
+                ExpText[i].text = level.ToString();
+            }
             OnLevelChanged?.Invoke(level);
         }
 
@@ -73,7 +77,7 @@ namespace Examen.Player.PlayerDataManagement
 
             handler.AddExp(exp);
         }
-        
+
         /// <summary>
         /// Retrieves the experience points of the player associated with the specified network connection.
         /// </summary>
@@ -89,7 +93,7 @@ namespace Examen.Player.PlayerDataManagement
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void SendClientConnection(int clientId, PlayerDataHandler handler) 
+        private void SendClientConnection(int clientId, PlayerDataHandler handler)
             => ProcessClientConnection(clientId, handler);
 
         [ServerRpc(RequireOwnership = false)]
