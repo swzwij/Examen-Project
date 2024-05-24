@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &6316447786515030103
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -4562260932261237755, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: <AssetPathHash>k__BackingField
+      value: 6768690287359427357
+      objectReference: {fileID: 0}
+    - target: {fileID: 1179021375115779314, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: bac4d39baa8175141b52269ca07a5a6b, type: 3}
+    - target: {fileID: 1758823735045272122, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: <PrefabId>k__BackingField
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 1758823735045272122, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: <AssetPathHash>k__BackingField
+      value: 6768690287359427357
+      objectReference: {fileID: 0}
+    - target: {fileID: 2538772683161522554, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 2bc7e32aada25554195ebad70d92901e, type: 3}
+    - target: {fileID: 3369571461996773050, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_Color.b
+      value: 0.48235297
+      objectReference: {fileID: 0}
+    - target: {fileID: 3369571461996773050, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_Color.g
+      value: 0.43137258
+      objectReference: {fileID: 0}
+    - target: {fileID: 3369571461996773050, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_Color.r
+      value: 0.3647059
+      objectReference: {fileID: 0}
+    - target: {fileID: 5721087705736406416, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_Name
+      value: PingStone
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308045788551920474, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308045788551920474, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308045788551920474, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308045788551920474, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308045788551920474, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308045788551920474, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308045788551920474, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308045788551920474, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308045788551920474, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308045788551920474, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1a6a7dd394a14454db1c2b18d6645ad8, type: 3}
